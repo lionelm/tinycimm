@@ -1,0 +1,19 @@
+#summary What you can expect from this plugin.
+#labels Phase-Design,Phase-Requirements
+
+= Introduction =
+
+The Image Manager is part of the core Media Manager package, and is the most useful and probably most used plugin in the package. It allows you to easily manage you images and easily insert them into the tinyMCE editor. I've focused on simplicity for the end user. Less is more, from a layout point of view. All the features you expect from a "fancy" image manager are there for you to use, they are just cleanly tucked away.
+
+
+= Front End Features =
+
+  * AJAX functionality = fast loading & easy to use. Requests are managed by tinyMCE util, therefore any future upgrades to the tinyMCE core will also update how the system manages requests. All data is processed in JavaScript Object Notation (JSON) : name => value. Deserialization of response string to object is managed by tinyMCE JSON class. (JSON object serialization to string is a very simple PHP function, _not the same_ as PHP's serialize)
+  * The Image Manager is actually an extension to the Advanced Image plugin, thus no need for a FileBrowser callback, and thus saving you time, bandwidth, possibly money, because you don't need to open a new dialog: you are 3 clicks away from inserting an image from your PC into your website.
+  * Browser: View thumbnails or file listing of your images in the relevant folders. Quick viewing stats include image size.
+  * Folders: Add, edit, delete folders to organize your image library. Quick stats on folders include: owner, num images, total size.
+  * Upload: Upload a local file to a remote folder. Constrain dimensions, to prevent you or your client from inserting massively huge images that interfere with site layout etc. Uploading the file 'appears' to be managed by the request object (hidden iframe).
+  * Manage: Set the default field data for the image. (Mainly description & folder). Also you can restore the image, if any resizes turned out unexpectantly etc, or completely remove the image from the file system.
+  * Resize: A simple resize layout allows you to make your images _smaller_ (only) in dimensions. The image will be recreated with new dimensions on the server, saving you bandwidth etc. (It doesn't just save the new width and height attributes, it actually resizes the image.)
+  * Future feature includes inserting image as linked thumbnail to full-size image, which will be opened in a lightbox.
+  * All other features of the Advanced Image plugin.
