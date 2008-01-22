@@ -1,4 +1,4 @@
-#summary What you can expect from this plugin.
+#summary A brief overview of the Image Manager features.
 #labels Phase-Design,Phase-Requirements
 
 = Introduction =
