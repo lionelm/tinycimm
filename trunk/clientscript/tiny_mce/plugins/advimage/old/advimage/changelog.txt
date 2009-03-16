@@ -1,4 +1,0 @@
-21/01/08
-Fixed Bug: Remove onresize attribute in image.htm: caused IE to crash.
-Fixed: Corrected initial style heights of prev image and image wrapper layers
-Fixed: Integrated with 3.0rc2 - this is now verion of tinyMCE i'm using for tinyCIMM development
