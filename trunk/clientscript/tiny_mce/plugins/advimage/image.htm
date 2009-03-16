@@ -1,0 +1,338 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Image Manager</title>
+	<script type="text/javascript" src="../../tiny_mce_popup.js"></script>
+	<script type="text/javascript" src="../../utils/mctabs.js"></script>
+	<script type="text/javascript" src="../../utils/form_utils.js"></script>
+	<script type="text/javascript" src="../../utils/validate.js"></script>
+  <script type="text/javascript" src="js/ScrollSlider.js"></script>
+	<script type="text/javascript" src="js/image.js"></script>
+	<link type="text/css" rel="stylesheet" href="css/advimage.css" />
+	<base target="_self" />
+</head>
+<body id="advimage" style="display: none" onload="ImageDialog.resizeInputs()">
+    <form onsubmit="ImageDialog.insert();return false;" action="#"> 
+		<div class="tabs">
+			<ul>
+				<li id="general_tab" class="current"><span><a href="javascript:ImageDialog.showGeneral();" onmousedown="return false;">{#advimage_dlg.tab_general}</a></span></li>
+				<li id="appearance_tab"><span><a href="javascript:ImageDialog.showAppearance()" onmousedown="return false;">{#advimage_dlg.tab_appearance}</a></span></li>
+				<li id="advanced_tab"><span><a href="javascript:ImageDialog.showAdvanced()" onmousedown="return false;">{#advimage_dlg.tab_advanced}</a></span></li>
+        <li id="resize_tab"><span><a href="javascript:ImageDialog.loadresizer();" onmousedown="return false;">Resize</a></span></li>
+        <li id="browser_tab"><span><a href="javascript:ImageDialog.showBrowser();" onmousedown="return false;">Browse</a></span></li>
+        <li id="upload_tab"><span><a href="javascript:ImageDialog.showUploader();" onmousedown="return false;">Upload</a></span></li>
+        <li id="manager_tab"><span><a href="javascript:ImageDialog.showManager();" onmousedown="return false;">Manage</a></span></li>
+        <!--<li id="mm_tab"><span><a href="javascript:ImageDialog.openmanager();" onmousedown="return false;">^</a></span></li>-->
+
+        <li id="info_tab" style="float:right"><span><a id="info_tab_link" href="javascript:;" onmousedown="return false;" title="reload dialog"><img border="0" style="display:block;margin-top:1px" src="img/loader_st.gif" onclick="this.src='img/loader.gif';ImageDialog.reload()" /></a></span></li>
+			</ul>
+		</div>
+
+		<div id="image_wrapper_panel" style="height:350px" class="panel_wrapper">
+			<div id="general_panel" class="panel current">
+				<fieldset>
+						<legend>{#advimage_dlg.general}</legend>
+
+						<table class="properties">
+							<tr>
+								<td class="column1"><label id="srclabel" for="src">{#advimage_dlg.src}</label></td>
+								<td colspan="2">
+                <table border="0" cellspacing="0" cellpadding="0">
+									<tr> 
+									  <td><input name="src" type="text" id="src" value="" onchange="ImageDialog.showPreviewImage(this.value);" /></td> 
+									  <td id="srecbrowsercontainer">
+                      <a id="srcbrowser_link" class="browse" onmousedown="return false;" href="javascript:ImageDialog.showBrowser();">
+                      <span id="srcbrowser" title="Browse"/>
+                      </a></td>
+                      <!--
+                      <td id="uploadcontainer">
+                      <a id="uploadcontainer_link" class="upload" href="javascript:ImageDialog.showUploader();" onmousedown="return false;">
+                      <span id="uploader" title="Upload"/>
+                      </a></td>
+                      -->
+									</tr>
+								  </table></td>
+							</tr>
+							<tr>
+								<td><label for="src_list">{#advimage_dlg.image_list}</label></td>
+								<td><select id="src_list" name="src_list" onchange="document.getElementById('src').value=this.options[this.selectedIndex].value;document.getElementById('alt').value=this.options[this.selectedIndex].text;document.getElementById('title').value=this.options[this.selectedIndex].text;ImageDialog.showPreviewImage(this.options[this.selectedIndex].value);"></select></td>
+							</tr>
+							<tr> 
+								<td class="column1"><label id="altlabel" for="alt">{#advimage_dlg.alt}</label></td> 
+								<td colspan="2"><input id="alt" name="alt" type="text" value="" /></td> 
+							</tr> 
+							<tr> 
+								<td class="column1"><label id="titlelabel" for="title">{#advimage_dlg.title}</label></td> 
+								<td colspan="2"><input id="title" name="title" type="text" value="" /></td> 
+							</tr>
+						</table>
+				</fieldset>
+    
+				<fieldset>
+					<legend>{#advimage_dlg.preview}</legend>
+					<div id="prev"></div>
+				</fieldset>
+			</div>
+
+			<div id="appearance_panel" class="panel">
+				<fieldset>
+					<legend>{#advimage_dlg.tab_appearance}</legend>
+
+					<table border="0" cellpadding="4" cellspacing="0">
+						<tr> 
+							<td class="column1"><label id="alignlabel" for="align">{#advimage_dlg.align}</label></td> 
+							<td><select id="align" name="align" onchange="ImageDialog.updateStyle();ImageDialog.changeAppearance();"> 
+									<option value="">{#not_set}</option> 
+                  <option value="left">{#advimage_dlg.align_left}</option>
+									<option value="right">{#advimage_dlg.align_right}</option>
+									<option value="baseline">{#advimage_dlg.align_baseline}</option>
+									<option value="top">{#advimage_dlg.align_top}</option>
+									<option value="middle">{#advimage_dlg.align_middle}</option>
+									<option value="bottom">{#advimage_dlg.align_bottom}</option>
+									<option value="text-top">{#advimage_dlg.align_texttop}</option>
+									<option value="text-bottom">{#advimage_dlg.align_textbottom}</option>
+								</select> 
+							</td>
+              <td rowspan="4" width="50">&nbsp;</td>
+							<td><label id="vspacelabel" for="vspace">{#advimage_dlg.vspace}</label></td> 
+							<td><input name="vspace" type="text" id="vspace" value="" size="3" maxlength="3" class="number" onchange="ImageDialog.updateStyle();ImageDialog.changeAppearance();" />
+							</td>
+						</tr>
+
+						<tr>
+							<td class="column1"><label id="widthlabel" for="width">{#advimage_dlg.dimensions}</label></td>
+							<td nowrap="nowrap">
+								<input name="width" type="text" id="width" value="" size="5" maxlength="5" class="size" onchange="ImageDialog.changeHeight();" /> x 
+								<input name="height" type="text" id="height" value="" size="5" maxlength="5" class="size" onchange="ImageDialog.changeWidth();" /> px
+							</td>
+              <td><label id="hspacelabel" for="hspace">{#advimage_dlg.hspace}</label></td> 
+							<td><input name="hspace" type="text" id="hspace" value="" size="3" maxlength="3" class="number" onchange="ImageDialog.updateStyle();ImageDialog.changeAppearance();" /></td> 
+						</tr>
+
+						<tr>
+							<td>&nbsp;</td>
+							<td><table border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td><input id="constrain" type="checkbox" name="constrain" class="checkbox" checked="checked" style="display:none" /></td>
+                    <td>[<a href="javascript:ImageDialog.loadresizer();">Resize Image</a>]</td>
+										<!-- <td><label id="constrainlabel" for="constrain">{#advimage_dlg.constrain_proportions}</label></td> -->
+									</tr>
+								</table></td>
+                
+              <td><label id="borderlabel" for="border">{#advimage_dlg.border}</label></td> 
+							<td><input id="border" name="border" type="text" value="" size="3" maxlength="3" class="number" onchange="ImageDialog.updateStyle();ImageDialog.changeAppearance();" /></td> 
+						</tr>
+						<tr>
+							<td><label for="class_list">{#class_name}</label></td>
+							<td><select id="class_list" name="class_list"></select></td>
+						</tr>
+
+						<tr>
+							<td class="column1"><label id="stylelabel" for="style">{#advimage_dlg.style}</label></td> 
+							<td colspan="4"><input id="style" name="style" type="text" value="" onchange="ImageDialog.changeAppearance();" /></td> 
+						</tr>
+
+						<!-- <tr>
+							<td class="column1"><label id="classeslabel" for="classes">{#advimage_dlg.classes}</label></td> 
+							<td colspan="2"><input id="classes" name="classes" type="text" value="" onchange="selectByValue(this.form,'classlist',this.value,true);" /></td> 
+						</tr> -->
+					</table>
+				</fieldset>
+        <fieldset><legend>Layout Preview</legend>
+        <div class="alignPreview">
+									<img id="alignSampleImg" src="img/sample.gif" alt="{#advimage_dlg.example_img}" />
+									Lorem ipsum, Dolor sit amet, consectetuer adipiscing loreum ipsum edipiscing elit, sed diam
+									nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.Loreum ipsum
+									edipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam
+									erat volutpat. Lorem ipsum, Dolor sit amet, consectetuer adipiscing loreum ipsum edipiscing elit, sed diam
+									nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.Loreum ipsum
+									edipiscing elit.
+								</div>
+          </fieldset>
+			</div>
+
+			<div id="advanced_panel" class="panel">
+				<fieldset>
+					<legend>{#advimage_dlg.swap_image}</legend>
+
+					<input type="checkbox" id="onmousemovecheck" name="onmousemovecheck" class="checkbox" onclick="ImageDialog.setSwapImage(this.checked);" />
+					<label id="onmousemovechecklabel" for="onmousemovecheck">{#advimage_dlg.alt_image}</label>
+
+					<table border="0" cellpadding="4" cellspacing="0" width="100%">
+							<tr>
+								<td class="column1"><label id="onmouseoversrclabel" for="onmouseoversrc">{#advimage_dlg.mouseover}</label></td> 
+								<td><table border="0" cellspacing="0" cellpadding="0"> 
+									<tr> 
+									  <td><input id="onmouseoversrc" name="onmouseoversrc" type="text" value="" /></td> 
+									  <td id="onmouseoversrccontainer">&nbsp;</td>
+									</tr>
+								  </table></td>
+							</tr>
+							<tr>
+								<td><label for="over_list">{#advimage_dlg.image_list}</label></td>
+								<td><select id="over_list" name="over_list" onchange="document.getElementById('onmouseoversrc').value=this.options[this.selectedIndex].value;"></select></td>
+							</tr>
+							<tr> 
+								<td class="column1"><label id="onmouseoutsrclabel" for="onmouseoutsrc">{#advimage_dlg.mouseout}</label></td> 
+								<td class="column2"><table border="0" cellspacing="0" cellpadding="0"> 
+									<tr> 
+									  <td><input id="onmouseoutsrc" name="onmouseoutsrc" type="text" value="" /></td> 
+									  <td id="onmouseoutsrccontainer">&nbsp;</td>
+									</tr> 
+								  </table></td> 
+							</tr>
+							<tr>
+								<td><label for="out_list">{#advimage_dlg.image_list}</label></td>
+								<td><select id="out_list" name="out_list" onchange="document.getElementById('onmouseoutsrc').value=this.options[this.selectedIndex].value;"></select></td>
+							</tr>
+					</table>
+				</fieldset>
+        <br/>
+				<fieldset>
+					<legend>{#advimage_dlg.misc}</legend>
+
+					<table border="0" cellpadding="4" cellspacing="0">
+						<tr>
+							<td class="column1"><label id="idlabel" for="id">{#advimage_dlg.id}</label></td> 
+							<td><input id="id" name="id" type="text" value="" /></td> 
+						</tr>
+
+						<tr>
+							<td class="column1"><label id="dirlabel" for="dir">{#advimage_dlg.langdir}</label></td> 
+							<td>
+								<select id="dir" name="dir" onchange="ImageDialog.updateStyle();ImageDialog.changeAppearance();"> 
+										<option value="">{#not_set}</option> 
+										<option value="ltr">{#advimage_dlg.ltr}</option> 
+										<option value="rtl">{#advimage_dlg.rtl}</option> 
+								</select>
+							</td> 
+						</tr>
+
+						<tr>
+							<td class="column1"><label id="langlabel" for="lang">{#advimage_dlg.langcode}</label></td> 
+							<td>
+								<input id="lang" name="lang" type="text" value="" />
+							</td> 
+						</tr>
+
+						<tr>
+							<td class="column1"><label id="usemaplabel" for="usemap">{#advimage_dlg.map}</label></td> 
+							<td>
+								<input id="usemap" name="usemap" type="text" value="" />
+							</td> 
+						</tr>
+
+						<tr>
+							<td class="column1"><label id="longdesclabel" for="longdesc">{#advimage_dlg.long_desc}</label></td>
+							<td><table border="0" cellspacing="0" cellpadding="0">
+									<tr>
+									  <td><input id="longdesc" name="longdesc" type="text" value="" /></td>
+									  <td id="longdesccontainer">&nbsp;</td>
+									</tr>
+								</table></td> 
+						</tr>
+					</table>
+				</fieldset>
+			</div>
+      
+      <!-- IMAGE RESIZER PANEL -->
+      <div id="resize_panel" class="panel">
+				<fieldset>
+					<legend>Image Resizer</legend>
+          <div style="width:110px;padding-top:0;float:right">
+          <input type="checkbox" checked="checked" id="replace" name="replace" value="1" style="width:12px;float:left;margin:0 4px 0 0;padding:0;border:0" /> 
+          <label for="replace">Replace Original</label>
+          <div class="clear" style="height:3px"></div>
+          <a href="javascript:;" onclick="ImageDialog.saveImgSize()" title="save new image dimensions"><img src="img/save.gif" id="saveimg" style="float:left;margin:0 4px 0 0;border:0"> Save Size</a></div>
+          <div class="clear" style="height:3px">&nbsp;</div>
+          <div id="resizer">
+            <div id="image-slider"></div>
+            <div id="image-info">
+              <div id="image-info-dimensions"><span id="slider_width_val">139</span> x <span id="slider_height_val">92px</span></div>
+              <img width="0" height="0" id="slider_img" src="" />
+            </div>
+          </div>
+				</fieldset>
+			</div>
+		
+      <!-- BROWSER PANEL -->
+      <div id="browser_panel" class="panel">
+				<fieldset>
+					<legend>File Browser</legend>
+          <div id="filebrowser"><span id="loading">loading</span></div>
+				</fieldset>
+			</div>
+      
+      
+      <!-- IMAGE UPLOAD PANEL -->
+      <div id="upload_panel" class="panel" style="background:#FFF">
+				<fieldset>
+					<legend>Quick Image Upload</legend>
+          <div id="fileuploader">
+            <iframe style="border:0" frameborder="0" id="upload_target_ajax" width="100%" name="upload_target_ajax" scrolling="no"></iframe>
+          </div>
+				</fieldset>
+        <br/>
+        <fieldset style="background:#FFF">
+					<legend>Your Upload Info</legend>
+          <div id="fileuploader_info">
+            <span id="loading"> loading</span>
+          </div>
+				</fieldset>
+			</div>
+      
+      <!-- MANAGE IMAGE PANEL -->
+      <div id="manager_panel" class="panel" style="background:#FFF">
+				<fieldset>
+					<legend>Manage Image</legend>
+            <input id="image_id" type="hidden" value="" />
+            <div style="width:218px;float:right;margin:6px 6px 0 0">
+              <div style="padding:2px 2px 0 2px;height:64px;border:1px solid #CCC;color:#444;">
+                These are the default settings for this image as stored in the database. Please note that in 
+                most cases it's not a good idea deleting the image, rather place it in the Trash folder.
+              </div>
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-top:20px">
+                <tr>
+                  <td class="mng_img"><a href="javascript:;"><img src="img/image_save.png" />[Update]</a></td>
+                  <td>&nbsp;</td>
+                  <td class="mng_img"><a href="javascript:;"><img src="img/image_restore.png" />[Restore]</a></td>
+                  <td>&nbsp;</td>
+                  <td class="mng_img"><a id="del_image" href="javascript:;" onclick="ImageDialog.deleteImage(this.rel)"><img id="img_delete" src="img/image_delete.png" />[Delete]</a></td>
+                </tr>
+              </table>
+            </div>
+            <img id="manage_thumb_img" src="" />
+            <div style="display:none">
+            <b>Image Name:</b>
+            <br/><input id="image_caption" type="text" style="width:160px" value="" disabled />
+            <br/>
+            </div>
+            <strong>Image Description:</strong>
+            <div id="alttext_container"><textarea id="image_alttext" style="color:#aaa;width: 160px; height: 36px;">loading</textarea></div>
+            <strong>Image Folder:</strong><br/>
+            <div id="folder_select_list"><img src="img/ajax-loader.gif" /> loading..</div>
+            <strong>Image Info:</strong><br/> 640 x 480px - 23KB
+        </fieldset>
+      </div>
+      
+      <!-- END PANELS -->
+      
+    </div>
+
+		<div class="mceActionPanel">
+			<div style="float: left">
+				<input type="button" id="insert" name="insert" value="{#insert}" onclick="ImageDialog.insert();" />
+        <!-- <input type="button" id="insertthumb" name="insert_thumb" value="Insert Thumb" onclick="ImageDialog.insertThumb();" /> -->
+			</div>
+
+			<div style="float: right">
+				<input type="button" id="cancel" name="cancel" value="{#cancel}" onclick="tinyMCEPopup.close();" />
+			</div>
+		</div>
+    
+    </form>
+    
+    
+
+</body> 
+</html> 
