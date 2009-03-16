@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Upload Image Form</title>
+<link href="css/advimage.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+var tinymce = parent.tinymce;
+// load popup css
+tinymce.EditorManager.activeEditor.windowManager.createInstance('tinymce.dom.DOMUtils', document).loadCSS(tinymce.EditorManager.activeEditor.settings.popup_css);
+ 
+function removedim() {
+  try {
+    var dim = parent.document.getElementById("dimwindow");
+    dim.parentNode.removeChild(dim);
+    var img = parent.document.getElementById("dimwindowimg");
+    img.parentNode.removeChild(img);
+  } catch(e) {}
+}
+
+function dimimage() {
+  var dim = parent.document.createElement("div");
+  dim.setAttribute("id", "dimwindow");
+  var img = parent.document.createElement("div");
+  img.setAttribute("id", "dimwindowimg");
+  img.innerHTML = '<div><img src="img/progress.gif" /></div>';
+  var bodyRef = parent.document.getElementById("upload_panel");
+  bodyRef.appendChild(dim);
+  bodyRef.appendChild(img);
+}
+
+function updateimg(imgurl, alttext) {
+  document.forms[0].reset();
+  parent.ImageDialog.updateImage(imgurl, alttext);
+}
+
+window.onload = function() {
+	/* CHANGE ACCORDINGLY */
+  //document.forms[0].action = parent.tinyMCEPopup.editor.documentBaseURI.toAbsolute('tinycimm/image/upload_image/');
+	document.forms[0].action = '/tinycimm/image/upload_image';
+}
+</script>
+<base target="_self" />
+</head>
+<body id="advimage" style="background:#FFF;margin:0">
+        <form method="post" target="hidden_iframe" enctype="multipart/form-data" action="" id="uploadform" name="uploadform">
+                <table border="0" cellpadding="4" cellspacing="0">
+                <tr><td>Select File</td><td colspan="3"><input type="file" id="fileupload" name="fileupload" size="25" style="display:inline;width:220px;" /></td></tr>
+                <tr><td>Remote Folder</td>
+                  <td colspan="3">
+                  <div id="folder_select_list" style="display: inline;">
+                    <select name="uploadfolder" style="float:left;margin-right:5px">
+                      <option value="">loading&nbsp;</option>
+                    </select> <img src="images/ajax-loader.gif" style="float:left" />
+                  </div></td></tr>
+                  <tr><td>Constrain Dimensions</td>
+                  <td>
+                  <input style="width:14px;float:left;border:0" type="radio" name="adjust_size" id="adjust_size_1" value="1" checked="checked" onclick="document.getElementById('con_dimensions').style.display='block';" /> 
+                  <label style="float:left;line-height:18px" for="adjust_size_1">Yes</label> 
+                  <input style="width:14px;float:left;border:0" type="radio" name="adjust_size" id="adjust_size_0" value="0" onclick="document.getElementById('con_dimensions').style.display='none';" /> 
+                  <label style="float:left;line-height:18px" for="adjust_size_0">No</label></td>
+                  <td>&nbsp;</td>
+                  <td><div id="con_dimensions"><input style="text-align:center;width:38px" type="text" name="max_x" value="640" /> x
+                  <input style="text-align:center;width:38px" type="text" name="max_y" value="480" /> px</div></td></tr>
+                  
+                  <tr><td>Quality</td>
+                  <td colspan="3"><input type="text" size="3" style="text-align:center;width:24px" id="image-quality" value="90" />%</td></tr>
+                <tr><td colspan="4"><br/>
+                <iframe id="hidden_iframe" name="hidden_iframe" src="" style="width:0;height:0;border:0px solid #fff;"></iframe>
+                <input type="submit" class="button" name="submit_upload" value="Upload" onclick="dimimage();document.forms['uploadform'].submit();">
+                </td></tr>
+                </table>
+              </form><br/><br/>&nbsp;
+            </body>
+            </html>
