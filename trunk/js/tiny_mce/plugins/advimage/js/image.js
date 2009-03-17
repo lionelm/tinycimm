@@ -720,7 +720,7 @@ var ImageDialog = {
   // and shows the preview image in the dialog window
   insertPreviewImage : function(imgsrc, alttext) {
 		//imgsrc = imgsrc.replace(/\@/, "");
-	  imgsrc = o('src').value = ImageDialog.baseURL('images/uploaded/'+imgsrc);
+	  imgsrc = o('src').value = ImageDialog.baseURL('images/uploaded/originals/'+imgsrc);
     o('alt').value = alttext;
     o('title').value = '';
     this.showPreviewImage(imgsrc);
