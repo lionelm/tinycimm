@@ -19,7 +19,7 @@ class Tinycimm extends Controller
 	var $upload_config;
 	var $resize_config;
   
-	function Tinycimm()
+	public function Tinycimm()
 	{
 		parent::Controller();
 
@@ -69,16 +69,16 @@ class Tinycimm extends Controller
 	
   	}
 	
-	function index(){	
+	public function index(){	
 	}
  
 
 	// determines what manager to use: image or media
-	function image() {
+	public function image() {
 		$this->image_manager();
   	}
   
-  	function image_manager() { 
+  	public function image_manager() { 
 		$method = $this->uri->segment(3);
 		$args = $this->uri->uri_to_assoc(4);
 
@@ -90,7 +90,7 @@ class Tinycimm extends Controller
   	}
 
 	// get folder listing from db
-	function get_folder_list($arg) {
+	public function get_folder_list($arg) {
 		header("Cache-Control: no-cache, must-revalidate");
 		header("Cache-Control: no-store");
 
@@ -106,7 +106,7 @@ class Tinycimm extends Controller
   	}
   
 	// get folder listing from db
-	function get_file_folder_list($arg) {
+	public function get_file_folder_list($arg) {
 	
 		// first we get info on uncategorized ROOT folder
 		$sql = 'SELECT id FROM images
@@ -151,7 +151,7 @@ class Tinycimm extends Controller
 		$data['images'] = array();
 		$totimagesize = 0;
 		foreach($query->result_array() AS $image) {
-	  		$this->_gen_thumb($this->image_path.$this->thumb_path.$image['filename']);
+	  		$this->gen_thumb($this->image_path.$this->thumb_path.$image['filename']);
 			$imgsize = ($imgsize = @getimagesize('./images/uploaded/'.$image['filename'])) ? $imgsize : array(0,0);
 			$image['width'] = $imgsize[0];
 			$image['height'] = $imgsize[1];
@@ -172,7 +172,7 @@ class Tinycimm extends Controller
   
 	// this geneates a javascript array of images that is
 	// used in the adv image dialog window as drop down list
-	function image_list() {
+	public function image_list() {
 		header("text/javascript");
 
 		$output = 'var tinyMCEImageList = new Array('."\n";
@@ -190,13 +190,13 @@ class Tinycimm extends Controller
 		die(rtrim($output, ",\n").');');
   	}
   
-	function setview($args) {
+	public function setview($args) {
 		$this->view = $args['view'];
 		$this->db_session->set_userdata('cimm_view', $args['view']);
 	}
 
 	// upload image to dir, insert image info into db
-	function upload_image() {
+	public function upload_image() {
 		// if file has been selected
 		if (isset($_FILES[$this->upload_config['field_name']]['name']) AND $_FILES[$this->upload_config['field_name']]['name'] != '') {
 			// DEMO PURPOSES
@@ -273,7 +273,7 @@ class Tinycimm extends Controller
 		}
   	}
   
-	function delete_image($arg) {
+	public function delete_image($arg) {
 		$imageid = isset($arg['image']) ? (int) $this->input->xss_clean($arg['image']) : 0;
 	
 		// get image info, filepath etc from db
@@ -326,7 +326,7 @@ class Tinycimm extends Controller
 		$this->_tinymce_serialize($response);
 	}
   
-	function delete_folder($arg) {
+	public function delete_folder($arg) {
 		$folder = isset($arg['folder']) ? (int) $this->input->xss_clean($arg['folder']) : 0;
 		
 		if ($folder > 0 ) {
@@ -356,7 +356,7 @@ class Tinycimm extends Controller
 		$this->_tinymce_serialize($response);
  	}
   
-	function add_folder($arg){ 
+	public function add_folder($arg){ 
 		$caption = isset($arg['caption']) ? $this->input->xss_clean($arg['caption']) : '';
 	
 		if ($caption == '') {
@@ -393,7 +393,7 @@ class Tinycimm extends Controller
 		die($this->load->view($this->_view_base.'image_folder_list', $data, true));
   	}
   
-	function edit_folder($arg) {
+	public function edit_folder($arg) {
 		header("Cache-Control: no-cache, must-revalidate");
 		header("Cache-Control: no-store");
 		
@@ -418,7 +418,7 @@ class Tinycimm extends Controller
 	exit;
   }
   
-	function get_folder_select($args){
+	public function get_folder_select($args){
 		$data['folderid'] = isset($args['folder']) ? (int) $args['folder'] : 0;
 
 		// get all folders
@@ -435,13 +435,13 @@ class Tinycimm extends Controller
 		die($this->load->view($this->_view_base.'image_folder_select', $data, true));
 	}
 
-	function get_alttext_textbox($args)
+	public function get_alttext_textbox($args)
 	{
 		$data['alttext'] = isset($args['alttext']) ? $this->input->xss_clean($args['alttext']) : '';
 		die($this->load->view($this->_view_base.'image_alttext_textbox', $data, true));
 	}
 
-	function save_image_size($args){
+	public function save_image_size($args){
 		$quality = 90;
 
 		$width = (int) $args['width'];
@@ -504,7 +504,7 @@ class Tinycimm extends Controller
 		$this->_tinymce_serialize($response);
 	}
 
-	function restore_image($arg) {
+	public function restore_image($arg) {
 		$imageid = isset($arg['image']) ? (int) $this->input->xss_clean($arg['image']) : 0;
 		
 		$sql = 'SELECT *
@@ -517,7 +517,7 @@ class Tinycimm extends Controller
 		@copy($this->image_path.$this->orig_path.$imageinfo['filename'], $this->image_path.$imageinfo['filename']);
 	}
   
-	function update_details($arg) {
+	public function update_details($arg) {
 		$sql = 'UPDATE images 
 			SET caption = ?, alttext = ?, folder = ?
 			WHERE id = ?
@@ -526,7 +526,7 @@ class Tinycimm extends Controller
 	}
   
 	// get image details from db
-	function get_image_info($arg = array('image' => '')) {
+	public function get_image_info($arg = array('image' => '')) {
 		$image = isset($arg['image']) ? basename($this->input->xss_clean($arg['image'])) : '';
 
 		// get info image
@@ -541,14 +541,14 @@ class Tinycimm extends Controller
 		}
 		else {
 			$response = $query->row_array();
-			$this->_gen_thumb($this->image_path.$this->thumb_path.$image);
+			$this->gen_thumb($this->image_path.$this->thumb_path.$image);
 			$response['outcome'] = 'success';
 		}
 	
 		$this->_tinymce_serialize($response);
   	}
 	
-	function get_user_info($args) {
+	public function get_user_info($args) {
 		// get user info: total images uploaded, privelages, max upload sizes etc etc
 	
 		$sql = 'SELECT COUNT(id) AS tot_images
@@ -583,68 +583,37 @@ class Tinycimm extends Controller
 		$this->load->view($this->_view_base.'image_user_info', $data);
 	}
 
-	function change_view($arg = array('view' => '')){
+	public function change_view($arg = array('view' => '')){
 		$this->view = strtolower($arg['view']);
 		$this->get_thumbs(array('folder' => ''));
 	}
-	function change_view_adv($args = array('view' => '')) {
+	public function change_view_adv($args = array('view' => '')) {
 		$this->view = $args['view'];
 		$this->db_session->set_userdata('cimm_view', $args['view']);
 		$this->get_file_folder_list(array('folder' => ''));
 	}
 
-  function _gen_thumb($thumb_file='')
-	{
+	public function gen_thumb($thumb_file='', $width=95, $height=95) {
 		if(file_exists($thumb_file) == FALSE) {
-			$filename = basename($thumb_file);
-			$img_name = $this->image_path.$this->orig_path.$filename;
-			$ext = $this->_get_extension($filename);
-			$the_width = 95; // maximum x aperture  in pixels
-			$the_height = 95; // maximum y aperture in pixels
-			
-			$size=GetImageSize($img_name);
-			if($size['0'] < $size['1']) {
-				$ratio = $the_width/$size['0'];
-				$semi_x = $the_width;
-				$semi_y = $size['1']*$ratio;
-			}
-			else {
-				$ratio = $the_height/$size['1'];
-				$semi_x = $size['0']*$ratio;
-				$semi_y = $the_height;
-			}
-			$new_width	= $the_width;
-			$new_height   = $the_height;
-			if ($ext == "jpg") {
-				$src_img = ImageCreateFromJPEG($img_name);
-			}
-			else if ($ext == "gif") {
-				$src_img = ImageCreateFromGIF($img_name);
-			}
-			else if ($ext == "png"){
-				$src_img = ImageCreateFromPNG($img_name);
-			}
-			$thumb = ImageCreateTrueColor($new_width, $new_height);
+		
+			$this->load->library('image_lib');
 
-			ImageCopyResized($thumb, $src_img, -($semi_x/2) + ($the_width/2), -($semi_y/2) + ($the_height/2), 0, 0, ($semi_x), ($semi_y), $size['0'], $size['1']);
-			
-			if ($ext == "jpg") {
-			  ImageJPEG($thumb, $this->image_path.$this->thumb_path.$filename,90);
-			}
-			else if ($ext == "gif") {
-			  ImageGIF($thumb, $this->image_path.$this->thumb_path.$filename,90);
-			}
-			else if ($ext == "png") {
-			  ImagePNG($thumb, $this->image_path.$this->thumb_path.$filename);
-			}   
-			ImageDestroy($src_img);
-			ImageDestroy($thumb);
+			$config['image_library'] = 'gd2';
+			$config['source_image'] = $this->image_path.$this->orig_path.basename($thumb_file);
+			$config['new_image'] = $thumb_file;
+			$config['maintain_ratio'] = FALSE;
+			$config['height'] = $height;
+			$config['width'] = $width;
+			$this->image_lib->initialize($config);
+			$this->image_lib->resize();
+			$this->image_lib->clear();
+
+			return true;
 		}
-		return true;
-  }
+	}
   
 	// check if image directories exist, if not then try to create them
-  	function _check_paths() {
+  	public function _check_paths() {
 		// image dir
 		if (!file_exists($this->image_path)) {
 		  @mkdir($this->image_path, 0777) OR show_error('Unable to create image folder '.$this->image_path.'<br/><strong>Please adjust permissions</strong>');
@@ -661,13 +630,13 @@ class Tinycimm extends Controller
   
 
 	// get extension of filename
-	function _get_extension($filename) {
+	public function _get_extension($filename) {
 		$ext = array_reverse(explode('.', $filename));
 		return strtolower($ext[0]);
 	}
 	
 	// serialize a simple associative array to JSON string
-	function _tinymce_serialize($response = array()) {
+	public function _tinymce_serialize($response = array()) {
 		header("Pragma: no-cache");
 		header("Cache-Control: no-store, no-cache, max-age=0, must-revalidate");
 		header('Content-Type: text/x-json');  
