@@ -23,6 +23,7 @@ class Tinycimm extends Controller
 	{
 		parent::Controller();
 
+		$this->load->library('tinycimm');
 		// SECURE the media manager here
 		// eg: $this->auth->check('admin');
 		// USERID
@@ -58,6 +59,8 @@ class Tinycimm extends Controller
 
 		// check image directories exist
 		$this->_check_paths();
+		// load the image library
+		$this->load->library('image_lib');
 
 		// set view type in user session
 		if (!$this->db_session->userdata('cimm_view')) {
@@ -442,62 +445,11 @@ class Tinycimm extends Controller
 	}
 
 	public function save_image_size($args){
-		$quality = 90;
-
-		$width = (int) $args['width'];
-		$height = (int) $args['height'];
-		if ($width <= 0 OR $height <= 0) {
-		  $this->_tinymce_serialize(array('outcome'=>'error','message'=>'Incorrect dimensions supplied. (Cant have value of 0)'));
+		if (!ctype_digit($args['width']) or !ctype_digit($args['height'])) {
+			$this->_tinymce_serialize(array('outcome'=>'error','message'=>'Incorrect dimensions supplied. (Cant have value of 0)'));
 		}
 
-		// get image info, to ensure image src exists
-		$sql = 'SELECT *
-			FROM images
-			WHERE filename = ?
-			LIMIT 1';
-
-		$query = $this->db->query($sql, array($args['img']));
-		if ($query->num_rows() == 0) {
-			die('fail|image not found');
-		}
-		$imageinfo = $query->row_array();
-		$img_name = $this->image_path.$this->orig_path.$imageinfo['filename'];
-		$ext = $this->_get_extension($imageinfo['filename']);
-		$size = GetImageSize($img_name);
-
-		switch($ext) {
-			case 'jpg' : $src_img = ImageCreateFromJPEG($img_name); break;
-			case 'gif' : $src_img = ImageCreateFromGIF($img_name); break;
-			case 'png' : $src_img = ImageCreateFromPNG($img_name); break;
-			default : $this->_tinymce_serialize(array('outcome'=>'error','message'=>'Incorrect file type.'));
-		}
-
-		// DEMO PURPOSES
-		$this->_tinymce_serialize(array('outcome'=>'error','message'=>'This is a demo, the image was not resized.'));
-		// DEMO PURPOSES		
-
-		$thumb = ImageCreateTrueColor($width, $height);
-		ImageCopyResampled($thumb, $src_img, 0, 0, 0, 0, ($width), ($height), $size[0], $size[1]);
-	
-		// dont replace over original
-		if ($args['replace'] == 0) {
-			switch($ext) {
-				case 'jpg' : ImageJPEG($thumb, $this->image_path.$width."_".$height."_".$imageinfo['filename'], $quality); break;
-				case 'gif' : ImageGIF($thumb, $this->image_path.$width."_".$height."_".$imageinfo['filename'], $quality); break;
-				case 'png' : ImagePNG($thumb, $this->image_path.$width."_".$height."_".$imageinfo['filename']); break;
-			}
-		}
-		// replace original image
-		else {
-			switch($ext) {
-				case 'jpg' : ImageJPEG($thumb, $this->image_path.$imageinfo['filename'], $quality); break;
-				case 'gif' : ImageGIF($thumb, $this->image_path.$imageinfo['filename'], $quality); break;
-				case 'png' : ImagePNG($thumb, $this->image_path.$imageinfo['filename']); break;
-	  		}
-		}
-	
-		ImageDestroy($src_img);
-		ImageDestroy($thumb);
+		TinyCIMM::save_image_size($args['img'], (int)$args['width'], (int)$args['height'], 90); 
 
 		$response['outcome'] = 'success';
 		$response['message'] = 'Image size successfully saved.';
@@ -595,9 +547,6 @@ class Tinycimm extends Controller
 
 	public function gen_thumb($thumb_file='', $width=95, $height=95) {
 		if(file_exists($thumb_file) == FALSE) {
-		
-			$this->load->library('image_lib');
-
 			$config['image_library'] = 'gd2';
 			$config['source_image'] = $this->image_path.$this->orig_path.basename($thumb_file);
 			$config['new_image'] = $thumb_file;
@@ -607,8 +556,6 @@ class Tinycimm extends Controller
 			$this->image_lib->initialize($config);
 			$this->image_lib->resize();
 			$this->image_lib->clear();
-
-			return true;
 		}
 	}
   
