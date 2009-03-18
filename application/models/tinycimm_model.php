@@ -1,4 +1,8 @@
 <?php
+/*
+copywrite to go here
+*/
+
 class Tinycimm_model extends Model {
 	
 	function Tinycimm_model() {
