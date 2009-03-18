@@ -23,8 +23,8 @@ class TinyCIMM {
 	* Deletes a file from the database and from the fileserver
 	* Goes on to also delete any new files that were created as a result of resizing the image
 	**/
-	public function delete_asset($image){
-		Tinycimm_model::delete_asset($image->id);
+	public function delete_asset($asset_id){
+		Tinycimm_model::delete_asset($asset_id) or die(TinyCIMM::tinymce_alert('asset not found'));
 
 		// delete images from filesystem, including original and thumbnails
 		if (file_exists($this->image_path.$image->filename)) {
@@ -57,12 +57,16 @@ class TinyCIMM {
 		header("Pragma: no-cache");
 		header("Cache-Control: no-store, no-cache, max-age=0, must-revalidate");
 		header('Content-Type: text/x-json');
-		$response_txt = '{';
-		foreach($response AS $key => $value) {
-			$response_txt .= '"'.$key.'":"'.$value.'",';
+		if (function_exists("json_encode")) {
+			die(json_encode($response));
+		} else {
+			$response_txt = '{';
+			foreach($response AS $key => $value) {
+				$response_txt .= '"'.$key.'":"'.$value.'",';
+			}
+			$response_txt = rtrim($response_txt, ',').'}';
+			die($response_txt);
 		}
-		$response_txt = rtrim($response_txt, ',').'}';
-		die($response_txt);
 	}
 	
 }
