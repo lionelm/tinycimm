@@ -7,7 +7,7 @@ class TinyCIMM {
 	**/
 	public function save_image_size($image_filename=0, $width=0, $height=0){
 		$ci =&get_instance();
-		$image_path = $ci->image_path.$ci->orig_path.$image_filename;
+		$image_path = $ci->config->item('tinycimm_image_upload_path').$image_filename;
 		$config['image_library'] = 'gd2';
 		$config['source_image'] = $image_path;
 		$config['new_image'] = $image_path;
@@ -23,8 +23,8 @@ class TinyCIMM {
 	* Deletes a file from the database and from the fileserver
 	* Goes on to also delete any new files that were created as a result of resizing the image
 	**/
-	public function delete_image($image){
-		$this->tinycimm_model->delete_image($image->id);
+	public function delete_asset($image){
+		Tinycimm_model::delete_asset($image->id);
 
 		// delete images from filesystem, including original and thumbnails
 		if (file_exists($this->image_path.$image->filename)) {
@@ -64,12 +64,5 @@ class TinyCIMM {
 		$response_txt = rtrim($response_txt, ',').'}';
 		die($response_txt);
 	}
-
-	public function get_image($image_id){
-		TinyCIMM_model::get_image($image_id);
-	}
-	public function get_asset($asset_id){
-		TinyCIMM_model::get_asset($asset_id);
-	}
-
+	
 }
