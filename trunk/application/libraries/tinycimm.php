@@ -1,7 +1,10 @@
 <?php  if (!defined('BASEPATH')) exit('No direct script access allowed');
  
 class TinyCIMM {
-
+	
+	/**
+	* Resizes an image using CI's image library
+	**/
 	public function save_image_size($image_filename=0, $width=0, $height=0){
 		$ci =&get_instance();
 		$image_path = $ci->image_path.$ci->orig_path.$image_filename;
@@ -16,6 +19,10 @@ class TinyCIMM {
 		$ci->image_lib->clear();
 	}
 
+	/**
+	* Deletes a file from the database and from the fileserver
+	* Goes on to also delete any new files that were created as a result of resizing the image
+	**/
 	public function delete_image($image){
 		$this->tinycimm_model->delete_image($image->id);
 
@@ -41,6 +48,11 @@ class TinyCIMM {
 		}
 	}
 
+	/**
+	* Takes a PHP array and outputs it as a JOSN array to screen using PHP's die function
+	*
+	* @param $response an array in PHP
+	**/
 	public function response_encode($response=array()) {
 		header("Pragma: no-cache");
 		header("Cache-Control: no-store, no-cache, max-age=0, must-revalidate");
