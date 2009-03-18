@@ -1,7 +1,9 @@
 #summary This page serves as a place to brain-dump ideas on what needs to be done to code, and where we want to take it
 #labels Phase-Requirements,Phase-Implementation
 
-= TODO =
+Please feel free to add to this list, or add any comments to this page.
+
+= Details =
 
   * Fix resizing
   * Fix (or remove, or move functionality to ‘browse’) the ‘Manage’ tab
