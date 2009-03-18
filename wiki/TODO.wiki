@@ -12,6 +12,7 @@ Please feel free to add to this list, or add any comments to this page.
   * refactor PHP code inside the CI application
   * Apply prettier skin to TinyMCE and the modal pop-up ( http://thebigreason.com/blog/2008/09/29/thebigreason-tinymce-skin )
   * Model/s: use the db class methods ([http://codeigniter.com/user_guide/database/active_record.html Active Record]) instead of raw queries. 
+  * use model objects instead of arrays. this means a lot of template changes
   * Drink a beer and become CI celebs
 
 Other notes:
