@@ -8,30 +8,24 @@ TinyCIMM media manager
 class Assetmanager extends Controller
 {
 	
-	var $view;
 	var $user_id;
   
 	public function __construct(){
 		parent::Controller();
 
 		$this->load->library('image_lib');
+		$this->load->library('session');
 		$this->load->library('tinycimm');
 		$this->load->model('tinycimm_model');
 		$this->load->config('tinycimm');
+		$this->check_paths();
 
-		// eg: $this->user_id = $this->auth->user_id OR die('You are not logged in.');
+		// eg: $this->user_id = $this->auth->user_id OR die('Acess denied.');
 		$this->user_id = 1;
 		
-		// check image directories exist
-		$this->check_paths();
-		// load the image library
-
 		// set view type in user session
-		if (!$this->db_session->userdata('cimm_view')) {
-			$this->db_session->set_userdata('cimm_view', 'thumbnails');
-			$this->view = 'thumbnails';
-		} else {
-			$this->view = $this->db_session->userdata('cimm_view');
+		if (!$this->session->userdata('cimm_view')) {
+			$this->session->set_userdata('cimm_view', 'thumbnails');
 		}
   	}
 	
@@ -124,7 +118,7 @@ class Assetmanager extends Controller
 		header("Pragma: no-cache");
 		header("Cache-Control: no-store, no-cache, max-age=0, must-revalidate");
 		header('Content-Type: text/x-json'); 
-		$this->load->view($this->config->item('tinycimm_views_root').'image_'.$this->view.'_list', $data);
+		$this->load->view($this->config->item('tinycimm_views_root').'image_'.$this->session->userdata('cimm_view').'_list', $data);
 	}
   
 	// this geneates a javascript array of images that is
@@ -148,8 +142,7 @@ class Assetmanager extends Controller
   	}
   
 	public function setview($args) {
-		$this->view = $args['view'];
-		$this->db_session->set_userdata('cimm_view', $args['view']);
+		$this->session->set_userdata('cimm_view', $args['view']);
 	}
 	
 	public function update_details($arg) {
@@ -230,7 +223,7 @@ class Assetmanager extends Controller
 	public function delete_image($arg) {
 		$image_id = isset($arg['image']) ? (int) $this->input->xss_clean($arg['image']) : 0;
 
-		if (!$image = TinyCIMM::get_asset($image_id)) {
+		if (!$image = TinyCIMM_model::get_asset($image_id)) {
 			$response['outcome'] = 'error';
 			$response['message'] = 'Image not found.';
 			TinyCIMM::response_encode($response);
@@ -433,12 +426,11 @@ class Assetmanager extends Controller
 	}
 
 	private function change_view($arg = array('view' => '')){
-		$this->view = strtolower($arg['view']);
+		$this->session->set_userdata('cimm_view', $arg['view']);
 		$this->get_thumbs(array('folder' => ''));
 	}
 	public function change_view_adv($args = array('view' => '')) {
-		$this->view = $args['view'];
-		$this->db_session->set_userdata('cimm_view', $args['view']);
+		$this->session->set_userdata('cimm_view', $args['view']);
 		$this->get_file_folder_list(array('folder' => ''));
 	}
 
