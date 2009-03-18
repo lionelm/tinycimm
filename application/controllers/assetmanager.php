@@ -1,12 +1,11 @@
 <?php
 /*
-Filename:   tinycimm.php
 Developer:  Richard Willis
 Copyright:	Richard Willis
 TinyCIMM media manager
 */
 
-class Tinycimm extends Controller
+class Assetmanager extends Controller
 {
 	
 	var $image_url;
@@ -19,9 +18,10 @@ class Tinycimm extends Controller
 	var $upload_config;
 	var $resize_config;
   
-	public function Tinycimm()
+	public function Assetmanager()
 	{
 		parent::Controller();
+		error_reporting(E_ALL);
 
 		$this->load->library('tinycimm');
 		// SECURE the media manager here
@@ -202,8 +202,7 @@ class Tinycimm extends Controller
 	public function upload_image() {
 		// if file has been selected
 		if (isset($_FILES[$this->upload_config['field_name']]['name']) AND $_FILES[$this->upload_config['field_name']]['name'] != '') {
-			// DEMO PURPOSES
-		//die("<script type=\"text/javascript\">
+			//die("<script type=\"text/javascript\">
 			//parent.removedim();
 			//parent.parent.tinyMCEPopup.editor.windowManager.alert('This is a demo, no files were uploaded.');
 			//parent.parent.ImageDialog.showBrowser();
@@ -281,9 +280,9 @@ class Tinycimm extends Controller
 	
 		// get image info, filepath etc from db
 		$sql = 'SELECT *
-				FROM images
-				WHERE id = ?
-				LIMIT 1';
+			FROM images
+			WHERE id = ?
+			LIMIT 1';
 		$query = $this->db->query($sql, array($imageid));
 		// error
 		if ($query->num_rows() == 0) {
@@ -450,7 +449,6 @@ class Tinycimm extends Controller
 		}
 
 		TinyCIMM::save_image_size($args['img'], (int)$args['width'], (int)$args['height'], 90); 
-
 		$response['outcome'] = 'success';
 		$response['message'] = 'Image size successfully saved.';
 		$this->_tinymce_serialize($response);
@@ -517,8 +515,8 @@ class Tinycimm extends Controller
 		$data['user']['tot_gif'] = $query->num_rows();
 		// num jpg
 		$sql = 'SELECT id
-						FROM images
-						WHERE filename LIKE \'%.jpg\'';
+			FROM images
+			WHERE filename LIKE \'%.jpg\'';
 		$query = $this->db->query($sql);
 		$data['user']['tot_jpg'] = $query->num_rows();
 		// num png
