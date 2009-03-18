@@ -1,8 +1,6 @@
 <?php
 /*
-Developer:  Richard Willis
-Copyright:	Richard Willis
-TinyCIMM media manager
+	TinyCIMM media manager
 */
 
 class Assetmanager extends Controller
@@ -16,6 +14,7 @@ class Assetmanager extends Controller
 		$this->load->library('image_lib');
 		$this->load->library('session');
 		$this->load->library('tinycimm');
+		$this->load->library('tinycimm_image');
 		$this->load->model('tinycimm_model');
 		$this->load->config('tinycimm');
 		TinyCIMM::check_paths();
@@ -23,20 +22,25 @@ class Assetmanager extends Controller
 		// eg: $this->user_id = $this->auth->user_id OR die('Acess denied.');
 		$this->user_id = 1;
 		
-		// set view type in user session
+		// set default view type in user session
 		if (!$this->session->userdata('cimm_view')) {
 			$this->session->set_userdata('cimm_view', 'thumbnails');
 		}
   	}
 
-	function _remap($method){
-		$this->load->library('tinycimm_'.$method);
-		$array = array_slice(explode("/", $this->uri->uri_string()),4);
+	function _remap($lib){
+		$param = array_slice(explode("/", $this->uri->uri_string()),4);
+		$method = $this->uri->segment(3);
 		$count = 0;
-                foreach ($array as $element) {
-			$array[$count] = "'" . $element . "'";$count++;
+                foreach ($param as $element) {
+			$param[$count] = "'".$element."'";
+			$count++;
 		}
-                eval("TinyCIMM_{$method}::" . $this->uri->segment(3) . "(".join(",", $array).");");
+                eval("
+			class_exists('TinyCIMM_{$lib}') and 
+			method_exists('TinyCIMM_{$lib}', '{$method}') and 
+			TinyCIMM_{$lib}::{$method}(".join(",", $param).");
+		");
 	}
 	
 }
