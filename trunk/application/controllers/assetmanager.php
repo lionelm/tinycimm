@@ -21,9 +21,10 @@ class Assetmanager extends Controller
 	public function Assetmanager()
 	{
 		parent::Controller();
-		error_reporting(E_ALL);
 
 		$this->load->library('tinycimm');
+		$this->load->model('tinycimm_model');
+		
 		// SECURE the media manager here
 		// eg: $this->auth->check('admin');
 		// USERID
@@ -121,12 +122,7 @@ class Assetmanager extends Controller
 		// create [all folders] list
 		$data['folders'][] = $data['folderinfo'];
 
-		// get all folders info (this exludes 'root' folder as it has no info in db)
-		$sql = 'SELECT *
-			FROM image_folders
-			ORDER by caption ASC';
-		$query = $this->db->query($sql);
-		foreach($query->result_array() AS $folderinfo) {
+		foreach($this->tinycimm_model->get_image_folders() as $folderinfo) {
 	 		// number of images in folder
 		  	$sql = 'SELECT id FROM images
 				WHERE folder = ?
@@ -276,56 +272,19 @@ class Assetmanager extends Controller
   	}
   
 	public function delete_image($arg) {
-		$imageid = isset($arg['image']) ? (int) $this->input->xss_clean($arg['image']) : 0;
-	
-		// get image info, filepath etc from db
-		$sql = 'SELECT *
-			FROM images
-			WHERE id = ?
-			LIMIT 1';
-		$query = $this->db->query($sql, array($imageid));
-		// error
-		if ($query->num_rows() == 0) {
+		$image_id = isset($arg['image']) ? (int) $this->input->xss_clean($arg['image']) : 0;
+
+		if (!$image = $this->tinycimm_model->get_image($image_id)) {
 			$response['outcome'] = 'error';
 			$response['message'] = 'Image not found.';
-			$this->_tinymce_serialize($response);
+			TinyCIMM::response_encode($response);
 		}
-	
-		$imageinfo = $query->row_array();
-
-		// delete image info from db
-		$sql = 'DELETE 
-				FROM images 
-				WHERE id = ?
-				LIMIT 1';
-		$query = $this->db->query($sql, array($imageid));
-
-		// now delete images from filesystem, including original and thumbnails
-		if (file_exists($this->image_path.$imageinfo['filename'])) {
-			@unlink($this->image_path.$imageinfo['filename']);
-		}
-		if (file_exists($this->image_path.$this->orig_path.$imageinfo['filename'])) {
-			@unlink($this->image_path.$this->orig_path.$imageinfo['filename']);
-		}
-		if (file_exists($this->image_path.$this->thumb_path.$imageinfo['filename'])) {
-			@unlink($this->image_path.$this->thumb_path.$imageinfo['filename']);
-		}
-
-		// delete the new size specific files
-		if ($handle = @opendir($this->image_path)) {
-			while (FALSE !== ($file = readdir($handle))) {
-				if (strpos($file, $imageinfo['filename']) !== FALSE) {
-					@unlink($this->image_path.$file);
-				}
-			}
-			@closedir($handle);
-		}
-	
+		
+		TinyCIMM::delete_image($image);
 		$response['outcome'] = 'success';
 		$response['message'] = 'Image successfully deleted.';
-		$response['folder'] = $imageinfo['folder'];
-	
-		$this->_tinymce_serialize($response);
+		$response['folder'] = $image->folder;
+		TinyCIMM::tinymce_serialize($response);
 	}
   
 	public function delete_folder($arg) {
@@ -355,7 +314,7 @@ class Assetmanager extends Controller
 			$response['message'] = 'You can\'t delete this folder.';
 		}
 	
-		$this->_tinymce_serialize($response);
+		TinyCIMM::response_encode($response);
  	}
   
 	public function add_folder($arg){ 
@@ -373,7 +332,7 @@ class Assetmanager extends Controller
 		}
 	
 		if (isset($response)) {
-			$this->_tinymce_serialize($response);
+			TinyCIMM::response_encode($response);
 		}
 	
 		$sql = 'INSERT INTO image_folders (caption)
@@ -445,13 +404,13 @@ class Assetmanager extends Controller
 
 	public function save_image_size($args){
 		if (!ctype_digit($args['width']) or !ctype_digit($args['height'])) {
-			$this->_tinymce_serialize(array('outcome'=>'error','message'=>'Incorrect dimensions supplied. (Cant have value of 0)'));
+			TinyCIMM::response_encode(array('outcome'=>'error','message'=>'Incorrect dimensions supplied. (Cant have value of 0)'));
 		}
 
 		TinyCIMM::save_image_size($args['img'], (int)$args['width'], (int)$args['height'], 90); 
 		$response['outcome'] = 'success';
 		$response['message'] = 'Image size successfully saved.';
-		$this->_tinymce_serialize($response);
+		TinyCIMM::response_encode($response);
 	}
 
 	public function restore_image($arg) {
@@ -495,7 +454,7 @@ class Assetmanager extends Controller
 			$response['outcome'] = 'success';
 		}
 	
-		$this->_tinymce_serialize($response);
+		TinyCIMM::response_encode($response);
   	}
 	
 	public function get_user_info($args) {

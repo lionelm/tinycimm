@@ -450,6 +450,8 @@ var ImageDialog = {
 	// TinyCIMM image manager
 	// Developer: Richard Willis
 	//----------------------------------------------------------
+
+	ci_controller : 'assetmanager',
 	
 	/* these following methods handle the different tab panels */
 	showGeneral : function() {
@@ -488,7 +490,7 @@ var ImageDialog = {
 		}
 
 		tinymce.util.XHR.send({
-			url : ImageDialog.baseURL('tinycimm/image/get_file_folder_list/folder/'+folder),
+			url : ImageDialog.baseURL('assetmanager/image/get_file_folder_list/folder/'+folder),
 			error : function(text) {
 				tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the images.');
 			},
@@ -503,7 +505,7 @@ var ImageDialog = {
 		// show loading image
 		tinyMCEPopup.dom.setHTML('filebrowser', '<span id="loading">loading</span>');
 		tinymce.util.XHR.send({
-			url : ImageDialog.baseURL('tinycimm/image/change_view_adv/view/'+view),
+			url : ImageDialog.baseURL('assetmanager/image/change_view_adv/view/'+view),
 			error : function(text) {
 				tinyMCEPopup.editor.windowManager.alert('There was an error processing the request.');
 			},
@@ -524,7 +526,7 @@ var ImageDialog = {
 		tinyMCEPopup.dom.setHTML('fileuploader_info', '<span id="loading">loading</span>');
 		// send a request for user info
 		tinymce.util.XHR.send({
-			url : ImageDialog.baseURL('tinycimm/image/get_user_info/'),
+			url : ImageDialog.baseURL('assetmanager/image/get_user_info/'),
 			error : function(text) {
 				tinyMCEPopup.editor.windowManager.alert('There was an error retrieving your user info.');
 			},
@@ -564,7 +566,7 @@ var ImageDialog = {
 		mcTabs.displayTab('manager_tab','manager_panel');
 		// send a request for image info
 		tinymce.util.XHR.send({
-			url : ImageDialog.baseURL('tinycimm/image/get_image_info/image/'+imgsrc),
+			url : ImageDialog.baseURL('assetmanager/image/get_image_info/image/'+imgsrc),
 			error : function(response) {
 				tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the image info.');
 			},
@@ -600,7 +602,7 @@ var ImageDialog = {
 	loadSelectManager : function(folder) {
 		folder = folder==undefined?'':folder;
 		tinymce.util.XHR.send({
-			url : ImageDialog.baseURL('tinycimm/image/get_folder_select/folder/'+folder),
+			url : ImageDialog.baseURL('assetmanager/image/get_folder_select/folder/'+folder),
 			error : function(response) {
 				tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the select list.');
 			},
@@ -613,7 +615,7 @@ var ImageDialog = {
  	// get select list of folders in html select & option format (var folder would give option selected attr)
 	loadAltTextManager : function(alttext) {
 		tinymce.util.XHR.send({
-			url : ImageDialog.baseURL('tinycimm/image/get_alttext_textbox/alttext/'+alttext),
+			url : ImageDialog.baseURL('assetmanager/image/get_alttext_textbox/alttext/'+alttext),
 			error : function(response) {
 				tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the image description.');
 			},
@@ -694,7 +696,7 @@ var ImageDialog = {
 	loadselect : function(folder) {
 		folder = folder==undefined?'':folder;
 		tinymce.util.XHR.send({
-			url : ImageDialog.baseURL('tinycimm/image/get_folder_select/folder/'+folder),
+			url : ImageDialog.baseURL('assetmanager/image/get_folder_select/folder/'+folder),
 			error : function(text) {
 				tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the select list.');
 			},
@@ -738,7 +740,7 @@ var ImageDialog = {
 		// prepare request url
 		var replace = o('replace').checked == true ? '1' : '0';
 		var imgsrc_arr = tinyMCEPopup.editor.documentBaseURI.toRelative(o('slider_img').src).split('/');
-		var requesturl = ImageDialog.baseURL('tinycimm/image/save_image_size/img/'+imgsrc_arr[imgsrc_arr.length-1]+'/width/'+o('slider_img').width+'/height/'+o('slider_img').height+'/replace/'+replace);
+		var requesturl = ImageDialog.baseURL('assetmanager/image/save_image_size/img/'+imgsrc_arr[imgsrc_arr.length-1]+'/width/'+o('slider_img').width+'/height/'+o('slider_img').height+'/replace/'+replace);
 		// send request
 		tinymce.util.XHR.send({
 			url : requesturl,
@@ -772,7 +774,7 @@ var ImageDialog = {
 	addFolder : function() {
 		var captionID = o('add_folder_caption').value.replace(/^\s+|\s+$/g, '');
 		// send request
-		var requesturl = ImageDialog.baseURL('tinycimm/image/add_folder/caption')+'/'+captionID;
+		var requesturl = ImageDialog.baseURL('assetmanager/image/add_folder/caption')+'/'+captionID;
 		tinymce.util.XHR.send({
 			url : requesturl,
 			error : function(response) {
@@ -798,7 +800,7 @@ var ImageDialog = {
 		tinyMCEPopup.editor.windowManager.confirm('Are you sure you want to delete this folder?', function(s) {
 			if (!s) {return false;}
 			// send request
- 			var requesturl = ImageDialog.baseURL('tinycimm/image/delete_folder/folder')+'/'+folderID;
+ 			var requesturl = ImageDialog.baseURL('assetmanager/image/delete_folder/folder')+'/'+folderID;
 			tinymce.util.XHR.send({
 				url : requesturl,
 				error : function(response) {
@@ -830,7 +832,7 @@ var ImageDialog = {
 			var img_delete_src = o('img_delete').src, folder = '';
 			o('img_delete').src = ajax_img;
 			// send request
-			var requesturl = ImageDialog.baseURL('tinycimm/image/delete_image/image')+'/'+imageID;
+			var requesturl = ImageDialog.baseURL('assetmanager/image/delete_image/image')+'/'+imageID;
 			tinymce.util.XHR.send({
 				url : requesturl,
 				error : function(response) {
