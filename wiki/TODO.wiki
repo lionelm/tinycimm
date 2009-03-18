@@ -13,3 +13,11 @@ Please feel free to add to this list, or add any comments to this page.
   * Apply prettier skin to TinyMCE and the modal pop-up ( http://thebigreason.com/blog/2008/09/29/thebigreason-tinymce-skin )
   * Model/s: use the db class methods ([http://codeigniter.com/user_guide/database/active_record.html Active Record]) instead of raw queries. 
   * Drink a beer and become CI celebs
+
+Other notes:
+After resizing, image doesn't appear as resized until you refresh the dialogue?
+Always overwrites original after saving (after resizing)
+‘Manage’ tab doesn't seem to do much yet (necessary?)
+Validation on adding new folder (removing spaces for dashes - )
+
+I notice the file upload types are limited to images, however I think the aim should be to use this uploader/browser for uploading videos/flash files. Currently TinyMCE can generate code for flash/quicktime/wmv types. Also, allowing types such as .doc, .pdf would be ideal. Not sure how the front end is built but I guess this would maybe mean replacing the ‘add image’ ‘add movie’ buttons in Tiny MCE with a general ‘Add Media’ button. Makes sense to me?
