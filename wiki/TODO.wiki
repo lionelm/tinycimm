@@ -1,4 +1,4 @@
-#summary This page serves as a place to brain-dump ideas on what needs to be done to code, and where we want to take it
+#summary This page serves as a place to brain-dump ideas on what needs to be done to the code, and where we want to take it
 #labels Phase-Requirements,Phase-Implementation
 
 Please feel free to add to this list, or add any comments to this page.
