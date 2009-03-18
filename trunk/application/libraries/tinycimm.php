@@ -65,5 +65,11 @@ class TinyCIMM {
 		die($response_txt);
 	}
 
+	public function get_image($image_id){
+		TinyCIMM_model::get_image($image_id);
+	}
+	public function get_asset($asset_id){
+		TinyCIMM_model::get_asset($asset_id);
+	}
 
 }

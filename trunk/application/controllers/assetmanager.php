@@ -194,28 +194,21 @@ class Assetmanager extends Controller
 		$this->db_session->set_userdata('cimm_view', $args['view']);
 	}
 
-	// upload image to dir, insert image info into db
+	// upload image to dir and insert info into DB
 	public function upload_image() {
 		// if file has been selected
 		if (isset($_FILES[$this->upload_config['field_name']]['name']) AND $_FILES[$this->upload_config['field_name']]['name'] != '') {
-			//die("<script type=\"text/javascript\">
-			//parent.removedim();
-			//parent.parent.tinyMCEPopup.editor.windowManager.alert('This is a demo, no files were uploaded.');
-			//parent.parent.ImageDialog.showBrowser();
-			//</script>");
 
 			// load upload library
 			$this->load->library('upload', $this->upload_config);
 	 
-			// try upload the file
 			if (!$this->upload->do_upload($this->upload_config['field_name']))  {
-			 	/* UPLOAD FAILED */  
+			 	/* upload failed */  
 				die("<script type=\"text/javascript\">
 					parent.parent.tinyMCEPopup.editor.windowManager.alert('There was an error processing the request.');
 				</script>");
 	  		}
 	  	
-		 	/* UPLOAD SUCCESS */
 			$imgdata = $this->upload->data();
 		 
 			// constrain dimensions?
@@ -274,17 +267,21 @@ class Assetmanager extends Controller
 	public function delete_image($arg) {
 		$image_id = isset($arg['image']) ? (int) $this->input->xss_clean($arg['image']) : 0;
 
-		if (!$image = $this->tinycimm_model->get_image($image_id)) {
+		if (!$image = TinyCIMM::get_image($image_id)) {
 			$response['outcome'] = 'error';
 			$response['message'] = 'Image not found.';
 			TinyCIMM::response_encode($response);
 		}
-		
-		TinyCIMM::delete_image($image);
+		TinyCIMM::delete_image($image_id);
 		$response['outcome'] = 'success';
 		$response['message'] = 'Image successfully deleted.';
 		$response['folder'] = $image->folder;
-		TinyCIMM::tinymce_serialize($response);
+		TinyCIMM::response_encode($response);
+	}
+
+	public function get_image($arg){
+		$image_id = end(explode('/', $this->uri->uri_string()));
+		die(print_r($this->tinycimm_model->get_image($image_id)));
 	}
   
 	public function delete_folder($arg) {

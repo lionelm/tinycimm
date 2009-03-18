@@ -5,7 +5,7 @@ copywrite to go here
 
 class Tinycimm_model extends Model {
 	
-	function Tinycimm_model() {
+	function Tinycimm_model(){
 		parent::Model();
 	}
 	
@@ -13,16 +13,13 @@ class Tinycimm_model extends Model {
 	* get an image from the database
 	*
 	* @param integer|$image_id The id of the image to retrieve
-	* @return Array| an array containing full database row for the image
+	* @return Object| an object containing full database row for the image
 	**/
-	function get_image($image_id) {
-		$sql = 'SELECT *
-			FROM images
-			WHERE id = ?
-			LIMIT 1';
-		$query = $this->db->query($sql, array($image_id));
-		
-		return $query->row_array();
+	function get_image($image_id){
+		return $this->db->where('id', (int) $image_id)->get('images', 1)->row();
+	}
+	function get_asset($asset_id){
+		return $this->db->where('id', (int) $asset_id)->get('asset', 1)->row();
 	}
 	
 	/**
@@ -31,12 +28,10 @@ class Tinycimm_model extends Model {
 	* @param integer|$image_id The id of the image to delete
 	**/
 	function delete_image($image_id){
-		$sql = 'DELETE
-			FROM images
-			WHERE id = ?
-			LIMIT 1';
-			
-		return $this->db->query($sql, array($image_id));
+		$this->db->where('id', (int)$image_id)->delete('images');	
+	}
+	function delete_asset($asset_id){
+		$this->db->where('id', (int)$asset_id)->delete('asset');	
 	}
 	
 	/**
