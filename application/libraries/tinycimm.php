@@ -68,5 +68,29 @@ class TinyCIMM {
 			die($response_txt);
 		}
 	}
+
 	
+        // check if image directories exist, if not then try to create them       
+	public function check_paths() {
+		// image dir
+		if (!file_exists($this->config->item('tinycimm_image_upload_path'))) {
+			@mkdir($this->config->item('tinycimm_image_upload_path'), 0777) OR show_error('Unable to create image folder '.$this->config->item('tinycimm_image_upload_path').'<br/><strong>Please adjust permissions</strong>');
+		}
+		// thumb dir
+		if (!file_exists($this->_full_thumb_path = $this->config->item('tinycimm_image_thumb_upload_path'))) {
+			@mkdir($this->_full_thumb_path, 0777) OR show_error('Unable to create thumbnails folder '.$this->_full_thumb_path.'<br/><strong>Please adjust permissions</stro
+ng>');
+		}
+		// orig dir
+		if (!file_exists($this->_full_orig_path = $this->config->item('tinycimm_image_upload_path'))) {
+			@mkdir($this->_full_orig_path, 0777) OR show_error('Unable to create image folder '.$this->_full_orig_path.'<br/><strong>Please adjust permissions</strong>');
+		}
+	}
+
+	public function tinymce_alert($message){
+		echo "<script type=\"text/javascript\">
+		parent.parent.tinyMCEPopup.editor.windowManager.alert('".$message."');
+		</script";
+	}
 }
+?>
