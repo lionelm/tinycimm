@@ -8,60 +8,23 @@ TinyCIMM media manager
 class Assetmanager extends Controller
 {
 	
-	var $image_url;
-	var $image_path;
-	var $thumb_path;
-	var $orig_path;
-	var $upload_path;
-	var $view;		  // Options: thumbnails (default); list;
+	var $view;
 	var $user_id;
-	var $upload_config;
-	var $resize_config;
   
-	public function Assetmanager()
-	{
+	public function __construct(){
 		parent::Controller();
 
+		$this->load->library('image_lib');
 		$this->load->library('tinycimm');
 		$this->load->model('tinycimm_model');
-		
-		// SECURE the media manager here
-		// eg: $this->auth->check('admin');
-		// USERID
+		$this->load->config('tinycimm');
+
 		// eg: $this->user_id = $this->auth->user_id OR die('You are not logged in.');
 		$this->user_id = 1;
 		
-		// private vars
-		$this->_view_base = 'media/ajaxfilemanager/';
-		
-		// class vars
-		$this->image_url = '/images/uploaded/';
-		$this->image_path = $_SERVER['DOCUMENT_ROOT'].$this->image_url;
-		$this->thumb_path = 'thumbs/';
-		$this->orig_path = 'originals/';
-		
-		// perhaps the following config can be stored in a separate config file
-		
-		// upload config
-		$this->upload_config['field_name'] = 'fileupload';
-		$this->upload_config['upload_path'] = './images/uploaded/originals';
-		$this->upload_config['allowed_types'] = 'gif|jpg|png';
-		$this->upload_config['max_size'] = '6800';
-		$this->upload_config['max_width']  = '5000';
-		$this->upload_config['max_height']  = '5000';
-	
-		// image resize config
-		$this->resize_config['image_library'] = 'GD2';
-		$this->resize_config['maintain_ratio'] = TRUE;
-		$this->resize_config['create_thumb'] = FALSE;
-		$this->resize_config['width'] = 1024;
-		$this->resize_config['height'] = 768;
-		$this->resize_config['quality'] = 90;
-
 		// check image directories exist
-		$this->_check_paths();
+		$this->check_paths();
 		// load the image library
-		$this->load->library('image_lib');
 
 		// set view type in user session
 		if (!$this->db_session->userdata('cimm_view')) {
@@ -70,13 +33,8 @@ class Assetmanager extends Controller
 		} else {
 			$this->view = $this->db_session->userdata('cimm_view');
 		}
-	
   	}
 	
-	public function index(){	
-	}
- 
-
 	// determines what manager to use: image or media
 	public function image() {
 		$this->image_manager();
@@ -99,21 +57,21 @@ class Assetmanager extends Controller
 		header("Cache-Control: no-store");
 
 		// get all folders
-		$sql = 'SELECT * FROM image_folders
+		$sql = 'SELECT * FROM asset_folder
 			ORDER by caption ASC';
 		$query = $this->db->query($sql);
 		$data['folders'] = array();
 		foreach($query->result_array() AS $folderinfo) {
 			$data['folders'][] = $folderinfo;
 		}
-		$this->load->view($this->_view_base.'image_folder_list', $data);
+		$this->load->view($this->config->item('tinycimm_views_root').'image_folder_list', $data);
   	}
   
 	// get folder listing from db
 	public function get_file_folder_list($arg) {
 	
 		// first we get info on uncategorized ROOT folder
-		$sql = 'SELECT id FROM images
+		$sql = 'SELECT id FROM asset
 			WHERE folder = \'\'';
 		$query = $this->db->query($sql);
 	
@@ -122,9 +80,9 @@ class Assetmanager extends Controller
 		// create [all folders] list
 		$data['folders'][] = $data['folderinfo'];
 
-		foreach($this->tinycimm_model->get_image_folders() as $folderinfo) {
+		foreach($this->tinycimm_model->get_asset_folders() as $folderinfo) {
 	 		// number of images in folder
-		  	$sql = 'SELECT id FROM images
+		  	$sql = 'SELECT id FROM asset
 				WHERE folder = ?
 				ORDER BY filename';
 	
@@ -143,14 +101,14 @@ class Assetmanager extends Controller
 	
 		// get all files in cur folder
 		$sql = 'SELECT * 
-				FROM images
+				FROM asset
 				WHERE folder = ?
 				ORDER by filename ASC';
 		$query = $this->db->query($sql, array($arg['folder']));
 		$data['images'] = array();
 		$totimagesize = 0;
 		foreach($query->result_array() AS $image) {
-	  		$this->gen_thumb($this->image_path.$this->thumb_path.$image['filename']);
+	  		$this->gen_thumb($this->config->item('tinycimm_image_thumb_upload_path').$image['filename']);
 			$imgsize = ($imgsize = @getimagesize('./images/uploaded/'.$image['filename'])) ? $imgsize : array(0,0);
 			$image['width'] = $imgsize[0];
 			$image['height'] = $imgsize[1];
@@ -166,7 +124,7 @@ class Assetmanager extends Controller
 		header("Pragma: no-cache");
 		header("Cache-Control: no-store, no-cache, max-age=0, must-revalidate");
 		header('Content-Type: text/x-json'); 
-		$this->load->view($this->_view_base.'image_'.$this->view.'_list', $data);
+		$this->load->view($this->config->item('tinycimm_views_root').'image_'.$this->view.'_list', $data);
 	}
   
 	// this geneates a javascript array of images that is
@@ -177,10 +135,10 @@ class Assetmanager extends Controller
 		$output = 'var tinyMCEImageList = new Array('."\n";
 		// get images in folder
 		$sql = 'SELECT img.*, fld.caption AS foldername
-			FROM images AS img
-			LEFT JOIN image_folders fld
-				ON img.folder = fld.id
-			ORDER by img.folder ASC, img.caption ASC';
+			FROM asset
+			LEFT JOIN asset_folder
+				ON asset.folder = asset_folder.id
+			ORDER by asset.folder ASC, asset.caption ASC';
 		$query = $this->db->query($sql);
 		foreach($query->result_array() AS $image) {
 			$image['foldername'] = 'General/'.($image['foldername']!=''?$image['foldername'].'/':'');
@@ -193,86 +151,91 @@ class Assetmanager extends Controller
 		$this->view = $args['view'];
 		$this->db_session->set_userdata('cimm_view', $args['view']);
 	}
+	
+	public function update_details($arg) {
+		$sql = 'UPDATE asset
+			SET caption = ?, alttext = ?, folder = ?
+			WHERE id = ?
+			LIMIT 1';
+		$this->db->query($sql, array($arg['caption'], $arg['alttext'], $arg['folder'], $arg['imageid']));
+	}
 
 	// upload image to dir and insert info into DB
 	public function upload_image() {
+		$upload_config = $this->config->item('upload_config');
 		// if file has been selected
-		if (isset($_FILES[$this->upload_config['field_name']]['name']) AND $_FILES[$this->upload_config['field_name']]['name'] != '') {
+		if (isset($_FILES[$upload_config['field_name']]['name']) AND $_FILES[$upload_config['field_name']]['name'] != '') {
 
 			// load upload library
-			$this->load->library('upload', $this->upload_config);
+			$this->load->library('upload', $this->config->item('upload_config'));
 	 
-			if (!$this->upload->do_upload($this->upload_config['field_name']))  {
+			if (!$this->upload->do_upload($this->config->item('upload_config_field_name')))  {
 			 	/* upload failed */  
-				die("<script type=\"text/javascript\">
-					parent.parent.tinyMCEPopup.editor.windowManager.alert('There was an error processing the request.');
-				</script>");
+				$this->tinymce_alert('There was an error processing the request.');
+				exit;
 	  		}
-	  	
-			$imgdata = $this->upload->data();
-		 
-			// constrain dimensions?
-			$adjust_size = (int) $this->input->post('adjust_size');
-			$max_x = (int) $this->input->post('max_x');
-			$max_y = (int) $this->input->post('max_y');
-		  
-			// yes, resize image
-			//if ($adjust_size == 1 AND ($imgdata['image_width'] > $max_x OR $imgdata['image_height'] > $max_y)) {
-			//	$this->resize_config['source_image'] = $imgdata['full_path'];
-			//	$this->resize_config['width'] = $max_x;
-			//	$this->resize_config['height'] = $max_y;
+			$image_data = $this->upload->data();
+			$max_x = (int)$this->input->post('max_x');
+			$max_y = (int)$this->input->post('max_y');
+			$adjust_size = (int)$this->input->post('adjust_size');
+			
+			// resize image
+			if ($adjust_size == 1 AND ($image_data['image_width'] > $max_x OR $image_data['image_height'] > $max_y)) {
+		
+				$resize_config = $this->config->item('resize_config');		
+				$resize_config['source_image'] = $image_data['full_path'];
+				$resize_config['width'] = $max_x;
+				$resize_config['height'] = $max_y;
 		
 				// load image library
-			//	$this->load->library('image_lib', $this->resize_config);
+				$this->load->library('image_lib', $resize_config);
 			
 				//  resize image
-			//	if (!$this->image_lib->resize()) {
-					//show_error($this->image_lib->display_errors());
-					//exit;
-			//	}
+				if (!$this->image_lib->resize()) {
+					$this->tinymce_alert($this->image_lib->display_errors());
+					exit;
+				}
 	
-			//	// save new dimensions
-			//	$imgdata['image_width'] = $this->image_lib->width;
-			//	$imgdata['image_height'] = $this->image_lib->height;
-			//}
+				// store new dimensions
+				$image_data['image_width'] = $this->image_lib->width;
+				$image_data['image_height'] = $this->image_lib->height;
+			}
 	
-	
-			//@copy($imgdata['full_path'], $this->image_path.(basename($imgdata['full_path'])));
 		  
-			$alttext = str_replace($imgdata['file_ext'], '', strtolower($imgdata['orig_name']));
-			$uploadfolder = (int) $this->input->post('uploadfolder');
+			$alttext = str_replace($image_data['file_ext'], '', strtolower($image_data['orig_name']));
+			$folder = (int) $this->input->post('uploadfolder');
 			  
 			// update the fileid for the photo in db
-			$sql = 'INSERT INTO images (caption, filename, alttext, folder, dateadded)
+			$sql = 'INSERT INTO asset (caption, filename, alttext, folder, dateadded)
 				VALUES (?, ?, ?, ?, ?)';
-			$query = $this->db->query($sql, array(basename($imgdata['orig_name']), basename($imgdata['full_path']), $alttext, $uploadfolder, time()));
+			$query = $this->db->query($sql, array(basename($image_data['orig_name']), basename($image_data['full_path']), $alttext, $folder, time()));
 			$lastid = $this->db->insert_id();
 			 
-			die("<script type=\"text/javascript\">
-			//alert('".$imgdata['file_ext']."');
+			die("<script type=\"text/javascript\"> //alert('".$image_data['file_ext']."');
 			parent.removedim();
-			parent.updateimg('".base_url('images/uploaded/'.basename($imgdata['full_path']))."', '".$alttext."');
+			parent.updateimg('".base_url('images/uploaded/'.basename($image_data['full_path']))."', '".$alttext."');
 			</script>");
 			  
 		}
 		// no file specified to upload
 		else {
-			die("<script type=\"text/javascript\">
+			echo "<script type=\"text/javascript\">
 			parent.removedim();
 			parent.parent.tinyMCEPopup.editor.windowManager.alert('Please select an image to upload.');
-			</script>");
+			</script>";
+			exit;
 		}
   	}
   
 	public function delete_image($arg) {
 		$image_id = isset($arg['image']) ? (int) $this->input->xss_clean($arg['image']) : 0;
 
-		if (!$image = TinyCIMM::get_image($image_id)) {
+		if (!$image = TinyCIMM::get_asset($image_id)) {
 			$response['outcome'] = 'error';
 			$response['message'] = 'Image not found.';
 			TinyCIMM::response_encode($response);
 		}
-		TinyCIMM::delete_image($image_id);
+		TinyCIMM::delete_asset($image_id);
 		$response['outcome'] = 'success';
 		$response['message'] = 'Image successfully deleted.';
 		$response['folder'] = $image->folder;
@@ -281,7 +244,7 @@ class Assetmanager extends Controller
 
 	public function get_image($arg){
 		$image_id = end(explode('/', $this->uri->uri_string()));
-		die(print_r($this->tinycimm_model->get_image($image_id)));
+		die(print_r(TinyCIMM_model::get_asset($image_id)));
 	}
   
 	public function delete_folder($arg) {
@@ -289,15 +252,15 @@ class Assetmanager extends Controller
 		
 		if ($folder > 0 ) {
 			// move images from folder to root folder
-			$this->db->query('UPDATE images SET folder = \'\' WHERE folder = ?', array($folder));
+			$this->db->query('UPDATE asset SET folder = \'\' WHERE folder = ?', array($folder));
 			$images_affected = $this->db->affected_rows();
 		
 			// remove folder
-			$this->db->query('DELETE FROM image_folders WHERE id = ?', array($folder));
+			$this->db->query('DELETE FROM asset_folder WHERE id = ?', array($folder));
 	  
 			// get new list of folders
 			$sql = 'SELECT *
-				FROM image_folders
+				FROM asset_folder
 				WHERE user_id = ?
 				ORDER by caption ASC';
 			$query = $this->db->query($sql, array($this->user_id));
@@ -305,7 +268,7 @@ class Assetmanager extends Controller
 			foreach($query->result_array() AS $folderinfo) {
 		 		$data['folders'][] = $folderinfo;
 			}
-			die($this->load->view($this->_view_base.'image_folder_list', $data, true).'<div style="display:none" id="message">'.(($images_affected>0?$images_affected.' image'.($images_affected==1?'':'s').' moved to General folder.':'').'</div>'));
+			die($this->load->view($this->config->item('tinycimm_views_root').'image_folder_list', $data, true).'<div style="display:none" id="message">'.(($images_affected>0?$images_affected.' image'.($images_affected==1?'':'s').' moved to General folder.':'').'</div>'));
 		} else {
 			$response['outcome'] = 'error';
 			$response['message'] = 'You can\'t delete this folder.';
@@ -332,14 +295,14 @@ class Assetmanager extends Controller
 			TinyCIMM::response_encode($response);
 		}
 	
-		$sql = 'INSERT INTO image_folders (caption)
+		$sql = 'INSERT INTO asset_folder (caption)
 			VALUES (?)';
 		$query = $this->db->query($sql, array($caption));
 		$lastid = $this->db->insert_id();
 
 		// get new list of folders
 		$sql = 'SELECT *
-			FROM image_folders
+			FROM asset_folder
 			WHERE user_id = ?
 			ORDER by caption ASC';
 		$query = $this->db->query($sql, array($this->user_id));
@@ -348,7 +311,7 @@ class Assetmanager extends Controller
 			$data['folders'][] = $folderinfo;
 		}
 	
-		die($this->load->view($this->_view_base.'image_folder_list', $data, true));
+		die($this->load->view($this->config->item('tinycimm_views_root').'image_folder_list', $data, true));
   	}
   
 	public function edit_folder($arg) {
@@ -362,7 +325,7 @@ class Assetmanager extends Controller
 		}
 	else {
 		$sql = 'SELECT caption
-			FROM image_folders
+			FROM asset_folder
 			WHERE id = ?
 			LIMIT 1';
 		$query = $this->db->query($sql, array($folder));
@@ -381,7 +344,7 @@ class Assetmanager extends Controller
 
 		// get all folders
 		$sql = 'SELECT * 
-			FROM image_folders
+			FROM asset_folder
 			WHERE user_id = ?
 			ORDER by caption ASC';
 		$query = $this->db->query($sql, array($this->user_id));
@@ -390,13 +353,13 @@ class Assetmanager extends Controller
 		foreach($query->result_array() AS $folderinfo) {
 			$data['folders'][] = $folderinfo;
 		}
-		die($this->load->view($this->_view_base.'image_folder_select', $data, true));
+		die($this->load->view($this->config->item('tinycimm_views_root').'image_folder_select', $data, true));
 	}
 
 	public function get_alttext_textbox($args)
 	{
 		$data['alttext'] = isset($args['alttext']) ? $this->input->xss_clean($args['alttext']) : '';
-		die($this->load->view($this->_view_base.'image_alttext_textbox', $data, true));
+		die($this->load->view($this->config->item('tinycimm_views_root').'image_alttext_textbox', $data, true));
 	}
 
 	public function save_image_size($args){
@@ -410,26 +373,6 @@ class Assetmanager extends Controller
 		TinyCIMM::response_encode($response);
 	}
 
-	public function restore_image($arg) {
-		$imageid = isset($arg['image']) ? (int) $this->input->xss_clean($arg['image']) : 0;
-		
-		$sql = 'SELECT *
-			FROM images
-			WHERE id = ?
-			LIMIT 1';
-		$query = $this->db->query($sql, array($imageid));
-		$imageinfo = $query->row_array();
-
-		@copy($this->image_path.$this->orig_path.$imageinfo['filename'], $this->image_path.$imageinfo['filename']);
-	}
-  
-	public function update_details($arg) {
-		$sql = 'UPDATE images 
-			SET caption = ?, alttext = ?, folder = ?
-			WHERE id = ?
-			LIMIT 1';
-		$this->db->query($sql, array($arg['caption'], $arg['alttext'], $arg['folder'], $arg['imageid']));
-	}
   
 	// get image details from db
 	public function get_image_info($arg = array('image' => '')) {
@@ -437,7 +380,7 @@ class Assetmanager extends Controller
 
 		// get info image
 		$sql = 'SELECT * 
-			FROM images 
+			FROM asset 
 			WHERE filename = ?
 			LIMIT 1';
 		$query = $this->db->query($sql, array($image));
@@ -447,7 +390,7 @@ class Assetmanager extends Controller
 		}
 		else {
 			$response = $query->row_array();
-			$this->gen_thumb($this->image_path.$this->thumb_path.$image);
+			$this->gen_thumb($this->config->item('tinycimm_image_thumb_upload_path').$image);
 			$response['outcome'] = 'success';
 		}
 	
@@ -458,26 +401,26 @@ class Assetmanager extends Controller
 		// get user info: total images uploaded, privelages, max upload sizes etc etc
 	
 		$sql = 'SELECT COUNT(id) AS tot_images
-			FROM images 
+			FROM asset 
 			WHERE user_id = ?';
 		$query = $this->db->query($sql, array($this->user_id));
 		$data['user'] = $query->row_array();
 	
 		// num gif
 		$sql = 'SELECT id
-			FROM images
+			FROM asset
 			WHERE filename LIKE \'%.gif\'';
 		$query = $this->db->query($sql);
 		$data['user']['tot_gif'] = $query->num_rows();
 		// num jpg
 		$sql = 'SELECT id
-			FROM images
+			FROM asset
 			WHERE filename LIKE \'%.jpg\'';
 		$query = $this->db->query($sql);
 		$data['user']['tot_jpg'] = $query->num_rows();
 		// num png
 		$sql = 'SELECT id
-			FROM images
+			FROM asset
 			WHERE filename LIKE \'%.png\'';
 		$query = $this->db->query($sql);
 		$data['user']['tot_png'] = $query->num_rows();
@@ -486,10 +429,10 @@ class Assetmanager extends Controller
 		header("Cache-Control: no-store, no-cache, max-age=0, must-revalidate");
 		header('Content-Type: text/x-json');
 		
-		$this->load->view($this->_view_base.'image_user_info', $data);
+		$this->load->view($this->config->item('tinycimm_views_root').'image_user_info', $data);
 	}
 
-	public function change_view($arg = array('view' => '')){
+	private function change_view($arg = array('view' => '')){
 		$this->view = strtolower($arg['view']);
 		$this->get_thumbs(array('folder' => ''));
 	}
@@ -499,10 +442,10 @@ class Assetmanager extends Controller
 		$this->get_file_folder_list(array('folder' => ''));
 	}
 
-	public function gen_thumb($thumb_file='', $width=95, $height=95) {
+	private static function gen_thumb($thumb_file='', $width=95, $height=95) {
 		if(file_exists($thumb_file) == FALSE) {
 			$config['image_library'] = 'gd2';
-			$config['source_image'] = $this->image_path.$this->orig_path.basename($thumb_file);
+			$config['source_image'] = $this->config->item('tinycimm_image_upload_path').basename($thumb_file);
 			$config['new_image'] = $thumb_file;
 			$config['maintain_ratio'] = FALSE;
 			$config['height'] = $height;
@@ -512,41 +455,48 @@ class Assetmanager extends Controller
 			$this->image_lib->clear();
 		}
 	}
+	
+	// get extension of filename
+	public static function _get_extension($filename) {
+		$ext = array_reverse(explode('.', $filename));
+		return strtolower($ext[0]);
+	}
   
 	// check if image directories exist, if not then try to create them
-  	public function _check_paths() {
+  	private function check_paths() {
 		// image dir
-		if (!file_exists($this->image_path)) {
-		  @mkdir($this->image_path, 0777) OR show_error('Unable to create image folder '.$this->image_path.'<br/><strong>Please adjust permissions</strong>');
+		if (!file_exists($this->config->item('tinycimm_image_upload_path'))) {
+			@mkdir($this->config->item('tinycimm_image_upload_path'), 0777) OR show_error('Unable to create image folder '.$this->config->item('tinycimm_image_upload_path').'<br/><strong>Please adjust permissions</strong>');
 		}
 		// thumb dir
-		if (!file_exists($this->_full_thumb_path = $this->image_path.$this->thumb_path)) {
+		if (!file_exists($this->_full_thumb_path = $this->config->item('tinycimm_image_thumb_upload_path'))) {
 		  @mkdir($this->_full_thumb_path, 0777) OR show_error('Unable to create thumbnails folder '.$this->_full_thumb_path.'<br/><strong>Please adjust permissions</strong>');
 		}
 		// orig dir
-		if (!file_exists($this->_full_orig_path = $this->image_path.$this->orig_path)) {
+		if (!file_exists($this->_full_orig_path = $this->config->item('tinycimm_image_upload_path'))) {
 		  @mkdir($this->_full_orig_path, 0777) OR show_error('Unable to create image folder '.$this->_full_orig_path.'<br/><strong>Please adjust permissions</strong>');
 		}
   	}
   
-
-	// get extension of filename
-	public function _get_extension($filename) {
-		$ext = array_reverse(explode('.', $filename));
-		return strtolower($ext[0]);
+	private static function tinymce_alert($message){
+		echo "<script type=\"text/javascript\">
+		parent.parent.tinyMCEPopup.editor.windowManager.alert('".$message."');
+		</script";
 	}
 	
-	// serialize a simple associative array to JSON string
-	public function _tinymce_serialize($response = array()) {
-		header("Pragma: no-cache");
-		header("Cache-Control: no-store, no-cache, max-age=0, must-revalidate");
-		header('Content-Type: text/x-json');  
-		$response_txt = '{';
-		foreach($response AS $key => $value) {
-			$response_txt .= '"'.$key.'":"'.$value.'",';
-		}
-		$response_txt = rtrim($response_txt, ',').'}';
-		die($response_txt);
- 	}
+	/*
+	public function restore_image($arg) {
+		$imageid = isset($arg['image']) ? (int) $this->input->xss_clean($arg['image']) : 0;
+		
+		$sql = 'SELECT *
+			FROM asset
+			WHERE id = ?
+			LIMIT 1';
+		$query = $this->db->query($sql, array($imageid));
+		$imageinfo = $query->row_array();
 
+		@copy($this->image_path.$this->orig_path.$imageinfo['filename'], $this->image_path.$imageinfo['filename']);
+	}
+	*/
+  
 }
