@@ -2,22 +2,9 @@
  
 class TinyCIMM {
 
-	public function save_image_size($image_id=0, $width=0, $height=0){
+	public function save_image_size($image_filename=0, $width=0, $height=0){
 		$ci =&get_instance();
-
-		// get image info, to ensure image src exists
-		$sql = 'SELECT *
-			FROM images
-			WHERE id = ?
-			LIMIT 1';
-		$query = $ci->db->query($sql, array($image_id));
-		if(!$query->num_rows()) {
-			die('not found');
-		}
-		$imageinfo = $query->row_array();
-		
-		$img_path = $ci->image_path.$ci->orig_path.$imageinfo['filename'];
-		
+		$image_path = $ci->image_path.$ci->orig_path.$image_filename;
 		$config['image_library'] = 'gd2';
 		$config['source_image'] = $image_path;
 		$config['new_image'] = $image_path;
@@ -27,7 +14,44 @@ class TinyCIMM {
 		$ci->image_lib->initialize($config);
 		$ci->image_lib->resize();
 		$ci->image_lib->clear();
-
-		die('hello');
 	}
+
+	public function delete_image($image){
+		$this->tinycimm_model->delete_image($image->id);
+
+		// delete images from filesystem, including original and thumbnails
+		if (file_exists($this->image_path.$image->filename)) {
+			@unlink($this->image_path.$image->filename);
+		}
+		if (file_exists($this->image_path.$this->orig_path.$image->filename)) {
+			@unlink($this->image_path.$this->orig_path.$image->filename);
+		}
+		if (file_exists($this->image_path.$this->thumb_path.$image->filename)) {
+			@unlink($this->image_path.$this->thumb_path.$image->filename);
+		}
+
+		// delete the new size specific files				
+		if ($handle = @opendir($this->image_path)) {
+			while (FALSE !== ($file = readdir($handle))) {
+				if (strpos($file, $image->filename) !== FALSE) {
+					@unlink($this->image_path.$file);
+				}
+			}	
+			@closedir($handle);
+		}
+	}
+
+	public function response_encode($response=array()) {
+		header("Pragma: no-cache");
+		header("Cache-Control: no-store, no-cache, max-age=0, must-revalidate");
+		header('Content-Type: text/x-json');
+		$response_txt = '{';
+		foreach($response AS $key => $value) {
+			$response_txt .= '"'.$key.'":"'.$value.'",';
+		}
+		$response_txt = rtrim($response_txt, ',').'}';
+		die($response_txt);
+	}
+
+
 }
