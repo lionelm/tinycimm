@@ -11,4 +11,5 @@ Please feel free to add to this list, or add any comments to this page.
   * Maybe combine this into it’s own TinyMCE plugin rather than expanding advimage, so we can incorporate movies/flash and allow document uploads
   * refactor PHP code inside the CI application
   * Apply prettier skin to TinyMCE and the modal pop-up ( http://thebigreason.com/blog/2008/09/29/thebigreason-tinymce-skin )
+  * Model/s: use the db class methods instead of raw queries. 
   * Drink a beer and become CI celebs
