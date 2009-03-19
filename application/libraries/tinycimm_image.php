@@ -2,7 +2,9 @@
  
 class TinyCIMM_image extends TinyCIMM {
 
-	// get folder listing from db
+	/**
+	* get folder listing from db
+	**/
 	public function get_folder_list($arg) {
 		header("Cache-Control: no-cache, must-revalidate");
 		header("Cache-Control: no-store");
@@ -18,7 +20,9 @@ class TinyCIMM_image extends TinyCIMM {
 		$this->load->view($this->config->item('tinycimm_views_root').'image_folder_list', $data);
   	}
   
-	// get folder listing from db
+	/**
+	* get folder listing from db
+	**/
 	public function get_file_folder_list($arg) {
 	
 		// first we get info on uncategorized ROOT folder
@@ -78,8 +82,10 @@ class TinyCIMM_image extends TinyCIMM {
 		$this->load->view($this->config->item('tinycimm_views_root').'image_'.$this->session->userdata('cimm_view').'_list', $data);
 	}
   
-	// this geneates a javascript array of images that is
-	// used in the adv image dialog window as drop down list
+	/**
+	* this geneates a javascript array of images that is
+	* used in the adv image dialog window as drop down list
+	**/
 	public function image_list() {
 		header("text/javascript");
 
@@ -97,11 +103,17 @@ class TinyCIMM_image extends TinyCIMM {
 		}
 		die(rtrim($output, ",\n").');');
   	}
-  
+  	
+  	/**
+  	*
+  	**/
 	public function setview($args) {
 		$this->session->set_userdata('cimm_view', $args['view']);
 	}
 	
+	/**
+	*
+	**/
 	public function update_details($arg) {
 		$sql = 'UPDATE asset
 			SET caption = ?, alttext = ?, folder = ?
@@ -110,7 +122,9 @@ class TinyCIMM_image extends TinyCIMM {
 		$this->db->query($sql, array($arg['caption'], $arg['alttext'], $arg['folder'], $arg['imageid']));
 	}
 
-	// upload image to dir and insert info into DB
+	/**
+	* upload image to dir and insert info into DB
+	**/
 	public function upload_image() {
 		$upload_config = $this->config->item('upload_config');
 		// if file has been selected
@@ -174,7 +188,10 @@ class TinyCIMM_image extends TinyCIMM {
 			exit;
 		}
   	}
-  
+  	
+  	/**
+  	*
+  	**/
 	public function delete_image($arg) {
 		$image_id = isset($arg['image']) ? (int) $this->input->xss_clean($arg['image']) : 0;
 
@@ -189,11 +206,17 @@ class TinyCIMM_image extends TinyCIMM {
 		$response['folder'] = $image->folder;
 		TinyCIMM::response_encode($response);
 	}
-
+	
+	/**
+	*
+	**/
 	public function get_image($image_id){
 		die(print_r(TinyCIMM_model::get_asset($image_id)));
 	}
-  
+  	
+  	/**
+  	*
+  	**/
 	public function delete_folder($arg) {
 		$folder = isset($arg['folder']) ? (int) $this->input->xss_clean($arg['folder']) : 0;
 		
@@ -223,7 +246,10 @@ class TinyCIMM_image extends TinyCIMM {
 	
 		TinyCIMM::response_encode($response);
  	}
-  
+  	
+  	/**
+  	*
+  	**/
 	public function add_folder($arg){ 
 		$caption = isset($arg['caption']) ? $this->input->xss_clean($arg['caption']) : '';
 	
@@ -260,7 +286,10 @@ class TinyCIMM_image extends TinyCIMM {
 	
 		die($this->load->view($this->config->item('tinycimm_views_root').'image_folder_list', $data, true));
   	}
-  
+  	
+  	/**
+  	*
+  	**/
 	public function edit_folder($arg) {
 		header("Cache-Control: no-cache, must-revalidate");
 		header("Cache-Control: no-store");
@@ -284,7 +313,10 @@ class TinyCIMM_image extends TinyCIMM {
 		}
 		exit;
 	}
-  
+  	
+  	/**
+  	*
+  	**/
 	public function get_folder_select($args){
 		$data['folderid'] = isset($args['folder']) ? (int) $args['folder'] : 0;
 
@@ -301,12 +333,18 @@ class TinyCIMM_image extends TinyCIMM {
 		}
 		die($this->load->view($this->config->item('tinycimm_views_root').'image_folder_select', $data, true));
 	}
-
+	
+	/**
+	*
+	**/
 	public function get_alttext_textbox($args){
 		$data['alttext'] = isset($args['alttext']) ? $this->input->xss_clean($args['alttext']) : '';
 		die($this->load->view($this->config->item('tinycimm_views_root').'image_alttext_textbox', $data, true));
 	}
-
+	
+	/**
+	*
+	**/
 	public function save_image_size($args){
 		if (!ctype_digit($args['width']) or !ctype_digit($args['height'])) {
 			TinyCIMM::response_encode(array('outcome'=>'error','message'=>'Incorrect dimensions supplied. (Cant have value of 0)'));
@@ -319,7 +357,9 @@ class TinyCIMM_image extends TinyCIMM {
 	}
 
   
-	// get image details from db
+	/**
+	* get image details from db
+	**/
 	public function get_image_info($arg = array('image' => '')) {
 		$image = isset($arg['image']) ? basename($this->input->xss_clean($arg['image'])) : '';
 
@@ -342,6 +382,9 @@ class TinyCIMM_image extends TinyCIMM {
 		TinyCIMM::response_encode($response);
   	}
 	
+	/**
+	*
+	**/
 	public function get_user_info() {
 		// get user info: total images uploaded, privelages, max upload sizes etc etc
 	
@@ -376,22 +419,34 @@ class TinyCIMM_image extends TinyCIMM {
 		
 		$this->load->view($this->config->item('tinycimm_views_root').'image_user_info', $data);
 	}
-
+	
+	/**
+	*
+	**/
 	private function change_view($arg = array('view' => '')){
 		$this->session->set_userdata('cimm_view', $arg['view']);
 		$this->get_thumbs(array('folder' => ''));
 	}
+	
+	/**
+	*
+	**/
 	public function change_view_adv($args = array('view' => '')) {
 		$this->session->set_userdata('cimm_view', $args['view']);
 		$this->get_file_folder_list(array('folder' => ''));
 	}
 
-	// get extension of filename
+	/**
+	* get extension of filename
+	**/
 	public static function get_extension($filename) {
 		$ext = array_reverse(explode('.', $filename));
 		return strtolower($ext[0]);
 	}
-  
+  	
+  	/**
+  	*
+  	**/
 	public function gen_thumb($thumb_file='', $width=95, $height=95) {
 		if(file_exists($thumb_file) == FALSE) {
 			$config['image_library'] = 'gd2';
@@ -405,6 +460,5 @@ class TinyCIMM_image extends TinyCIMM {
 			$this->image_lib->clear();
 		}
 	}
-  
-	
-}
+ 
+} // class TinyCIMM_image
