@@ -20,6 +20,7 @@ class Assetmanager extends Controller
 		TinyCIMM::check_paths();
 
 		// eg: $this->user_id = $this->auth->user_id OR die('Acess denied.');
+		// Why are we checking for users? Authorisation should be handled externally? @author Liam
 		$this->user_id = 1;
 		
 		// set default view type in user session
@@ -43,4 +44,4 @@ class Assetmanager extends Controller
 		");
 	}
 	
-}
+} // class Assetmanager
