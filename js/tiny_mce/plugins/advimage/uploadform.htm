@@ -9,7 +9,7 @@ var tinymce = parent.tinymce;
 tinymce.EditorManager.activeEditor.windowManager.createInstance('tinymce.dom.DOMUtils', document).loadCSS(tinymce.EditorManager.activeEditor.settings.popup_css);
 
 /**
-*
+* remove overlay layer and spinner image
 **/
 function removedim() {
 	try {
@@ -21,7 +21,7 @@ function removedim() {
 }
 
 /**
-*
+* create overlay layer and spinner image and add to the dom
 **/
 function dimimage() {
 	var dim = parent.document.createElement("div");
@@ -43,7 +43,7 @@ function updateimg(imgurl, alttext) {
 }
 
 window.onload = function() {
-	/* CHANGE ACCORDINGLY */
+	/* CHANGE ACCORDINGLY, this is terrible we need to find a way for javascript to use the tinycimm CI config @author richw */
  	//document.forms[0].action = parent.tinyMCEPopup.editor.documentBaseURI.toAbsolute('tinycimm/image/upload_image/');
 	document.forms[0].action = '/assetmanager/image/upload_image';
 }
@@ -51,6 +51,7 @@ window.onload = function() {
 <base target="_self" />
 </head>
 <body id="advimage" style="background:#FFF;margin:0">
+	<iframe id="hidden_iframe" name="hidden_iframe" src="javascript:false" style="width:0;height:0;border:0px solid #fff;"></iframe>
 	<form method="post" target="hidden_iframe" enctype="multipart/form-data" action="" id="uploadform" name="uploadform">
 		<table border="0" cellpadding="4" cellspacing="0">
 			<tr><td>Select File</td><td colspan="3"><input type="file" id="fileupload" name="fileupload" size="25" style="display:inline;width:220px;" /></td></tr>
@@ -87,7 +88,6 @@ window.onload = function() {
 			<tr>
 				<td colspan="4">
 					<br/>
-					<iframe id="hidden_iframe" name="hidden_iframe" src="" style="width:0;height:0;border:0px solid #fff;"></iframe>
 					<input type="submit" class="button" name="submit_upload" value="Upload" onclick="dimimage();document.forms['uploadform'].submit();">
 				</td>
 			</tr>
