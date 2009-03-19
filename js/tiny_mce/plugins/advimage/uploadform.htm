@@ -7,7 +7,10 @@
 var tinymce = parent.tinymce;
 // load popup css
 tinymce.EditorManager.activeEditor.windowManager.createInstance('tinymce.dom.DOMUtils', document).loadCSS(tinymce.EditorManager.activeEditor.settings.popup_css);
- 
+
+/**
+*
+**/
 function removedim() {
 	try {
 		var dim = parent.document.getElementById("dimwindow");
@@ -17,6 +20,9 @@ function removedim() {
 	} catch(e) {}
 }
 
+/**
+*
+**/
 function dimimage() {
 	var dim = parent.document.createElement("div");
 	dim.setAttribute("id", "dimwindow");
@@ -28,6 +34,9 @@ function dimimage() {
 	bodyRef.appendChild(img);
 }
 
+/**
+*
+**/
 function updateimg(imgurl, alttext) {
 	document.forms[0].reset();
 	parent.ImageDialog.updateImage(imgurl, alttext);
