@@ -132,14 +132,14 @@ class TinyCIMM_image extends TinyCIMM {
   	}
   	
   	/**
-  	* 
+  	* set view type for asset listing (list or thumbnails) in user session
   	**/
-	public function setview($args) {
-		$this->session->set_userdata('cimm_view', $args['view']);
+	public function setview($view) {
+		$this->session->set_userdata('cimm_view', $view);
 	}
 	
 	/**
-	*
+	* update asset row
 	**/
 	public function update_details($arg) {
 		$sql = 'UPDATE asset
@@ -225,7 +225,7 @@ class TinyCIMM_image extends TinyCIMM {
   	}
   	
   	/**
-  	*
+  	* delete an image from database and file system
   	**/
 	public function delete_image($arg) {
 		$image_id = isset($arg['image']) ? (int) $this->input->xss_clean($arg['image']) : 0;
@@ -243,7 +243,7 @@ class TinyCIMM_image extends TinyCIMM {
 	}
 	
 	/**
-	*
+	* debug function @richw
 	**/
 	public function get_image($image_id){
 		die(print_r(TinyCIMM_model::get_asset($image_id)));
@@ -378,14 +378,24 @@ class TinyCIMM_image extends TinyCIMM {
 	}
 	
 	/**
-	*
+	* resizes an image
 	**/
-	public function save_image_size($args){
-		if (!ctype_digit($args['width']) or !ctype_digit($args['height'])) {
+	public function save_image_size($filename, $width, $height, $quality=90, $replace_original=0){
+		if (!(int)$width or !(int)$height) {
 			TinyCIMM::response_encode(array('outcome'=>'error','message'=>'Incorrect dimensions supplied. (Cant have value of 0)'));
 		}
 
-		TinyCIMM::save_image_size($args['img'], (int)$args['width'], (int)$args['height'], 90); 
+		$image_path = $this->config->item('tinycimm_image_upload_path').$filename;
+		$config['image_library'] = 'gd2';
+		$config['source_image'] = $image_path;
+		$config['new_image'] = $image_path;
+		$config['maintain_ratio'] = TRUE;
+		$config['height'] = (int)$height;
+		$config['width'] = (int)$width;
+		$this->image_lib->initialize($config);
+		$this->image_lib->resize();
+		$this->image_lib->clear();
+
 		$response['outcome'] = 'success';
 		$response['message'] = 'Image size successfully saved.';
 		TinyCIMM::response_encode($response);
@@ -458,8 +468,8 @@ class TinyCIMM_image extends TinyCIMM {
 	/**
 	*
 	**/
-	private function change_view($arg = array('view' => '')){
-		$this->session->set_userdata('cimm_view', $arg['view']);
+	private function change_view($view){
+		$this->session->set_userdata('cimm_view', $view);
 		$this->get_thumbs(array('folder' => ''));
 	}
 	
@@ -468,7 +478,7 @@ class TinyCIMM_image extends TinyCIMM {
 	**/
 	public function change_view_adv($args = array('view' => '')) {
 		$this->session->set_userdata('cimm_view', $args['view']);
-		$this->get_file_folder_list(array('folder' => ''));
+		TinyCIMM_image::get_file_folder_list(array('folder' => ''));
 	}
 
 	/**

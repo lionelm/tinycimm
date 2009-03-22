@@ -740,7 +740,7 @@ var ImageDialog = {
 		// prepare request url
 		var replace = o('replace').checked == true ? '1' : '0';
 		var imgsrc_arr = tinyMCEPopup.editor.documentBaseURI.toRelative(o('slider_img').src).split('/');
-		var requesturl = ImageDialog.baseURL('assetmanager/image/save_image_size/img/'+imgsrc_arr[imgsrc_arr.length-1]+'/width/'+o('slider_img').width+'/height/'+o('slider_img').height+'/replace/'+replace);
+		var requesturl = ImageDialog.baseURL('assetmanager/image/save_image_size/'+imgsrc_arr[imgsrc_arr.length-1]+'/'+o('slider_img').width+'/'+o('slider_img').height+'/90/'+replace);
 		// send request
 		tinymce.util.XHR.send({
 			url : requesturl,
