@@ -139,16 +139,20 @@ class TinyCIMM {
 		// what CHMOD permissions should we use for the upload folders?
 		$chmod = $this->config->item('tinycimm_asset_upload_chmod');
 		
-		// asset dir
+		// upload dir
 		if (!file_exists($this->config->item('tinycimm_image_upload_path'))) {
-			@mkdir($this->config->item('tinycimm_image_upload_path'), $chmod) OR show_error('Unable to create image folder '.$this->config->item('tinycimm_image_upload_path').'<br/><strong>Please adjust permissions</strong>');
+			@mkdir($this->config->item('tinycimm_image_upload_path'), $chmod) or die('Error: Unable to create upload folder '.$this->config->item('tinycimm_image_upload_path').'<br/><strong>Please adjust permissions</strong>');
+		}
+		// cache dir
+		if (!file_exists($this->config->item('tinycimm_image_upload_cache_path'))) {
+			@mkdir($this->config->item('tinycimm_image_upload_cache_path'), $chmod) or die('Error: Unable to create cache folder '.$this->config->item('tinycimm_image_upload_cache_path').'<br/><strong>Please adjust permissions</strong>');
 		}
 	}
 	
 	/**
 	* Throw up an alert message using TinyMCE's alert method (only used in upload function at this time)
 	**/
-	public function tinymce_alert($message){
+	public static function tinymce_alert($message){
 		echo "<script type=\"text/javascript\">
 		parent.parent.tinyMCEPopup.editor.windowManager.alert('".$message."');
 		</script";
