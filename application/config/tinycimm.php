@@ -12,7 +12,10 @@ $config['tinycimm_views_root'] = 'media/ajaxfilemanager/';
 $config['tinycimm_image_upload_path'] = $_SERVER['DOCUMENT_ROOT'].'/images/uploaded/';
 $config['tinycimm_image_thumb_upload_path'] = $config['tinycimm_image_upload_path'].'thumbs/';
 
-// upload
+// set to either 0777 or 0755 depending on your server setup
+$config['tinycimm_asset_upload_chmod'] = 0777;
+
+// upload configuration variables
 $config['upload_config']['field_name'] = 'fileupload';
 $config['upload_config']['upload_path'] = $config['tinycimm_image_upload_path'];
 $config['upload_config']['allowed_types'] = 'gif|jpg|png';
