@@ -36,16 +36,13 @@ class Assetmanager extends Controller
 	function _remap($lib){
 		$param = array_slice(explode("/", $this->uri->uri_string()),4);
 		$method = $this->uri->segment(3);
+		$tinycimm_lib = "tinycimm_{$lib}";
 		$count = 0;
                 foreach ($param as $element) {
 			$param[$count] = "'".$element."'";
 			$count++;
 		}
-                eval("
-			class_exists('TinyCIMM_{$lib}') and 
-			method_exists('TinyCIMM_{$lib}', '{$method}') and 
-			TinyCIMM_{$lib}::{$method}(".join(",", $param).");
-		");
+		$this->{$tinycimm_lib}->{$method}(join(',', $param));
 	}
 	
 } // class Assetmanager

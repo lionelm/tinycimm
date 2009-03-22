@@ -26,24 +26,25 @@ class TinyCIMM_image extends TinyCIMM {
 	* get folder listing from db
 	**/
 	public function get_file_folder_list($arg) {
+		$ci = &get_instance();
 	
 		// first we get info on uncategorized ROOT folder
 		$sql = 'SELECT id FROM asset
 			WHERE folder = \'\'';
-		$query = $this->db->query($sql);
+		$query = $ci->db->query($sql);
 	
 		// DEFAULT current folder info, default root folder info
 		$data['folderinfo'] = array('id'=>'0','user_id' => '0','username' => 'demo','caption' => 'General', 'num_files' => $query->num_rows());
 		// create [all folders] list
 		$data['folders'][] = $data['folderinfo'];
 
-		foreach($this->tinycimm_model->get_asset_folders() as $folderinfo) {
+		foreach($ci->tinycimm_model->get_asset_folders() as $folderinfo) {
 	 		// number of images in folder
 		  	$sql = 'SELECT id FROM asset
 				WHERE folder = ?
 				ORDER BY filename';
 	
-			$file_query = $this->db->query($sql, array($folderinfo['id']));
+			$file_query = $ci->db->query($sql, array($folderinfo['id']));
 			$folderinfo['num_files'] = $file_query->num_rows();
 			$data['folders'][] = $folderinfo;
 	  
@@ -61,12 +62,12 @@ class TinyCIMM_image extends TinyCIMM {
 				FROM asset
 				WHERE folder = ?
 				ORDER by filename ASC';
-		$query = $this->db->query($sql, array($arg['folder']));
+		$query = $ci->db->query($sql, array($arg['folder']));
 		$data['images'] = array();
 		$totimagesize = 0;
 		
 		foreach($query->result_array() AS $image) {
-	  		TinyCIMM_image::gen_thumb($this->config->item('tinycimm_image_upload_cache_path').$image['filename']);
+	  		$this->gen_thumb($ci->config->item('tinycimm_image_upload_cache_path').$image['filename']);
 	  		
 	  		/**
 			* @TODO Assumes uploaded folder is /images/uploaded/
@@ -97,7 +98,7 @@ class TinyCIMM_image extends TinyCIMM {
 		header("Pragma: no-cache");
 		header("Cache-Control: no-store, no-cache, max-age=0, must-revalidate");
 		header('Content-Type: text/x-json'); 
-		$this->load->view($this->config->item('tinycimm_views_root').'image_'.$this->session->userdata('cimm_view').'_list', $data);
+		$ci->load->view($ci->config->item('tinycimm_views_root').'image_'.$ci->session->userdata('cimm_view').'_list', $data);
 	}
   
 	/**
@@ -114,7 +115,7 @@ class TinyCIMM_image extends TinyCIMM {
 			LEFT JOIN asset_folder
 				ON asset.folder = asset_folder.id
 			ORDER by asset.folder ASC, asset.caption ASC';
-		$query = $this->db->query($sql);
+		$query = $ci->db->query($sql);
 		
 		foreach($query->result_array() AS $image) {
 			$image['foldername'] = 'General/'.($image['foldername']!=''?$image['foldername'].'/':'');
@@ -494,16 +495,17 @@ class TinyCIMM_image extends TinyCIMM {
   	* generate a thumbnail of an image using CI's image library class
   	**/
 	public function gen_thumb($thumb_file='', $width=95, $height=95) {
+		$ci = &get_instance();
 		if(file_exists($thumb_file) == FALSE) {
 			$config['image_library'] = 'gd2';
-			$config['source_image'] = $this->config->item('tinycimm_image_upload_path').basename($thumb_file);
+			$config['source_image'] = $ci->config->item('tinycimm_image_upload_path').basename($thumb_file);
 			$config['new_image'] = $thumb_file;
 			$config['maintain_ratio'] = FALSE;
 			$config['height'] = $height;
 			$config['width'] = $width;
-			$this->image_lib->initialize($config);
-			$this->image_lib->resize();
-			$this->image_lib->clear();
+			$ci->image_lib->initialize($config);
+			$ci->image_lib->resize();
+			$ci->image_lib->clear();
 		}
 	}
  
