@@ -1,24 +1,83 @@
 <?php  if (!defined('BASEPATH')) exit('No direct script access allowed');
  
 class TinyCIMM {
-	
-	/**
-	* Resizes an image using CI's image library class (GD2)
-	**/
-	public function save_image_size($image_filename=0, $width=0, $height=0){
-		$ci =&get_instance();
-		$image_path = $ci->config->item('tinycimm_image_upload_path').$image_filename;
-		$config['image_library'] = 'gd2';
-		$config['source_image'] = $image_path;
-		$config['new_image'] = $image_path;
-		$config['maintain_ratio'] = FALSE;
-		$config['height'] = $height;
-		$config['width'] = $width;
-		$ci->image_lib->initialize($config);
-		$ci->image_lib->resize();
-		$ci->image_lib->clear();
-	}
 
+	/**
+	* upload asset to directory and insert info into DB
+	**/
+	public function upload_asset() {
+		$upload_config = $this->config->item('upload_config');
+		// if file has been uploaded
+		if (isset($_FILES[$upload_config['field_name']]['name']) AND $_FILES[$upload_config['field_name']]['name'] != '') {
+
+			// load upload library
+			$this->load->library('upload', $this->config->item('upload_config'));
+
+			// move file into specified upload directory	
+			if (!$this->upload->do_upload($upload_config['field_name']))  {
+			 	/* upload failed */  
+				$this->tinymce_alert('There was an error processing the request: '.$this->upload->display_errors());
+				exit;
+	  		}
+			$image_data = $this->upload->data();
+			$max_x = (int)$this->input->post('max_x');
+			$max_y = (int)$this->input->post('max_y');
+			$adjust_size = (int)$this->input->post('adjust_size');
+			
+			// resize image
+			if ($adjust_size == 1 AND ($image_data['image_width'] > $max_x OR $image_data['image_height'] > $max_y)) {
+				/*	
+				$resize_config = $this->config->item('resize_config');		
+				$resize_config['source_image'] = $image_data['full_path'];
+				$resize_config['width'] = $max_x;
+				$resize_config['height'] = $max_y;
+				$this->load->library('image_lib', $resize_config);
+				
+				//  resize image
+				if (!$this->image_lib->resize()) {
+					$this->tinymce_alert($this->image_lib->display_errors());
+					exit;
+				}
+	
+				// store new dimensions
+				$image_data['image_width'] = $this->image_lib->width;
+				$image_data['image_height'] = $this->image_lib->height;
+				*/
+			}
+	
+			$alttext = str_replace($image_data['file_ext'], '', strtolower($image_data['orig_name']));
+			$folder = (int) $this->input->post('uploadfolder');
+			  
+			// update the fileid for the photo in db
+			$sql = 'INSERT INTO asset (caption, filename, alttext, folder, dateadded)
+				VALUES (?, ?, ?, ?, ?)';
+			$query = $this->db->query($sql, array(basename($image_data['orig_name']), basename($image_data['full_path']), $alttext, $folder, time()));
+			$lastid = $this->db->insert_id();
+			
+			/**
+			* @TODO Assumes uploaded folder is /images/uploaded/
+			* @Liam
+			**/
+			die("<script type=\"text/javascript\">
+			parent.removedim();
+			parent.updateimg('".base_url('images/uploaded/'.basename($image_data['full_path']))."', '".$alttext."');
+			</script>");
+			/**
+			* @TODO Assumes uploaded folder is /images/uploaded/
+			* @Liam
+			**/
+			  
+		}
+		// no file specified to upload
+		else {
+			echo "<script type=\"text/javascript\">
+			parent.removedim();
+			parent.parent.tinyMCEPopup.editor.windowManager.alert('Please select an image to upload.');
+			</script>";
+			exit;
+		}
+  	}
+  	
 	/**
 	* Deletes a file from the database and from the fileserver
 	* Goes on to also delete any new files that were created as a result of resizing the image
@@ -80,23 +139,14 @@ class TinyCIMM {
 		// what CHMOD permissions should we use for the upload folders?
 		$chmod = $this->config->item('tinycimm_asset_upload_chmod');
 		
-		// image dir
+		// asset dir
 		if (!file_exists($this->config->item('tinycimm_image_upload_path'))) {
 			@mkdir($this->config->item('tinycimm_image_upload_path'), $chmod) OR show_error('Unable to create image folder '.$this->config->item('tinycimm_image_upload_path').'<br/><strong>Please adjust permissions</strong>');
-		}
-		// thumb dir
-		if (!file_exists($this->_full_thumb_path = $this->config->item('tinycimm_image_thumb_upload_path'))) {
-			@mkdir($this->_full_thumb_path, $chmod) OR show_error('Unable to create thumbnails folder '.$this->_full_thumb_path.'<br/><strong>Please adjust permissions</stro
-ng>');
-		}
-		// orig dir
-		if (!file_exists($this->_full_orig_path = $this->config->item('tinycimm_image_upload_path'))) {
-			@mkdir($this->_full_orig_path, $chmod) OR show_error('Unable to create image folder '.$this->_full_orig_path.'<br/><strong>Please adjust permissions</strong>');
 		}
 	}
 	
 	/**
-	* Throw up an alert message
+	* Throw up an alert message using TinyMCE's alert method (only used in upload function at this time)
 	**/
 	public function tinymce_alert($message){
 		echo "<script type=\"text/javascript\">

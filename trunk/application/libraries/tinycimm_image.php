@@ -66,7 +66,7 @@ class TinyCIMM_image extends TinyCIMM {
 		$totimagesize = 0;
 		
 		foreach($query->result_array() AS $image) {
-	  		TinyCIMM_image::gen_thumb($this->config->item('tinycimm_image_thumb_upload_path').$image['filename']);
+	  		TinyCIMM_image::gen_thumb($this->config->item('tinycimm_image_upload_cache_path').$image['filename']);
 	  		
 	  		/**
 			* @TODO Assumes uploaded folder is /images/uploaded/
@@ -150,16 +150,17 @@ class TinyCIMM_image extends TinyCIMM {
 	}
 
 	/**
-	* upload image to dir and insert info into DB
+	* upload asset to dir and insert info into DB
 	**/
-	public function upload_image() {
+	public function upload_asset() {
 		$upload_config = $this->config->item('upload_config');
-		// if file has been selected
+		// if file has been uploaded
 		if (isset($_FILES[$upload_config['field_name']]['name']) AND $_FILES[$upload_config['field_name']]['name'] != '') {
 
 			// load upload library
 			$this->load->library('upload', $this->config->item('upload_config'));
-	
+
+			// move file into specified upload directory	
 			if (!$this->upload->do_upload($upload_config['field_name']))  {
 			 	/* upload failed */  
 				$this->tinymce_alert('There was an error processing the request: '.$this->upload->display_errors());
@@ -420,7 +421,7 @@ class TinyCIMM_image extends TinyCIMM {
 		}
 		else {
 			$response = $query->row_array();
-			$this->gen_thumb($this->config->item('tinycimm_image_thumb_upload_path').$image);
+			$this->gen_thumb($this->config->item('tinycimm_image_upload_cache_path').$image);
 			$response['outcome'] = 'success';
 		}
 	
