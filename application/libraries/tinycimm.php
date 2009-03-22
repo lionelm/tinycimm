@@ -97,7 +97,7 @@ ng>');
 	}
 	
 	/**
-	*
+	* Throw up an alert message
 	**/
 	public function tinymce_alert($message){
 		echo "<script type=\"text/javascript\">
