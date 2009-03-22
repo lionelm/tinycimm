@@ -51,7 +51,7 @@ window.onload = function() {
 <base target="_self" />
 </head>
 <body id="advimage" style="background:#FFF;margin:0">
-	<iframe id="hidden_iframe" name="hidden_iframe" src="javascript:false" style="width:0;height:0;border:0px solid #fff;"></iframe>
+	<iframe id="hidden_iframe" name="hidden_iframe" src="javascript:false" style="display:none"></iframe>
 	<form method="post" target="hidden_iframe" enctype="multipart/form-data" action="" id="uploadform" name="uploadform">
 		<table border="0" cellpadding="4" cellspacing="0">
 			<tr><td>Select File</td><td colspan="3"><input type="file" id="fileupload" name="fileupload" size="25" style="display:inline;width:220px;" /></td></tr>
@@ -87,7 +87,6 @@ window.onload = function() {
 			</tr>
 			<tr>
 				<td colspan="4">
-					<br/>
 					<input type="submit" class="button" name="submit_upload" value="Upload" onclick="dimimage();document.forms['uploadform'].submit();">
 				</td>
 			</tr>

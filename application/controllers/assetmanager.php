@@ -29,6 +29,10 @@ class Assetmanager extends Controller
 		}
   	}
 
+	/*
+	* prevent default controller method execution, use the default CI segment method to load in the corresponding
+	* tinycimm library, and use the next segment to execute the corresponding libraries' method
+	*/
 	function _remap($lib){
 		$param = array_slice(explode("/", $this->uri->uri_string()),4);
 		$method = $this->uri->segment(3);

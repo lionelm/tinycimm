@@ -72,11 +72,10 @@ class TinyCIMM {
 	}
 
 	
-    /** 
-    * check if image directories exist, if not then try to create them with 0777/0755 permissions
-    *
-    * Added config variable to allow user to choose between 0777 and 0755, as different server setups require different settings
-    **/    
+	/** 
+	* check if image directories exist, if not then try to create them with 0777/0755 permissions
+	* Added config variable to allow user to choose between 0777 and 0755, as different server setups require different settings
+	**/    
 	public function check_paths() {
 		// what CHMOD permissions should we use for the upload folders?
 		$chmod = $this->config->item('tinycimm_asset_upload_chmod');
