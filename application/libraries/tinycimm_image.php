@@ -4,6 +4,8 @@ class TinyCIMM_image extends TinyCIMM {
 
 	/**
 	* get folder listing from db
+	*
+	* @TODO if we move to a category system, this will become obsolete. @Liam
 	**/
 	public function get_folder_list($arg) {
 		header("Cache-Control: no-cache, must-revalidate");
@@ -62,17 +64,33 @@ class TinyCIMM_image extends TinyCIMM {
 		$query = $this->db->query($sql, array($arg['folder']));
 		$data['images'] = array();
 		$totimagesize = 0;
+		
 		foreach($query->result_array() AS $image) {
 	  		TinyCIMM_image::gen_thumb($this->config->item('tinycimm_image_thumb_upload_path').$image['filename']);
+	  		
+	  		/**
+			* @TODO Assumes uploaded folder is /images/uploaded/
+			* @Liam
+			**/
 			$imgsize = ($imgsize = @getimagesize('./images/uploaded/'.$image['filename'])) ? $imgsize : array(0,0);
+			/**/
+			
 			$image['width'] = $imgsize[0];
 			$image['height'] = $imgsize[1];
 			$image['dimensions'] = $imgsize[0].'x'.$imgsize[1];
 			$image['extension'] = TinyCIMM_image::get_extension($image['filename']);
+			
+			/**
+			* @TODO Assumes uploaded folder is /images/uploaded/
+			* @Liam
+			**/
 			$image['filesize'] = round(@filesize('./images/uploaded/'.$image['filename'])/1024, 0);
+			/**/
+			
 			$data['images'][] = $image;	 
 			$totimagesize = $totimagesize + $image['filesize'];
 		}
+		
 		// prepare total image size
 		$data['folderinfo']['tot_file_size'] = ($totimagesize > 1024) ? round($totimagesize/1024, 2).'mb' : $totimagesize.'kb';
 
@@ -97,15 +115,24 @@ class TinyCIMM_image extends TinyCIMM {
 				ON asset.folder = asset_folder.id
 			ORDER by asset.folder ASC, asset.caption ASC';
 		$query = $this->db->query($sql);
+		
 		foreach($query->result_array() AS $image) {
 			$image['foldername'] = 'General/'.($image['foldername']!=''?$image['foldername'].'/':'');
+			
+			/**
+			* @TODO Assumes uploaded folder is /images/uploaded/
+			* @Liam
+			**/
 			$output .= '["'.$image['foldername'].$image['caption'].'", "'.base_url('images/uploaded/'.$image['filename']).'", "desc"],'."\n";
+			/**/
+			
 		}
+		
 		die(rtrim($output, ",\n").');');
   	}
   	
   	/**
-  	*
+  	* 
   	**/
 	public function setview($args) {
 		$this->session->set_userdata('cimm_view', $args['view']);
@@ -172,11 +199,19 @@ class TinyCIMM_image extends TinyCIMM {
 				VALUES (?, ?, ?, ?, ?)';
 			$query = $this->db->query($sql, array(basename($image_data['orig_name']), basename($image_data['full_path']), $alttext, $folder, time()));
 			$lastid = $this->db->insert_id();
-			 
+			
+			/**
+			* @TODO Assumes uploaded folder is /images/uploaded/
+			* @Liam
+			**/
 			die("<script type=\"text/javascript\">
 			parent.removedim();
 			parent.updateimg('".base_url('images/uploaded/'.basename($image_data['full_path']))."', '".$alttext."');
 			</script>");
+			/**
+			* @TODO Assumes uploaded folder is /images/uploaded/
+			* @Liam
+			**/
 			  
 		}
 		// no file specified to upload
@@ -215,7 +250,7 @@ class TinyCIMM_image extends TinyCIMM {
 	}
   	
   	/**
-  	*
+  	* @TODO would become obsolete if we switched away from a multi folder system and went with categories @Liam
   	**/
 	public function delete_folder($arg) {
 		$folder = isset($arg['folder']) ? (int) $this->input->xss_clean($arg['folder']) : 0;
@@ -248,7 +283,7 @@ class TinyCIMM_image extends TinyCIMM {
  	}
   	
   	/**
-  	*
+  	* @TODO would become obsolete if we switched away from a multi folder system and went with categories @Liam
   	**/
 	public function add_folder($arg){ 
 		$caption = isset($arg['caption']) ? $this->input->xss_clean($arg['caption']) : '';
@@ -288,7 +323,7 @@ class TinyCIMM_image extends TinyCIMM {
   	}
   	
   	/**
-  	*
+  	* @TODO would become obsolete if we switched away from a multi folder system and went with categories @Liam
   	**/
 	public function edit_folder($arg) {
 		header("Cache-Control: no-cache, must-revalidate");
@@ -315,7 +350,7 @@ class TinyCIMM_image extends TinyCIMM {
 	}
   	
   	/**
-  	*
+  	* @TODO would become obsolete if we switched away from a multi folder system and went with categories @Liam
   	**/
 	public function get_folder_select($args){
 		$data['folderid'] = isset($args['folder']) ? (int) $args['folder'] : 0;
@@ -383,7 +418,7 @@ class TinyCIMM_image extends TinyCIMM {
   	}
 	
 	/**
-	*
+	* @TODO not sure if its worth assuming a multi-user system yet.
 	**/
 	public function get_user_info() {
 		// get user info: total images uploaded, privelages, max upload sizes etc etc
@@ -445,7 +480,7 @@ class TinyCIMM_image extends TinyCIMM {
 	}
   	
   	/**
-  	*
+  	* generate a thumbnail of an image using CI's image library class
   	**/
 	public function gen_thumb($thumb_file='', $width=95, $height=95) {
 		if(file_exists($thumb_file) == FALSE) {
