@@ -10,7 +10,7 @@ $config['resize_config']['quality'] = 90;
 
 $config['tinycimm_views_root'] = 'media/ajaxfilemanager/';
 $config['tinycimm_image_upload_path'] = $_SERVER['DOCUMENT_ROOT'].'/images/uploaded/';
-$config['tinycimm_image_thumb_upload_path'] = $config['tinycimm_image_upload_path'].'thumbs/';
+$config['tinycimm_image_upload_cache_path'] = $config['tinycimm_image_upload_path'].'cache/';
 
 // set to either 0777 or 0755 depending on your server setup
 $config['tinycimm_asset_upload_chmod'] = 0777;
