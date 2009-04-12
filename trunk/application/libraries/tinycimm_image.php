@@ -2,6 +2,10 @@
  
 class TinyCIMM_image extends TinyCIMM {
 
+	public function upload_image(){
+		$this->upload_asset();
+	}
+
 	/**
 	* get folder listing from db
 	*
@@ -30,7 +34,7 @@ class TinyCIMM_image extends TinyCIMM {
 	
 		// first we get info on uncategorized ROOT folder
 		$sql = 'SELECT id FROM asset
-			WHERE folder = \'\'';
+			WHERE folder_id = \'\'';
 		$query = $ci->db->query($sql);
 	
 		// DEFAULT current folder info, default root folder info
@@ -41,7 +45,7 @@ class TinyCIMM_image extends TinyCIMM {
 		foreach($ci->tinycimm_model->get_asset_folders() as $folderinfo) {
 	 		// number of images in folder
 		  	$sql = 'SELECT id FROM asset
-				WHERE folder = ?
+				WHERE folder_id = ?
 				ORDER BY filename';
 	
 			$file_query = $ci->db->query($sql, array($folderinfo['id']));
@@ -60,7 +64,7 @@ class TinyCIMM_image extends TinyCIMM {
 		// get all files in cur folder
 		$sql = 'SELECT * 
 				FROM asset
-				WHERE folder = ?
+				WHERE folder_id = ?
 				ORDER by filename ASC';
 		$query = $ci->db->query($sql, array($arg['folder']));
 		$data['images'] = array();
@@ -150,82 +154,6 @@ class TinyCIMM_image extends TinyCIMM {
 		$this->db->query($sql, array($arg['caption'], $arg['alttext'], $arg['folder'], $arg['imageid']));
 	}
 
-	/**
-	* upload asset to dir and insert info into DB
-	**/
-	public function upload_asset() {
-		$upload_config = $this->config->item('upload_config');
-		// if file has been uploaded
-		if (isset($_FILES[$upload_config['field_name']]['name']) AND $_FILES[$upload_config['field_name']]['name'] != '') {
-
-			// load upload library
-			$this->load->library('upload', $this->config->item('upload_config'));
-
-			// move file into specified upload directory	
-			if (!$this->upload->do_upload($upload_config['field_name']))  {
-			 	/* upload failed */  
-				$this->tinymce_alert('There was an error processing the request: '.$this->upload->display_errors());
-				exit;
-	  		}
-			$image_data = $this->upload->data();
-			$max_x = (int)$this->input->post('max_x');
-			$max_y = (int)$this->input->post('max_y');
-			$adjust_size = (int)$this->input->post('adjust_size');
-			
-			// resize image
-			if ($adjust_size == 1 AND ($image_data['image_width'] > $max_x OR $image_data['image_height'] > $max_y)) {
-				/*	
-				$resize_config = $this->config->item('resize_config');		
-				$resize_config['source_image'] = $image_data['full_path'];
-				$resize_config['width'] = $max_x;
-				$resize_config['height'] = $max_y;
-				$this->load->library('image_lib', $resize_config);
-				
-				//  resize image
-				if (!$this->image_lib->resize()) {
-					$this->tinymce_alert($this->image_lib->display_errors());
-					exit;
-				}
-	
-				// store new dimensions
-				$image_data['image_width'] = $this->image_lib->width;
-				$image_data['image_height'] = $this->image_lib->height;
-				*/
-			}
-	
-			$alttext = str_replace($image_data['file_ext'], '', strtolower($image_data['orig_name']));
-			$folder = (int) $this->input->post('uploadfolder');
-			  
-			// update the fileid for the photo in db
-			$sql = 'INSERT INTO asset (caption, filename, alttext, folder, dateadded)
-				VALUES (?, ?, ?, ?, ?)';
-			$query = $this->db->query($sql, array(basename($image_data['orig_name']), basename($image_data['full_path']), $alttext, $folder, time()));
-			$lastid = $this->db->insert_id();
-			
-			/**
-			* @TODO Assumes uploaded folder is /images/uploaded/
-			* @Liam
-			**/
-			die("<script type=\"text/javascript\">
-			parent.removedim();
-			parent.updateimg('".base_url('images/uploaded/'.basename($image_data['full_path']))."', '".$alttext."');
-			</script>");
-			/**
-			* @TODO Assumes uploaded folder is /images/uploaded/
-			* @Liam
-			**/
-			  
-		}
-		// no file specified to upload
-		else {
-			echo "<script type=\"text/javascript\">
-			parent.removedim();
-			parent.parent.tinyMCEPopup.editor.windowManager.alert('Please select an image to upload.');
-			</script>";
-			exit;
-		}
-  	}
-  	
   	/**
   	* delete an image from database and file system
   	**/
@@ -356,19 +284,13 @@ class TinyCIMM_image extends TinyCIMM {
   	**/
 	public function get_folder_select($args){
 		$data['folderid'] = isset($args['folder']) ? (int) $args['folder'] : 0;
-
-		// get all folders
-		$sql = 'SELECT * 
-			FROM asset_folder
-			WHERE user_id = ?
-			ORDER by caption ASC';
-		$query = $this->db->query($sql, array($this->user_id));
-	
+		$ci = &get_instance();
+		
 		$data['folders'] = array();
-		foreach($query->result_array() AS $folderinfo) {
+		foreach($folders = $ci->tinycimm_model->get_folders($ci->user_id) AS $folderinfo) {
 			$data['folders'][] = $folderinfo;
 		}
-		die($this->load->view($this->config->item('tinycimm_views_root').'image_folder_select', $data, true));
+		die($ci->load->view($ci->config->item('tinycimm_views_root').'image_folder_select', $data, true));
 	}
 	
 	/**
@@ -433,38 +355,40 @@ class TinyCIMM_image extends TinyCIMM {
 	* @TODO not sure if its worth assuming a multi-user system yet.
 	**/
 	public function get_user_info() {
+		$ci = &get_instance();
 		// get user info: total images uploaded, privelages, max upload sizes etc etc
+
 	
 		$sql = 'SELECT COUNT(id) AS tot_images
 			FROM asset 
 			WHERE user_id = ?';
-		$query = $this->db->query($sql, array($this->user_id));
+		$query = $ci->db->query($sql, array($ci->user_id));
 		$data['user'] = $query->row_array();
 	
 		// num gif
 		$sql = 'SELECT id
 			FROM asset
 			WHERE filename LIKE \'%.gif\'';
-		$query = $this->db->query($sql);
+		$query = $ci->db->query($sql);
 		$data['user']['tot_gif'] = $query->num_rows();
 		// num jpg
 		$sql = 'SELECT id
 			FROM asset
 			WHERE filename LIKE \'%.jpg\'';
-		$query = $this->db->query($sql);
+		$query = $ci->db->query($sql);
 		$data['user']['tot_jpg'] = $query->num_rows();
 		// num png
 		$sql = 'SELECT id
 			FROM asset
 			WHERE filename LIKE \'%.png\'';
-		$query = $this->db->query($sql);
+		$query = $ci->db->query($sql);
 		$data['user']['tot_png'] = $query->num_rows();
 
 		header("Pragma: no-cache");
 		header("Cache-Control: no-store, no-cache, max-age=0, must-revalidate");
 		header('Content-Type: text/x-json');
 		
-		$this->load->view($this->config->item('tinycimm_views_root').'image_user_info', $data);
+		$ci->load->view($ci->config->item('tinycimm_views_root').'image_user_info', $data);
 	}
 	
 	/**
