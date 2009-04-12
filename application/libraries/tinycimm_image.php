@@ -2,6 +2,12 @@
  
 class TinyCIMM_image extends TinyCIMM {
 
+	var $view_path = '';
+
+	public function get($asset_id, $width=200, $height=200){
+		$this->get_asset((int) $asset_id, $width, $height);
+	}
+
 	public function upload_image(){
 		$this->upload_asset();
 	}
@@ -32,13 +38,10 @@ class TinyCIMM_image extends TinyCIMM {
 	public function get_file_folder_list($arg) {
 		$ci = &get_instance();
 	
-		// first we get info on uncategorized ROOT folder
-		$sql = 'SELECT id FROM asset
-			WHERE folder_id = \'\'';
-		$query = $ci->db->query($sql);
-	
+		$assets = $ci->tinycimm_model->get_assets();
+
 		// DEFAULT current folder info, default root folder info
-		$data['folderinfo'] = array('id'=>'0','user_id' => '0','username' => 'demo','caption' => 'General', 'num_files' => $query->num_rows());
+		$data['folderinfo'] = array('id'=>'0','user_id' => '0','username' => 'demo','caption' => 'General', 'num_files' => count($assets));
 		// create [all folders] list
 		$data['folders'][] = $data['folderinfo'];
 
@@ -102,7 +105,7 @@ class TinyCIMM_image extends TinyCIMM {
 		header("Pragma: no-cache");
 		header("Cache-Control: no-store, no-cache, max-age=0, must-revalidate");
 		header('Content-Type: text/x-json'); 
-		$ci->load->view($ci->config->item('tinycimm_views_root').'image_'.$ci->session->userdata('cimm_view').'_list', $data);
+		$ci->load->view($this->view_path.'image_'.$ci->session->userdata('cimm_view').'_list', $data);
 	}
   
 	/**
@@ -285,12 +288,11 @@ class TinyCIMM_image extends TinyCIMM {
 	public function get_folder_select($args){
 		$data['folderid'] = isset($args['folder']) ? (int) $args['folder'] : 0;
 		$ci = &get_instance();
-		
 		$data['folders'] = array();
 		foreach($folders = $ci->tinycimm_model->get_folders($ci->user_id) AS $folderinfo) {
 			$data['folders'][] = $folderinfo;
 		}
-		die($ci->load->view($ci->config->item('tinycimm_views_root').'image_folder_select', $data, true));
+		die($ci->load->view($this->view_path.'image_folder_select', $data, true));
 	}
 	
 	/**
@@ -388,7 +390,7 @@ class TinyCIMM_image extends TinyCIMM {
 		header("Cache-Control: no-store, no-cache, max-age=0, must-revalidate");
 		header('Content-Type: text/x-json');
 		
-		$ci->load->view($ci->config->item('tinycimm_views_root').'image_user_info', $data);
+		$ci->load->view($this->view_path.'image_user_info', $data);
 	}
 	
 	/**

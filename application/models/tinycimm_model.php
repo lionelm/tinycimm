@@ -18,6 +18,10 @@ class Tinycimm_model extends Model {
 	function get_asset($asset_id){
 		return $this->db->where('id', (int) $asset_id)->get('asset', 1)->row();
 	}
+
+	function get_assets($folder_id=""){
+		return $this->db->where('folder_id', $folder_id)->orderby('dateadded', 'asc')->get('asset')->result();
+	}
 	
 	/**
 	* Deletes an asset's data from the database
@@ -33,8 +37,8 @@ class Tinycimm_model extends Model {
 	*
 	* @returns integer|insert_id the last insert id from the id sequence colmn
 	**/
-	function insert_asset($name, $filename, $description, $folder_id){
-		$fields = array('name' => $name, 'filename' => $filename, 'description' => $description, 'folder_id' => $folder_id);
+	function insert_asset($folder_id, $name, $filename, $description, $extension, $mimetype){
+		$fields = array('folder_id' => $folder_id, 'name' => $name, 'filename' => $filename, 'description' => $description, 'extension' => $extension, 'mimetype' => $mimetype);
 		$this->db->set($fields)->insert('asset');
 		return $this->db->insert_id();
 	}
