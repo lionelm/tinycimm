@@ -42,7 +42,8 @@ class Assetmanager extends Controller
 			$param[$count] = "'".$element."'";
 			$count++;
 		}
-		$this->{$tinycimm_lib}->{$method}(join(',', $param));
+		$this->{$tinycimm_lib}->view_path = $this->config->item('tinycimm_views_root').$this->config->item('tinycimm_views_root_'.$lib);
+		eval('$this->'.$tinycimm_lib. "->" . $method . "(".join(",", $param).");");
 	}
 	
 } // class Assetmanager

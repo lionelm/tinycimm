@@ -2,6 +2,54 @@
  
 class TinyCIMM {
 
+	public function __construct(){
+
+	}
+
+	public function get_asset($asset_id, $width=200, $height=200, $quality=85, $send_nocache=true){
+		$ci = &get_instance();
+		$asset = $ci->tinycimm_model->get_asset($asset_id) or die('asset not found');
+		$asset->filepath = $ci->config->item('tinycimm_asset_path').$asset_id.$asset->extension;
+		if (!@file_exists($asset->filepath)) {
+			die('asset not found');
+		}
+		
+		$resize_asset = $this->resize_asset($asset, $width, $height, $quality);
+
+		header('Content-Transfer-Encoding: binary');
+		if ($send_nocache) {
+			header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+			header('Pragma: public');
+		}
+		header('Content-type: '.$resize_asset->mimetype);
+		header("Content-Length: ".filesize($resize_asset->filepath));
+		//ob_clean();
+		flush();
+		readfile($resize_asset->filepath);
+	}
+
+	public function resize_asset($asset, $width=200, $height=200, $quality=85, $cache=true){
+		$ci = &get_instance();
+		if ($cache) {
+			$asset->new_filepath = $ci->config->item('tinycimm_asset_path').'cache/'.$asset->id.'_'.$width.'_'.$height.'_'.$quality.$asset->extension;
+		} else {
+			$asset->newpath = $asset->filepath;
+		}
+		$resize_config = $ci->config->item('tinycimm_image_resize_config');		
+		$resize_config['source_image'] = $asset->filepath;
+		$resize_config['new_image'] = $asset->new_filepath;
+		$resize_config['width'] = $width;
+		$resize_config['height'] = $height;
+		$ci->load->library('image_lib');
+		$ci->image_lib->initialize($resize_config);
+		if (!$ci->image_lib->resize()) {
+			$this->tinymce_alert($ci->image_lib->display_errors());
+			exit;
+		}
+		$asset->filepath = $asset->new_filepath;
+		return $asset;
+	}
+
 	/**
 	* upload asset to directory and insert info into DB
 	**/
@@ -21,36 +69,34 @@ class TinyCIMM {
 				exit;
 	  		}
 			$image_data = $ci->upload->data();
+			$alttext = str_replace($image_data['file_ext'], '', strtolower($image_data['orig_name']));
+			$folder = (int) $ci->input->post('uploadfolder');
+		 
+			// insert the asset info into the db
+			$last_insert_id = $ci->tinycimm_model->insert_asset($folder, basename($image_data['orig_name']), basename($image_data['full_path']), $alttext, $image_data['file_ext'], $_FILES[$upload_config['field_name']]['type']);
+
+			// rename the uploaded file, CI's Upload library does not custom file naming 	
+			rename($image_data['full_path'], $image_data['file_path'].$last_insert_id.$image_data['file_ext']);
+			
 			$max_x = (int) $ci->input->post('max_x');
 			$max_y = (int) $ci->input->post('max_y');
 			$adjust_size = (int) $ci->input->post('adjust_size');
 			
 			// resize image
 			if ($adjust_size === 1 AND ($image_data['image_width'] > $max_x OR $image_data['image_height'] > $max_y)) {
-				/*	
 				$resize_config = $this->config->item('tinycimm_resize_config');		
 				$resize_config['source_image'] = $image_data['full_path'];
 				$resize_config['width'] = $max_x;
 				$resize_config['height'] = $max_y;
-				$this->load->library('image_lib', $resize_config);
-				
-				//  resize image
+				$this->load->library('image_lib');
+				$this->image_lib->initialize($resize_config);
 				if (!$this->image_lib->resize()) {
 					$this->tinymce_alert($this->image_lib->display_errors());
 					exit;
 				}
-	
-				// store new dimensions
 				$image_data['image_width'] = $this->image_lib->width;
 				$image_data['image_height'] = $this->image_lib->height;
-				*/
 			}
-	
-			$alttext = str_replace($image_data['file_ext'], '', strtolower($image_data['orig_name']));
-			$folder = (int) $ci->input->post('uploadfolder');
-		 
-			// insert the asset info into the db
-			$last_insert_id = $ci->tinycimm_model->insert_asset(basename($image_data['orig_name']), basename($image_data['full_path']), $alttext, $folder);
 			
 			/**
 			* @TODO Assumes uploaded folder is /images/uploaded/
@@ -134,12 +180,12 @@ class TinyCIMM {
 		$chmod = $this->config->item('tinycimm_asset_upload_chmod');
 		
 		// upload dir
-		if (!file_exists($this->config->item('tinycimm_image_upload_path'))) {
-			@mkdir($this->config->item('tinycimm_image_upload_path'), $chmod) or die('Error: Unable to create upload folder '.$this->config->item('tinycimm_image_upload_path').'<br/><strong>Please adjust permissions</strong>');
+		if (!file_exists($this->config->item('tinycimm_asset_path'))) {
+			@mkdir($this->config->item('tinycimm_asset_path'), $chmod) or die('Error: Unable to create asset folder '.$this->config->item('tinycimm_asset_path').'<br/><strong>Please adjust permissions</strong>');
 		}
 		// cache dir
-		if (!file_exists($this->config->item('tinycimm_image_upload_cache_path'))) {
-			@mkdir($this->config->item('tinycimm_image_upload_cache_path'), $chmod) or die('Error: Unable to create cache folder '.$this->config->item('tinycimm_image_upload_cache_path').'<br/><strong>Please adjust permissions</strong>');
+		if (!file_exists($this->config->item('tinycimm_asset_cache_path'))) {
+			@mkdir($this->config->item('tinycimm_asset_cache_path'), $chmod) or die('Error: Unable to create asset cache folder '.$this->config->item('tinycimm_asset_cache_path').'<br/><strong>Please adjust permissions</strong>');
 		}
 	}
 	
