@@ -6,28 +6,29 @@ class TinyCIMM {
 	* upload asset to directory and insert info into DB
 	**/
 	public function upload_asset() {
-		$upload_config = $this->config->item('upload_config');
+		$ci = &get_instance();
+		$upload_config = $ci->config->item('tinycimm_upload_config');
 		// if file has been uploaded
 		if (isset($_FILES[$upload_config['field_name']]['name']) AND $_FILES[$upload_config['field_name']]['name'] != '') {
 
 			// load upload library
-			$this->load->library('upload', $this->config->item('upload_config'));
+			$ci->load->library('upload', $upload_config);
 
 			// move file into specified upload directory	
-			if (!$this->upload->do_upload($upload_config['field_name']))  {
+			if (!$ci->upload->do_upload($upload_config['field_name']))  {
 			 	/* upload failed */  
 				$this->tinymce_alert('There was an error processing the request: '.$this->upload->display_errors());
 				exit;
 	  		}
-			$image_data = $this->upload->data();
-			$max_x = (int)$this->input->post('max_x');
-			$max_y = (int)$this->input->post('max_y');
-			$adjust_size = (int)$this->input->post('adjust_size');
+			$image_data = $ci->upload->data();
+			$max_x = (int) $ci->input->post('max_x');
+			$max_y = (int) $ci->input->post('max_y');
+			$adjust_size = (int) $ci->input->post('adjust_size');
 			
 			// resize image
-			if ($adjust_size == 1 AND ($image_data['image_width'] > $max_x OR $image_data['image_height'] > $max_y)) {
+			if ($adjust_size === 1 AND ($image_data['image_width'] > $max_x OR $image_data['image_height'] > $max_y)) {
 				/*	
-				$resize_config = $this->config->item('resize_config');		
+				$resize_config = $this->config->item('tinycimm_resize_config');		
 				$resize_config['source_image'] = $image_data['full_path'];
 				$resize_config['width'] = $max_x;
 				$resize_config['height'] = $max_y;
@@ -46,13 +47,10 @@ class TinyCIMM {
 			}
 	
 			$alttext = str_replace($image_data['file_ext'], '', strtolower($image_data['orig_name']));
-			$folder = (int) $this->input->post('uploadfolder');
-			  
-			// update the fileid for the photo in db
-			$sql = 'INSERT INTO asset (caption, filename, alttext, folder, dateadded)
-				VALUES (?, ?, ?, ?, ?)';
-			$query = $this->db->query($sql, array(basename($image_data['orig_name']), basename($image_data['full_path']), $alttext, $folder, time()));
-			$lastid = $this->db->insert_id();
+			$folder = (int) $ci->input->post('uploadfolder');
+		 
+			// insert the asset info into the db
+			$last_insert_id = $ci->tinycimm_model->insert_asset(basename($image_data['orig_name']), basename($image_data['full_path']), $alttext, $folder);
 			
 			/**
 			* @TODO Assumes uploaded folder is /images/uploaded/
@@ -70,11 +68,7 @@ class TinyCIMM {
 		}
 		// no file specified to upload
 		else {
-			echo "<script type=\"text/javascript\">
-			parent.removedim();
-			parent.parent.tinyMCEPopup.editor.windowManager.alert('Please select an image to upload.');
-			</script>";
-			exit;
+			$this->tinymce_alert('Please select an image to upload');
 		}
   	}
   	
@@ -110,7 +104,7 @@ class TinyCIMM {
 	}
 
 	/**
-	* Takes a PHP array and outputs it as a JOSN array to screen using PHP's die function
+	* Takes a PHP array and outputs it as a JSON array to screen using PHP's die function
 	*
 	* @param $response an array in PHP
 	**/
@@ -154,6 +148,7 @@ class TinyCIMM {
 	**/
 	public static function tinymce_alert($message){
 		echo "<script type=\"text/javascript\">
+		parent.removedim();
 		parent.parent.tinyMCEPopup.editor.windowManager.alert('".$message."');
 		</script";
 	}

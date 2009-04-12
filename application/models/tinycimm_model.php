@@ -10,7 +10,7 @@ class Tinycimm_model extends Model {
 	}
 	
 	/**
-	* get an asset from the database
+	* Get an asset from the database
 	*
 	* @param integer|$asset_id The id of the image to retrieve
 	* @return Object| an object containing full database row for the image
@@ -25,7 +25,18 @@ class Tinycimm_model extends Model {
 	* @param integer|$asset_id The id of the image to delete
 	**/
 	function delete_asset($asset_id){
-		$this->db->where('id', (int)$asset_id)->delete('asset');	
+		$this->db->where('id', (int) $asset_id)->delete('asset');	
+	}
+
+	/** 
+	* Inserts an asset into the database
+	*
+	* @returns integer|insert_id the last insert id from the id sequence colmn
+	**/
+	function insert_asset($name, $filename, $description, $folder_id){
+		$fields = array('name' => $name, 'filename' => $filename, 'description' => $description, 'folder_id' => $folder_id);
+		$this->db->set($fields)->insert('asset');
+		return $this->db->insert_id();
 	}
 	
 	/**
@@ -36,6 +47,10 @@ class Tinycimm_model extends Model {
 	**/
 	function get_asset_folders($orderby='caption'){
 		return $this->db->orderby($orderby, 'asc')->get('asset_folder')->row_array();
+	}
+
+	function get_folders($user_id){
+		return $this->db->where('user_id', (int) $user_id)->orderby('caption', 'asc')->get('asset_folder')->result_array();
 	}
 }
 ?>
