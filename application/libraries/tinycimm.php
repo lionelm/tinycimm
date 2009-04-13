@@ -6,6 +6,7 @@ class TinyCIMM {
 		$ci = &get_instance();
                 $this->db = &$ci->db;
                 $this->config = &$ci->config;
+		$this->input = &$ci->input;
 	}
 
 	public function get_asset($asset_id, $width=200, $height=200, $quality=85, $send_nocache=true){
@@ -74,7 +75,7 @@ class TinyCIMM {
 			$alttext = str_replace($image_data['file_ext'], '', strtolower($image_data['orig_name']));
 			$folder = (int) $ci->input->post('uploadfolder');
 
-			$last_insert_id = $ci->tinycimm_model->get_last_insert_id('asset');
+			$last_insert_id = $ci->tinycimm_model->get_last_id('asset');
 			$last_insert_id++;
 		 
 			// insert the asset info into the db

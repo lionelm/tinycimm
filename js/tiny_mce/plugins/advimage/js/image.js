@@ -776,7 +776,7 @@ var ImageDialog = {
 	addFolder : function() {
 		var captionID = o('add_folder_caption').value.replace(/^\s+|\s+$/g, '');
 		// send request
-		var requesturl = ImageDialog.baseURL('assetmanager/image/add_folder/caption')+'/'+captionID;
+		var requesturl = ImageDialog.baseURL('assetmanager/image/add_folder')+'/'+captionID;
 		tinymce.util.XHR.send({
 			url : requesturl,
 			error : function(response) {
