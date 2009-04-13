@@ -57,7 +57,7 @@
 				<?} else {?>
 					<?foreach($images AS $image):?>
 					<li>
-						<span id="image-<?=$image['id'];?>" onclick="ImageDialog.insertPreviewImage('<?=$image['filename'];?>', '<?=$image['alttext'];?>');" style="cursor:pointer;display:block" title="insert image" onMouseOver="this.style.color='#000066';this.style.background='#EEEEEE';" onMouseOut="this.style.color='#000000';this.style.background='#FFFFFF';">
+						<span id="image-<?=$image['id'];?>" onclick="ImageDialog.insertPreviewImage('<?=$image['id'];?>', '<?=$image['alttext'];?>');" style="cursor:pointer;display:block" title="insert image" onMouseOver="this.style.color='#000066';this.style.background='#EEEEEE';" onMouseOut="this.style.color='#000000';this.style.background='#FFFFFF';">
 						<span class="image_dimensions" style="display:inline;"><?=$image['dimensions'];?></span>
 						<img id="img-<?=$image['id'];?>" class="image_preview" src="img/icons/<?=$image['extension'];?>.gif" />
 						<?=$image['name'];?>

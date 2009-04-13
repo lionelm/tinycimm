@@ -4,6 +4,10 @@ class TinyCIMM_image extends TinyCIMM {
 
 	var $view_path = '';
 
+	public function __construct(){
+		parent::__construct();
+	}
+
 	public function get($asset_id, $width=200, $height=200){
 		$this->get_asset((int) $asset_id, $width, $height);
 	}
@@ -15,7 +19,6 @@ class TinyCIMM_image extends TinyCIMM {
 		die(print_r(TinyCIMM_model::get_asset($image_id)));
 	}
   	
-
 	/**
 	* uploads an asset and insert info into db
 	**/
@@ -98,7 +101,7 @@ class TinyCIMM_image extends TinyCIMM {
 			LEFT JOIN asset_folder
 				ON asset.folder = asset_folder.id
 			ORDER by asset.folder ASC, asset.name ASC';
-		$query = $ci->db->query($sql);
+		$query = $this->db->query($sql);
 		
 		foreach($query->result_array() AS $image) {
 			$image['foldername'] = 'General/'.($image['foldername']!=''?$image['foldername'].'/':'');
@@ -154,28 +157,29 @@ class TinyCIMM_image extends TinyCIMM {
   	/**
   	* @TODO would become obsolete if we switched away from a multi folder system and went with categories @Liam
   	**/
-	public function delete_folder($arg) {
-		$folder = isset($arg['folder']) ? (int) $this->input->xss_clean($arg['folder']) : 0;
+	public function delete_folder($folder_id=0) {
+		$ci = &get_instance();
+		$folder_id = (int) $folder_id;
 		
-		if ($folder > 0 ) {
+		if ($folder_id > 0 ) {
 			// move images from folder to root folder
-			$this->db->query('UPDATE asset SET folder = \'\' WHERE folder = ?', array($folder));
-			$images_affected = $this->db->affected_rows();
+			$this->db->query('UPDATE asset SET folder_id = \'\' WHERE folder_id = ?', array($folder_id));
+			$images_affected = $ci->db->affected_rows();
 		
 			// remove folder
-			$this->db->query('DELETE FROM asset_folder WHERE id = ?', array($folder));
+			$this->db->query('DELETE FROM asset_folder WHERE id = ?', array($folder_id));
 	  
 			// get new list of folders
 			$sql = 'SELECT *
 				FROM asset_folder
 				WHERE user_id = ?
 				ORDER by name ASC';
-			$query = $this->db->query($sql, array($this->user_id));
+			$query = $this->db->query($sql, array($ci->user_id));
 			$data['folders'][0] = array('id'=>0,'name'=>'General');
 			foreach($query->result_array() AS $folderinfo) {
 		 		$data['folders'][] = $folderinfo;
 			}
-			die($this->load->view($this->config->item('tinycimm_views_root').'image_folder_list', $data, true).'<div style="display:none" id="message">'.(($images_affected>0?$images_affected.' image'.($images_affected==1?'':'s').' moved to General folder.':'').'</div>'));
+			die($this->load->view($this->view_path.'image_folder_list', $data, true).'<div style="display:none" id="message">'.(($images_affected>0?$images_affected.' image'.($images_affected==1?'':'s').' moved to General folder.':'').'</div>'));
 		} else {
 			$response['outcome'] = 'error';
 			$response['message'] = 'You can\'t delete this folder.';
@@ -187,16 +191,16 @@ class TinyCIMM_image extends TinyCIMM {
   	/**
   	* @TODO would become obsolete if we switched away from a multi folder system and went with categories @Liam
   	**/
-	public function add_folder($arg){ 
-		$caption = isset($arg['caption']) ? $this->input->xss_clean($arg['caption']) : '';
+	public function add_folder($name=''){ 
+		$name = $this->input->xss_clean($name);
 	
-		if ($caption == '') {
+		if ($name == '') {
 			$response['outcome'] = 'error';
 			$response['message'] = 'Please specify a valid folder name.';
-		} else if (strlen($caption) == 1) {
+		} else if (strlen($name) == 1) {
 			$response['outcome'] = 'error';
 			$response['message'] = 'The folder name must be at least 2 characters in length.';
-		} else if (strlen($caption) > 24) {
+		} else if (strlen($name) > 24) {
 			$response['outcome'] = 'error';
 			$response['message'] = "The folder name must be less than 24 characters.\n(The supplied folder name is "+captionID.length+" characters).";
 		}
@@ -205,9 +209,9 @@ class TinyCIMM_image extends TinyCIMM {
 			TinyCIMM::response_encode($response);
 		}
 	
-		$sql = 'INSERT INTO asset_folder (caption)
+		$sql = 'INSERT INTO asset_folder (name)
 			VALUES (?)';
-		$query = $this->db->query($sql, array($caption));
+		$query = $this->db->query($sql, array($name));
 		$lastid = $this->db->insert_id();
 
 		// get new list of folders
@@ -258,7 +262,7 @@ class TinyCIMM_image extends TinyCIMM {
 		$data['folderid'] = isset($args['folder']) ? (int) $args['folder'] : 0;
 		$ci = &get_instance();
 		$data['folders'] = array();
-		foreach($folders = $ci->tinycimm_model->get_folders($ci->user_id) AS $folderinfo) {
+		foreach($folders = $ci->tinycimm_model->get_asset_folders('name', $ci->user_id) AS $folderinfo) {
 			$data['folders'][] = $folderinfo;
 		}
 		die($ci->load->view($this->view_path.'image_folder_select', $data, true));
@@ -300,15 +304,16 @@ class TinyCIMM_image extends TinyCIMM {
 	/**
 	* get image details from db
 	**/
-	public function get_image_info($arg = array('image' => '')) {
-		$image = isset($arg['image']) ? basename($this->input->xss_clean($arg['image'])) : '';
+	public function get_image_info($asset_id=0) {
+		$ci = &get_instance();
+		$image = $ci->input->xss_clean($asset_id);
 
 		// get info image
 		$sql = 'SELECT * 
 			FROM asset 
-			WHERE filename = ?
+			WHERE id = ?
 			LIMIT 1';
-		$query = $this->db->query($sql, array($image));
+		$query = $this->db->query($sql, array($asset_id));
 		if ($query->num_rows() == 0) {
 			$response['outcome'] = 'error';
 			$response['message'] = 'Image not found in database.';
@@ -324,7 +329,7 @@ class TinyCIMM_image extends TinyCIMM {
 	/**
 	* @TODO not sure if its worth assuming a multi-user system yet.
 	**/
-	public function get_user_info() {
+	public function get_user_info(){
 		$ci = &get_instance();
 		// get user info: total images uploaded, privelages, max upload sizes etc etc
 
@@ -332,26 +337,26 @@ class TinyCIMM_image extends TinyCIMM {
 		$sql = 'SELECT COUNT(id) AS tot_images
 			FROM asset 
 			WHERE user_id = ?';
-		$query = $ci->db->query($sql, array($ci->user_id));
+		$query = $this->db->query($sql, array($ci->user_id));
 		$data['user'] = $query->row_array();
 	
 		// num gif
 		$sql = 'SELECT id
 			FROM asset
 			WHERE filename LIKE \'%.gif\'';
-		$query = $ci->db->query($sql);
+		$query = $this->db->query($sql);
 		$data['user']['tot_gif'] = $query->num_rows();
 		// num jpg
 		$sql = 'SELECT id
 			FROM asset
 			WHERE filename LIKE \'%.jpg\'';
-		$query = $ci->db->query($sql);
+		$query = $this->db->query($sql);
 		$data['user']['tot_jpg'] = $query->num_rows();
 		// num png
 		$sql = 'SELECT id
 			FROM asset
 			WHERE filename LIKE \'%.png\'';
-		$query = $ci->db->query($sql);
+		$query = $this->db->query($sql);
 		$data['user']['tot_png'] = $query->num_rows();
 
 		header("Pragma: no-cache");
