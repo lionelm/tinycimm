@@ -558,6 +558,7 @@ var ImageDialog = {
 		// prep thumb path
 		var imgsrc_arr = tinyMCEPopup.editor.documentBaseURI.toRelative(o('src').value).split('/');
 		var imgsrc = imgsrc_arr[imgsrc_arr.length-1];
+		var imgid = 0;
 		// set thumb	
 		o('manage_thumb_img').src = 'img/progress.gif';
 		o('manage_thumb_img').width = 95;
@@ -567,7 +568,7 @@ var ImageDialog = {
 		mcTabs.displayTab('manager_tab','manager_panel');
 		// send a request for image info
 		tinymce.util.XHR.send({
-			url : ImageDialog.baseURL('assetmanager/image/get_image_info/image/'+imgsrc),
+			url : ImageDialog.baseURL('assetmanager/image/get_image_info/'+imgid),
 			error : function(response) {
 				tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the image info.');
 			},
@@ -723,7 +724,7 @@ var ImageDialog = {
 	// and shows the preview image in the dialog window
 	insertPreviewImage : function(imgsrc, alttext) {
 		//imgsrc = imgsrc.replace(/\@/, "");
-		imgsrc = o('src').value = ImageDialog.baseURL('images/uploaded/'+imgsrc);
+		imgsrc = o('src').value = ImageDialog.baseURL('assets/'+imgsrc);
 		o('alt').value = alttext;
 		o('title').value = '';
 		this.showPreviewImage(imgsrc);
@@ -801,7 +802,7 @@ var ImageDialog = {
 		tinyMCEPopup.editor.windowManager.confirm('Are you sure you want to delete this folder?', function(s) {
 			if (!s) {return false;}
 			// send request
- 			var requesturl = ImageDialog.baseURL('assetmanager/image/delete_folder/folder')+'/'+folderID;
+ 			var requesturl = ImageDialog.baseURL('assetmanager/image/delete_folder')+'/'+folderID;
 			tinymce.util.XHR.send({
 				url : requesturl,
 				error : function(response) {

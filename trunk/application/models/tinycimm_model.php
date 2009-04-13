@@ -56,12 +56,16 @@ class Tinycimm_model extends Model {
 	* @param String|$orderby the method to sort the results by
 	* @return Array| the full query array
 	**/
-	function get_asset_folders($orderby='name'){
-		return $this->db->order_by($orderby, 'asc')->get('asset_folder')->result_array();
+	function get_asset_folders($orderby='name', $user_id=FALSE){
+		if ($user_id === FALSE) {
+			return $this->db->order_by($orderby, 'asc')->get('asset_folder')->result_array();
+		} else {
+			return $this->db->where('user_id', (int) $user_id)->order_by($orderby, 'asc')->get('asset_folder')->result_array();
+		}
 	}
 
-	function get_folders($user_id){
-		return $this->db->where('user_id', (int) $user_id)->order_by('name', 'asc')->get('asset_folder')->result_array();
+	function get_last_id($tablename=''){
+		return $this->db->query('SELECT MAX(id) as last_id FROM '.$tablename.' LIMIT 1')->row()->last_id;
 	}
 }
 ?>

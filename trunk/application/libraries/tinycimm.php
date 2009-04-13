@@ -3,13 +3,15 @@
 class TinyCIMM {
 
 	public function __construct(){
-
+		$ci = &get_instance();
+                $this->db = &$ci->db;
+                $this->config = &$ci->config;
 	}
 
 	public function get_asset($asset_id, $width=200, $height=200, $quality=85, $send_nocache=true){
 		$ci = &get_instance();
 		$asset = $ci->tinycimm_model->get_asset($asset_id) or die('asset not found');
-		$asset->filepath = $ci->config->item('tinycimm_asset_path').$asset_id.$asset->extension;
+		$asset->filepath = $this->config->item('tinycimm_asset_path').$asset_id.$asset->extension;
 		if (!@file_exists($asset->filepath)) {
 			die('asset not found');
 		}
@@ -31,11 +33,11 @@ class TinyCIMM {
 	public function resize_asset($asset, $width=200, $height=200, $quality=85, $cache=true){
 		$ci = &get_instance();
 		if ($cache) {
-			$asset->new_filepath = $ci->config->item('tinycimm_asset_path').'cache/'.$asset->id.'_'.$width.'_'.$height.'_'.$quality.$asset->extension;
+			$asset->new_filepath = $this->config->item('tinycimm_asset_path').'cache/'.$asset->id.'_'.$width.'_'.$height.'_'.$quality.$asset->extension;
 		} else {
 			$asset->new_filepath = $asset->filepath;
 		}
-		$resize_config = $ci->config->item('tinycimm_image_resize_config');		
+		$resize_config = $this->config->item('tinycimm_image_resize_config');		
 		$resize_config['source_image'] = $asset->filepath;
 		$resize_config['new_image'] = $asset->new_filepath;
 		$resize_config['width'] = $width;
@@ -55,7 +57,7 @@ class TinyCIMM {
 	**/
 	public function upload_asset() {
 		$ci = &get_instance();
-		$upload_config = $ci->config->item('tinycimm_upload_config');
+		$upload_config = $this->config->item('tinycimm_upload_config');
 		// if file has been uploaded
 		if (isset($_FILES[$upload_config['field_name']]['name']) AND $_FILES[$upload_config['field_name']]['name'] != '') {
 
@@ -71,9 +73,12 @@ class TinyCIMM {
 			$image_data = $ci->upload->data();
 			$alttext = str_replace($image_data['file_ext'], '', strtolower($image_data['orig_name']));
 			$folder = (int) $ci->input->post('uploadfolder');
+
+			$last_insert_id = $ci->tinycimm_model->get_last_insert_id('asset');
+			$last_insert_id++;
 		 
 			// insert the asset info into the db
-			$last_insert_id = $ci->tinycimm_model->insert_asset($folder, basename($image_data['orig_name']), basename($image_data['full_path']), $alttext, $image_data['file_ext'], $_FILES[$upload_config['field_name']]['type']);
+			$ci->tinycimm_model->insert_asset($folder, basename($image_data['orig_name']), $last_insert_id.$image_data['file_ext'], $alttext, $image_data['file_ext'], $_FILES[$upload_config['field_name']]['type']);
 
 			// rename the uploaded file, CI's Upload library does not handle custom file naming 	
 			rename($image_data['full_path'], $image_data['file_path'].$last_insert_id.$image_data['file_ext']);
@@ -84,7 +89,7 @@ class TinyCIMM {
 			
 			// resize image
 			if ($adjust_size === 1 AND ($image_data['image_width'] > $max_x OR $image_data['image_height'] > $max_y)) {
-				$resize_config = $ci->config->item('tinycimm_resize_config');		
+				$resize_config = $this->config->item('tinycimm_resize_config');		
 				$resize_config['source_image'] = $image_data['file_path'].$last_insert_id.$image_data['file_ext'];
 				$resize_config['width'] = $max_x;
 				$resize_config['height'] = $max_y;
