@@ -20,7 +20,7 @@
 								<a href="javascript:;"><img height="13" onclick="editFolder('53');" title="edit" src="img/pencil_sm.png"/></a>
 								<a href="javascript:;"><img onclick="ImageDialog.deleteFolder('<?=$folder['id'];?>');" title="remove" src="img/delete.gif"/></a>
 							</span>
-							<span style="cursor:pointer;" onClick="ImageDialog.fileBrowser('<?=$folder['id'];?>');"><img class="folderimg" id="img-<?=$folder['id'];?>" src="img/folder.gif" /> <?=$folder['caption'];?>/</span>
+							<span style="cursor:pointer;" onClick="ImageDialog.fileBrowser('<?=$folder['id'];?>');"><img class="folderimg" id="img-<?=$folder['id'];?>" src="img/folder.gif" /> <?=$folder['name'];?>/</span>
 						</span>
 						<br class="clear" />
 					</li>
@@ -30,9 +30,9 @@
 			<br/>
 			<div class="heading">&raquo; Folder Info</div>
 			<table border="0" cellpadding="2" cellspacing="1">
-				<tr><td>Images:</td><td><?=$folderinfo['num_files'];?></td></tr>
-				<tr><td>Size:</td><td><?=$folderinfo['tot_file_size'];?></td></tr>
-				<tr><td>Owner:</td><td><?=$folderinfo['username'];?></td></tr>
+				<tr><td>Images:</td><td><?=$selected_folder_info['total_assets'];?></td></tr>
+				<tr><td>Size:</td><td><?=$selected_folder_info['total_file_size'];?></td></tr>
+				<tr><td>Owner:</td><td><?=$selected_folder_info['username'];?></td></tr>
 				<tr><td>View:</td><td>
 				<select style="border:1px solid #AAA" onchange="ImageDialog.changeView(this.options[this.selectedIndex].value)">
 					<optgroup label="Views">
@@ -44,7 +44,7 @@
 		</td>
 		<td width="5">&nbsp;</td>
 		<td valign="top">
-			<div class="heading">&raquo; <?=$folderinfo['caption'];?></div>
+			<div class="heading">&raquo; <?=$selected_folder_info['name'];?></div>
 			<div id="filelist">
 				<div id="filelist-contextmenu"></div>
 				<?if (sizeof($images) == 0) {?>

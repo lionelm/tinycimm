@@ -21,7 +21,7 @@
 									<a href="javascript:;"><img height="13" onclick="editFolder('53');" title="edit" src="img/pencil_sm.png"/></a>
 									<a href="javascript:;"><img onclick="ImageDialog.deleteFolder('<?=$folder['id'];?>');" title="remove" src="img/delete.gif"/></a>
 								</span>
-								<span style="cursor:pointer;" onClick="ImageDialog.fileBrowser('<?=$folder['id'];?>');"><img class="folderimg" id="img-<?=$folder['id'];?>" src="img/folder.gif" /> <?=$folder['caption'];?>/</span>
+								<span style="cursor:pointer;" onClick="ImageDialog.fileBrowser('<?=$folder['id'];?>');"><img class="folderimg" id="img-<?=$folder['id'];?>" src="img/folder.gif" /> <?=$folder['name'];?>/</span>
 							</span>
 							<br class="clear" />
 						</li>
@@ -49,7 +49,7 @@
 		</td>
 		<td width="5">&nbsp;</td>
 		<td valign="top">
-			<div class="heading">&raquo; <?=$folderinfo['caption'];?></div>
+			<div class="heading">&raquo; <?=$folderinfo['name'];?></div>
 			<div id="filelist">
 				<ul class="folderlist">
 				<?if (sizeof($images) == 0) {?>
@@ -60,7 +60,7 @@
 						<span id="image-<?=$image['id'];?>" onclick="ImageDialog.insertPreviewImage('<?=$image['filename'];?>', '<?=$image['alttext'];?>');" style="cursor:pointer;display:block" title="insert image" onMouseOver="this.style.color='#000066';this.style.background='#EEEEEE';" onMouseOut="this.style.color='#000000';this.style.background='#FFFFFF';">
 						<span class="image_dimensions" style="display:inline;"><?=$image['dimensions'];?></span>
 						<img id="img-<?=$image['id'];?>" class="image_preview" src="img/icons/<?=$image['extension'];?>.gif" />
-						<?=$image['caption'];?>
+						<?=$image['name'];?>
 						<br class="clear" /></span>
 					</li>
 					<?endforeach;?>

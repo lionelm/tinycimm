@@ -33,7 +33,7 @@ class TinyCIMM {
 		if ($cache) {
 			$asset->new_filepath = $ci->config->item('tinycimm_asset_path').'cache/'.$asset->id.'_'.$width.'_'.$height.'_'.$quality.$asset->extension;
 		} else {
-			$asset->newpath = $asset->filepath;
+			$asset->new_filepath = $asset->filepath;
 		}
 		$resize_config = $ci->config->item('tinycimm_image_resize_config');		
 		$resize_config['source_image'] = $asset->filepath;
@@ -75,7 +75,7 @@ class TinyCIMM {
 			// insert the asset info into the db
 			$last_insert_id = $ci->tinycimm_model->insert_asset($folder, basename($image_data['orig_name']), basename($image_data['full_path']), $alttext, $image_data['file_ext'], $_FILES[$upload_config['field_name']]['type']);
 
-			// rename the uploaded file, CI's Upload library does not custom file naming 	
+			// rename the uploaded file, CI's Upload library does not handle custom file naming 	
 			rename($image_data['full_path'], $image_data['file_path'].$last_insert_id.$image_data['file_ext']);
 			
 			$max_x = (int) $ci->input->post('max_x');
@@ -84,18 +84,16 @@ class TinyCIMM {
 			
 			// resize image
 			if ($adjust_size === 1 AND ($image_data['image_width'] > $max_x OR $image_data['image_height'] > $max_y)) {
-				$resize_config = $this->config->item('tinycimm_resize_config');		
-				$resize_config['source_image'] = $image_data['full_path'];
+				$resize_config = $ci->config->item('tinycimm_resize_config');		
+				$resize_config['source_image'] = $image_data['file_path'].$last_insert_id.$image_data['file_ext'];
 				$resize_config['width'] = $max_x;
 				$resize_config['height'] = $max_y;
-				$this->load->library('image_lib');
-				$this->image_lib->initialize($resize_config);
-				if (!$this->image_lib->resize()) {
-					$this->tinymce_alert($this->image_lib->display_errors());
+				$ci->load->library('image_lib');
+				$ci->image_lib->initialize($resize_config);
+				if (!$ci->image_lib->resize()) {
+					$this->tinymce_alert($ci->image_lib->display_errors());
 					exit;
 				}
-				$image_data['image_width'] = $this->image_lib->width;
-				$image_data['image_height'] = $this->image_lib->height;
 			}
 			
 			/**
@@ -114,7 +112,11 @@ class TinyCIMM {
 		}
 		// no file specified to upload
 		else {
-			$this->tinymce_alert('Please select an image to upload');
+			die("<script type=\"text/javascript\">
+                        parent.removedim();
+			parent.parent.tinyMCEPopup.editor.windowManager.alert('Please select an image to upload.');
+                        </script>");
+			//$this->tinymce_alert('Please select an image to upload');
 		}
   	}
   	

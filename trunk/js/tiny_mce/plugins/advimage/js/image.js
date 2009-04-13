@@ -482,6 +482,7 @@ var ImageDialog = {
 
 	 // load list of folders and images via json request
 	fileBrowser : function(folder) {
+		folder = folder || 0;
 		if (o('img-'+folder) == null) {
 			tinyMCEPopup.dom.setHTML('filebrowser', '<span id="loading">loading</span>');
 		}
@@ -490,7 +491,7 @@ var ImageDialog = {
 		}
 
 		tinymce.util.XHR.send({
-			url : ImageDialog.baseURL('assetmanager/image/get_file_folder_list/folder/'+folder),
+			url : ImageDialog.baseURL('assetmanager/image/get_file_folder_list/'+folder),
 			error : function(text) {
 				tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the images.');
 			},
