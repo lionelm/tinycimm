@@ -49,6 +49,12 @@ class Tinycimm_model extends Model {
 		$this->db->set($fields)->insert('asset');
 		return $this->db->insert_id();
 	}
+
+	function insert_folder($folder_name=''){
+		$fields = array('name' => $folder_name);
+		$this->db->set($fields)->insert('asset_folder');
+		return $this->db->insert_id();
+	}
 	
 	/**
 	* Get all image folders
@@ -56,7 +62,7 @@ class Tinycimm_model extends Model {
 	* @param String|$orderby the method to sort the results by
 	* @return Array| the full query array
 	**/
-	function get_asset_folders($orderby='name', $user_id=FALSE){
+	function get_folders($orderby='name', $user_id=FALSE){
 		if ($user_id === FALSE) {
 			return $this->db->order_by($orderby, 'asc')->get('asset_folder')->result_array();
 		} else {

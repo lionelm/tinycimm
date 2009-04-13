@@ -36,7 +36,7 @@ class TinyCIMM_image extends TinyCIMM {
 		// 'uncategorized' folder
 		$data['folders'][] = array('id'=>'0','user_id' => '0','username' => 'demo','name' => 'General', 'total_assets' => count($assets));
 		// get a list of folders, and store the total amount of assets
-		foreach($folders = $ci->tinycimm_model->get_asset_folders() as $folderinfo) {
+		foreach($folders = $ci->tinycimm_model->get_folders() as $folderinfo) {
 			$folderinfo['total_assets'] = count($ci->tinycimm_model->get_assets($folderinfo['id']));
 			$data['folders'][] = $folderinfo;
 			// selected folder info
@@ -170,28 +170,24 @@ class TinyCIMM_image extends TinyCIMM {
 			$this->db->query('DELETE FROM asset_folder WHERE id = ?', array($folder_id));
 	  
 			// get new list of folders
-			$sql = 'SELECT *
-				FROM asset_folder
-				WHERE user_id = ?
-				ORDER by name ASC';
-			$query = $this->db->query($sql, array($ci->user_id));
 			$data['folders'][0] = array('id'=>0,'name'=>'General');
-			foreach($query->result_array() AS $folderinfo) {
+			foreach($folders = $ci->tinycimm_model->get_folders('name', $ci->user_id) AS $folderinfo) {
 		 		$data['folders'][] = $folderinfo;
 			}
-			die($this->load->view($this->view_path.'image_folder_list', $data, true).'<div style="display:none" id="message">'.(($images_affected>0?$images_affected.' image'.($images_affected==1?'':'s').' moved to General folder.':'').'</div>'));
+			die($ci->load->view($this->view_path.'image_folder_list', $data, true).'<div style="display:none" id="message">'.(($images_affected>0?$images_affected.' image'.($images_affected==1?'':'s').' moved to General folder.':'').'</div>'));
 		} else {
 			$response['outcome'] = 'error';
 			$response['message'] = 'You can\'t delete this folder.';
 		}
 	
-		TinyCIMM::response_encode($response);
+		$this->response_encode($response);
  	}
   	
   	/**
   	* @TODO would become obsolete if we switched away from a multi folder system and went with categories @Liam
   	**/
 	public function add_folder($name=''){ 
+		$ci = &get_instance();
 		$name = $this->input->xss_clean($name);
 	
 		if ($name == '') {
@@ -206,26 +202,16 @@ class TinyCIMM_image extends TinyCIMM {
 		}
 	
 		if (isset($response)) {
-			TinyCIMM::response_encode($response);
+			$this->response_encode($response);
 		}
-	
-		$sql = 'INSERT INTO asset_folder (name)
-			VALUES (?)';
-		$query = $this->db->query($sql, array($name));
-		$lastid = $this->db->insert_id();
 
-		// get new list of folders
-		$sql = 'SELECT *
-			FROM asset_folder
-			WHERE user_id = ?
-			ORDER by caption ASC';
-		$query = $this->db->query($sql, array($this->user_id));
-		$data['folders'][0] = array('id'=>0,'caption'=>'General');
-		foreach($query->result_array() AS $folderinfo) {
+		$ci->tinycimm_model->insert_folder($name);
+	
+		$data['folders'][0] = array('id'=>0,'name'=>'General');
+		foreach($folders = $ci->tinycimm_model->get_folders('name', $ci->user_id) AS $folderinfo) {
 			$data['folders'][] = $folderinfo;
 		}
-	
-		die($this->load->view($this->config->item('tinycimm_views_root').'image_folder_list', $data, true));
+		die($ci->load->view($this->view_path.'image_folder_list', $data, true));
   	}
   	
   	/**
@@ -240,7 +226,7 @@ class TinyCIMM_image extends TinyCIMM {
 		if ($folder == '' OR $folder == '0') {
 			echo '';
 		} else {
-			$sql = 'SELECT caption
+			$sql = 'SELECT name
 				FROM asset_folder
 				WHERE id = ?
 				LIMIT 1';
@@ -262,7 +248,7 @@ class TinyCIMM_image extends TinyCIMM {
 		$data['folderid'] = isset($args['folder']) ? (int) $args['folder'] : 0;
 		$ci = &get_instance();
 		$data['folders'] = array();
-		foreach($folders = $ci->tinycimm_model->get_asset_folders('name', $ci->user_id) AS $folderinfo) {
+		foreach($folders = $ci->tinycimm_model->get_folders('name', $ci->user_id) AS $folderinfo) {
 			$data['folders'][] = $folderinfo;
 		}
 		die($ci->load->view($this->view_path.'image_folder_select', $data, true));
