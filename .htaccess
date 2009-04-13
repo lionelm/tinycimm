@@ -1,4 +1,3 @@
-RewriteEngine on
-# SE friendly urls
-RewriteCond $1 !^(index\.php|favicon\.ico|images|css|tmp|public|js|robots\.txt)
-RewriteRule ^(.*)$ index.php/$1 [L]
+        RewriteEngine on
+        RewriteCond $1 !^(index\.php|favicon\.ico|images|css|tmp|public|js|assets|robots\.txt)
+     RewriteRule ^(.*)$ index.php/$1 [L]

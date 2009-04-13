@@ -11,6 +11,7 @@
 input {width: 280px;}
 #constrain, #onmousemovecheck {width:auto;}
 #id, #dir, #lang, #usemap, #longdesc {width:200px;}
+
 /* 
 TinyCIMM Media Manager
 Developer: Richard Willis 
@@ -58,12 +59,12 @@ span#loading {background:url(../img/ajax-loader.gif) no-repeat;padding-left:20px
 .folderlist li .image_preview {}
 
 .thumb_wrapper {cursor:pointer;display:block;width:99px;height:99px;float:left;border:1px solid #DFDFDF;z-index:1;}
-.thumb_wrapper span {position:absolute;display:block;width:95px;height:95px;margin:2px 0 0 2px;background:#FFF;z-index:1;filter:alpha(opacity=0);-moz-opacity:0;opacity:0;}
-.thumb_wrapper img {display:block;width:95px;height:95px;margin:2px 0 0 2px}
+.thumb_wrapper span {position:absolute;display:block;width:95px;height:95px;margin:2px 0 0 2px;background:#FFF;z-index:1;filter:alpha(opacity=0);-moz-opacity:0;opacity:0;text-align:center;}
+.thumb_wrapper img {display:block;margin:auto;}
 
-.thumb_wrapper_over {cursor:pointer;display:block;width:99px;height:99px;float:left;border:1px solid red;z-index:1;}
+.thumb_wrapper_over {cursor:pointer;display:block;width:99px;height:99px;float:left;border:1px solid #8094A4;z-index:1;}
 .thumb_wrapper_over span {position:absolute;display:block;width:95px;height:95px;margin:2px 0 0 2px;background:#FFF;z-index:1;filter:alpha(opacity=0);-moz-opacity:0;opacity:0;}
-.thumb_wrapper_over img {display:block;width:95px;height:95px;margin:2px 0 0 2px}
+.thumb_wrapper_over img {display:block;margin:auto;}
 
 select#view-type, select#sort-type {font-weight:normal;border-left:1px solid #AAA;border-width:0 0 0 1px;background:#FFF;background-color:transparent;width:120px}
 
