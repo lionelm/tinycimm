@@ -130,31 +130,29 @@ class TinyCIMM {
 	* Deletes a file from the database and from the fileserver
 	* Goes on to also delete any new files that were created as a result of resizing the image
 	**/
-	public function delete_asset($asset_id){
-		// lets drop it from the database
-		Tinycimm_model::delete_asset($asset_id) or die(TinyCIMM::tinymce_alert('asset not found'));
+	public function delete_asset($asset_id=0){
+		$ci = &get_instance();
+
+		$asset = $ci->tinycimm_model->get_asset($asset_id) or die('asset not found');
+		$asset->filepath = $this->config->item('tinycimm_asset_path').$asset_id.$asset->extension;
 
 		// delete images from filesystem, including original and thumbnails
-		// @TODO this assumes the asset is an image @Liam
-		if (file_exists($this->image_path.$image->filename)) {
-			@unlink($this->image_path.$image->filename);
-		}
-		if (file_exists($this->image_path.$this->orig_path.$image->filename)) {
-			@unlink($this->image_path.$this->orig_path.$image->filename);
-		}
-		if (file_exists($this->image_path.$this->thumb_path.$image->filename)) {
-			@unlink($this->image_path.$this->thumb_path.$image->filename);
+		if (file_exists($asset->filepath)) {
+			@unlink($asset->filepath);
 		}
 
 		// delete the new size specific files				
-		if ($handle = @opendir($this->image_path)) {
+		if ($handle = @opendir($this->config->item('tinycimm_asset_path').'cache')) {
 			while (FALSE !== ($file = readdir($handle))) {
-				if (strpos($file, $image->filename) !== FALSE) {
-					@unlink($this->image_path.$file);
+				if (preg_match("/{$asset->id}\_[0-9]+\_[0-9]+\_[0-9]+.*/", $file)) {
+					@unlink($this->config->item('tinycimm_asset_path').'cache/'.$file);
 				}
 			}	
 			@closedir($handle);
 		}
+
+		// delete from database
+		$ci->tinycimm_model->delete_asset($asset_id);
 	}
 
 	/**

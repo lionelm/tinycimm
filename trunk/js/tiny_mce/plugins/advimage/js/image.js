@@ -558,7 +558,7 @@ var ImageDialog = {
 		// prep thumb path
 		var imgsrc_arr = tinyMCEPopup.editor.documentBaseURI.toRelative(o('src').value).split('/');
 		var imgsrc = imgsrc_arr[imgsrc_arr.length-1];
-		var imgid = 0;
+		var imgid = imgsrc.replace(/(.*\/)?([0-9]+)\.([a-zA-Z]+)/, "$2");
 		// set thumb	
 		o('manage_thumb_img').src = 'img/progress.gif';
 		o('manage_thumb_img').width = 95;
@@ -568,7 +568,7 @@ var ImageDialog = {
 		mcTabs.displayTab('manager_tab','manager_panel');
 		// send a request for image info
 		tinymce.util.XHR.send({
-			url : ImageDialog.baseURL('assetmanager/image/get_image_info/'+imgid),
+			url : ImageDialog.baseURL('assetmanager/image/get_image/'+imgid),
 			error : function(response) {
 				tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the image info.');
 			},
@@ -579,7 +579,7 @@ var ImageDialog = {
 				}
 				else {
 					o('del_image').rel = obj.id;
-					o('manage_thumb_img').src = ImageDialog.baseURL('images/uploaded/thumbs/'+obj.filename);
+					o('manage_thumb_img').src = ImageDialog.baseURL('/assetmanager/image/get/'+obj.id+'/95/95');
 					ImageDialog.loadSelectManager(obj.folder);
 					ImageDialog.loadAltTextManager(obj.alttext);
 				}
@@ -834,7 +834,7 @@ var ImageDialog = {
 			var img_delete_src = o('img_delete').src, folder = '';
 			o('img_delete').src = ajax_img;
 			// send request
-			var requesturl = ImageDialog.baseURL('assetmanager/image/delete_image/image')+'/'+imageID;
+			var requesturl = ImageDialog.baseURL('assetmanager/image/delete_image/')+'/'+imageID;
 			tinymce.util.XHR.send({
 				url : requesturl,
 				error : function(response) {
@@ -845,10 +845,10 @@ var ImageDialog = {
 					o('img_delete').src = img_delete_src;
 					var obj = tinymce.util.JSON.parse(response);
 					if (obj.outcome == 'error') {
-					 tinyMCEPopup.editor.windowManager.alert('Error: '+obj.message);
+						tinyMCEPopup.editor.windowManager.alert('Error: '+obj.message);
 					}
 					else {
-						//alert(obj.message);
+						tinyMCEPopup.editor.windowManager.alert(obj.message);
 						folder = obj.folder
 					}
  					// reset inputs, loadbrowser

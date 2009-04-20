@@ -15,8 +15,11 @@ class TinyCIMM_image extends TinyCIMM {
 	/**
 	* debug function @richw
 	**/
-	public function get_image($image_id){
-		die(print_r(TinyCIMM_model::get_asset($image_id)));
+	public function get_image($image_id=0){
+		$ci = &get_instance();
+		$image = $ci->tinycimm_model->get_asset($image_id);
+		$image->outcome = 'success';
+		$this->response_encode($image);
 	}
   	
 	/**
@@ -139,19 +142,20 @@ class TinyCIMM_image extends TinyCIMM {
   	/**
   	* delete an image from database and file system
   	**/
-	public function delete_image($arg) {
-		$image_id = isset($arg['image']) ? (int) $this->input->xss_clean($arg['image']) : 0;
-
-		if (!$image = TinyCIMM_model::get_asset($image_id)) {
+	public function delete_image($image_id=0) {
+		$ci = &get_instance();
+		$image_id = (int) $this->input->xss_clean($image_id);
+		if (!$image = $ci->tinycimm_model->get_asset($image_id)) {
 			$response['outcome'] = 'error';
 			$response['message'] = 'Image not found.';
-			TinyCIMM::response_encode($response);
+			$this->response_encode($response);
+			exit;
 		}
-		TinyCIMM::delete_asset($image_id);
+		$this->delete_asset($image_id);
 		$response['outcome'] = 'success';
 		$response['message'] = 'Image successfully deleted.';
-		$response['folder'] = $image->folder;
-		TinyCIMM::response_encode($response);
+		$this->response_encode($response);
+		exit;
 	}
 	
   	/**
@@ -258,8 +262,9 @@ class TinyCIMM_image extends TinyCIMM {
 	*
 	**/
 	public function get_alttext_textbox($args){
+		$ci = &get_instance();
 		$data['alttext'] = isset($args['alttext']) ? $this->input->xss_clean($args['alttext']) : '';
-		die($this->load->view($this->config->item('tinycimm_views_root').'image_alttext_textbox', $data, true));
+		die($ci->load->view($this->view_path.'image_alttext_textbox', $data, true));
 	}
 	
 	/**
@@ -287,31 +292,6 @@ class TinyCIMM_image extends TinyCIMM {
 	}
 
   
-	/**
-	* get image details from db
-	**/
-	public function get_image_info($asset_id=0) {
-		$ci = &get_instance();
-		$image = $ci->input->xss_clean($asset_id);
-
-		// get info image
-		$sql = 'SELECT * 
-			FROM asset 
-			WHERE id = ?
-			LIMIT 1';
-		$query = $this->db->query($sql, array($asset_id));
-		if ($query->num_rows() == 0) {
-			$response['outcome'] = 'error';
-			$response['message'] = 'Image not found in database.';
-		}
-		else {
-			$response = $query->row_array();
-			$response['outcome'] = 'success';
-		}
-	
-		TinyCIMM::response_encode($response);
-  	}
-	
 	/**
 	* @TODO not sure if its worth assuming a multi-user system yet.
 	**/
