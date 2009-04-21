@@ -131,7 +131,7 @@ class TinyCIMM_image extends TinyCIMM {
 	/**
 	* update asset row
 	**/
-	public function update($image_id=0) {
+	public function update_asset($image_id=0) {
 		if (!count($_POST)) {
 			exit;
 		}
@@ -170,28 +170,16 @@ class TinyCIMM_image extends TinyCIMM {
   	**/
 	public function delete_folder($folder_id=0) {
 		$ci = &get_instance();
-		$folder_id = (int) $folder_id;
-		
-		if ($folder_id > 0 ) {
-			// move images from folder to root folder
-			$this->db->query('UPDATE asset SET folder_id = \'\' WHERE folder_id = ?', array($folder_id));
-			$images_affected = $ci->db->affected_rows();
-		
-			// remove folder
-			$this->db->query('DELETE FROM asset_folder WHERE id = ?', array($folder_id));
-	  
-			// get new list of folders
-			$data['folders'][0] = array('id'=>0,'name'=>'General');
-			foreach($folders = $ci->tinycimm_model->get_folders('name', $ci->user_id) AS $folderinfo) {
-		 		$data['folders'][] = $folderinfo;
-			}
-			die($ci->load->view($this->view_path.'image_folder_list', $data, true).'<div style="display:none" id="message">'.(($images_affected>0?$images_affected.' image'.($images_affected==1?'':'s').' moved to General folder.':'').'</div>'));
-		} else {
+		if (!parent::delete_folder((int) $folder_id)) {
 			$response['outcome'] = 'error';
-			$response['message'] = 'You can\'t delete this folder.';
+			$response['message'] = 'Image not found.';
+			$this->response_encode($response);
+			exit;
 		}
-	
+		$response['outcome'] = 'success';
+		$response['images_affected'] = $this->images_affected;
 		$this->response_encode($response);
+		exit;
  	}
   	
   	/**
@@ -263,6 +251,15 @@ class TinyCIMM_image extends TinyCIMM {
 			$data['folders'][] = $folderinfo;
 		}
 		die($ci->load->view($this->view_path.'image_folder_select', $data, true));
+	}
+
+	public function get_folders_html(){
+		$ci = &get_instance();
+		$data['folders'][0] = array('id'=>0,'name'=>'General');
+		foreach($folders = $ci->tinycimm_model->get_folders('name', $ci->user_id) as $folderinfo) {
+			$data['folders'][] = $folderinfo;
+		}
+		$ci->load->view($this->view_path.'image_folder_list', $data);
 	}
 	
 	/**

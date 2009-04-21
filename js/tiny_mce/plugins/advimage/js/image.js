@@ -800,8 +800,9 @@ var ImageDialog = {
 	// delete image folder
 	deleteFolder : function(folderID) {
 		tinyMCEPopup.editor.windowManager.confirm('Are you sure you want to delete this folder?', function(s) {
-			if (!s) {return false;}
-			// send request
+			if (!s) {
+				return false;
+			}
  			var requesturl = ImageDialog.baseURL('assetmanager/image/delete_folder')+'/'+folderID;
 			tinymce.util.XHR.send({
 				url : requesturl,
@@ -810,20 +811,34 @@ var ImageDialog = {
 				},
 				success : function(response) {
 		 			var obj = tinymce.util.JSON.parse(response);
-					if (obj != undefined && obj.outcome == 'error') {
+					if (obj && obj.outcome == 'error') {
 						tinyMCEPopup.editor.windowManager.alert('Error: '+obj['message']);
-		 			}
-					else {
-						//success
-						tinyMCEPopup.dom.setHTML('folderlist', response)
-						if (o('message').innerHTML != '') {
-							tinyMCEPopup.editor.windowManager.alert(o('message').innerHTML);
+		 			} else {
+						ImageDialog.getFoldersHTML(function(folderHTML){
+							tinyMCEPopup.dom.setHTML('folderlist', folderHTML)
+						});
+						if (obj.images_affected > 0) {
+							tinyMCEPopup.editor.windowManager.alert(obj.images_affected+" images were moved to the root directory.");
 						}
 		 			}
 				}
 			});
 		});
 	},			
+
+	// get folders as html string
+	getFoldersHTML : function(callback) {
+ 		var requesturl = ImageDialog.baseURL('assetmanager/image/get_folders_html');
+		tinymce.util.XHR.send({
+			url : requesturl,
+			error : function(response) {
+		 		tinyMCEPopup.editor.windowManager.alert('There was an error processing the request.');
+			},
+			success : function(response) {
+				callback(response.toString());	
+			}
+		});
+	},
 	
 	// delete image 
 	deleteImage : function(imageID) {

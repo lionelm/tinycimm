@@ -62,13 +62,18 @@ class Tinycimm_model extends Model {
 	*
 	* @returns integer|insert_id the last insert id from the id sequence colmn
 	**/
-	function update_asset($asset_id=0, $folder_id=0, $name='', $description=''){
-		$fields = array(
-			'folder_id' => $folder_id, 
-			'name' => $name, 
-			'description' => $description, 
-			);
-		return $this->db->where('id', $asset_id)->update('asset', $fields); 
+	function update_asset($column='', $id=0, $folder_id=0, $name='', $description=''){
+		$fields = array();
+		if ($folder_id !== 0) {
+			$fields['folder_id'] = $folder_id;
+		}
+		if ($name !== '') {
+			$fields['name'] = $name;
+		}
+		if ($description !== '') {
+			$fields['description'] = $description;
+		}
+		return $this->db->where($column, $id)->update('asset', $fields); 
 	}
 
 
@@ -99,6 +104,13 @@ class Tinycimm_model extends Model {
 	}
 
 	/**
+	* Deletes a folder from the database
+	**/
+	function delete_folder($folder_id=0){
+		return $this->db->where('id', (int) $folder_id)->delete('asset_folder');	
+	}
+
+	/**
 	* Get the last auto-incremented id value from the specified table
 	* RW Note:: this method is buggy, need to get last auto-increment value 
 	*
@@ -106,6 +118,10 @@ class Tinycimm_model extends Model {
 	**/
 	function get_last_id($tablename=''){
 		return (int) $this->db->query('SELECT MAX(id) as last_id FROM '.$tablename.' LIMIT 1')->row()->last_id;
+	}
+
+	function affected_rows(){
+		return $this->db->affected_rows();
 	}
 }
 ?>
