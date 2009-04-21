@@ -142,10 +142,10 @@ class TinyCIMM {
 		}
 
 		// delete the new size specific files				
-		if ($handle = @opendir($this->config->item('tinycimm_asset_path').'cache')) {
+		if ($handle = @opendir($this->config->item('tinycimm_asset_cache_path'))) {
 			while (FALSE !== ($file = readdir($handle))) {
 				if (preg_match("/{$asset->id}\_[0-9]+\_[0-9]+\_[0-9]+.*/", $file)) {
-					@unlink($this->config->item('tinycimm_asset_path').'cache/'.$file);
+					@unlink($this->config->item('tinycimm_asset_cache_path').$file);
 				}
 			}	
 			@closedir($handle);
