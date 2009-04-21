@@ -155,6 +155,19 @@ class TinyCIMM {
 		$ci->tinycimm_model->delete_asset($asset_id);
 	}
 
+	
+	public function delete_folder($folder_id=0){
+		$ci = &get_instance();
+		
+		// move images from folder to root folder
+		$ci->tinycimm_model->update_asset('folder_id', (int) $folder_id, '');	
+		// store affected images
+		$this->images_affected = $ci->tinycimm_model->affected_rows();
+
+		// remove folder from database
+		return $ci->tinycimm_model->delete_folder((int) $folder_id);
+	}
+
 	/**
 	* Takes a PHP array and outputs it as a JSON array to screen using PHP's die function
 	*
