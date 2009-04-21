@@ -70,8 +70,14 @@ class Tinycimm_model extends Model {
 		}
 	}
 
+	/**
+	* Get the last auto-incremented id value from the specified table
+	* RW Note:: this method is buggy, need to get last auto-increment value 
+	*
+	* @param String|$tablename - the name of the db table
+	**/
 	function get_last_id($tablename=''){
-		return $this->db->query('SELECT MAX(id) as last_id FROM '.$tablename.' LIMIT 1')->row()->last_id;
+		return (int) $this->db->query('SELECT MAX(id) as last_id FROM '.$tablename.' LIMIT 1')->row()->last_id;
 	}
 }
 ?>

@@ -51,9 +51,8 @@
 					(folder is empty)
 				<?} else {?>
 					<?foreach($images AS $image):?>
-						<span class="thumb_wrapper" title="insert image" onclick="ImageDialog.insertPreviewImage('<?=$image['filename'];?>', '<?=$image['description'];?>');" onMouseOver="this.className='thumb_wrapper_over';" onMouseOut="this.className='thumb_wrapper';">
+						<span class="thumb_wrapper" title="insert image" onclick="ImageDialog.insertPreviewImage('<?=$image['filename'];?>', '<?=$image['description'];?>');" onMouseOver="this.className='thumb_wrapper_over';" onMouseOut="this.className='thumb_wrapper';" style="background:url(/assetmanager/image/get/<?=$image['id'];?>/99/99) no-repeat center center;">
 							<span id="image-<?=$image['id'];?>"></span>
-							<img id="img-<?=$image['id'];?>" class="thumb_preview" src="/assetmanager/image/get/<?=$image['id'];?>/99/99" />
 						</span>
 					<?endforeach;?>
 				<?}?>
