@@ -13,16 +13,6 @@ class TinyCIMM_image extends TinyCIMM {
 	}
 	
 	/**
-	* debug function @richw
-	**/
-	public function get_image($image_id=0){
-		$ci = &get_instance();
-		$image = $ci->tinycimm_model->get_asset($image_id);
-		$image->outcome = 'success';
-		$this->response_encode($image);
-	}
-  	
-	/**
 	* uploads an asset and insert info into db
 	**/
 	public function upload_image(){
@@ -30,9 +20,9 @@ class TinyCIMM_image extends TinyCIMM {
 	}
 
 	/**
-	* get folder listing from db
+	* get browser 
 	**/
-	public function get_file_folder_list($folder=0) {
+	public function get_browser($folder=0) {
 		$ci = &get_instance();
 	
 		$assets = $ci->tinycimm_model->get_assets();
@@ -52,41 +42,24 @@ class TinyCIMM_image extends TinyCIMM {
 			$data['selected_folder_info'] = $data['folders'][0];
 		}
 		
-		$assets = $ci->tinycimm_model->get_assets($folder);
 		$data['images'] = array();
 		$totimagesize = 0;
-		
-		foreach($assets AS $image) {
-	  		
-	  		/**
-			* @TODO Assumes uploaded folder is /images/uploaded/
-			* @Liam
-			**/
-			$imgsize = ($imgsize = @getimagesize('./images/uploaded/'.$image['filename'])) ? $imgsize : array(0,0);
-			/**/
+		foreach($assets as $image) {
+			$image_path = $this->config->item('tinycimm_asset_path').$image['id'].$image['extension'];
+			$image_size = ($imgsize = @getimagesize($image_path)) ? $imgsize : array(0,0);
 			
-			$image['width'] = $imgsize[0];
-			$image['height'] = $imgsize[1];
-			$image['dimensions'] = $imgsize[0].'x'.$imgsize[1];
-			$image['extension'] = TinyCIMM_image::get_extension($image['filename']);
-			
-			/**
-			* @TODO Assumes uploaded folder is /images/uploaded/
-			* @Liam
-			**/
-			$image['filesize'] = round(@filesize('./images/uploaded/'.$image['filename'])/1024, 0);
-			/**/
+			$image['width'] = $image_size[0];
+			$image['height'] = $image_size[1];
+			$image['dimensions'] = $image_size[0].'x'.$image_size[1];
+			$image['extension'] = str_replace('.', '', $image['extension']);
+			$image['filesize'] = round(@filesize($image_path)/1024, 0);
 			
 			$data['images'][] = $image;	 
-			$totimagesize = $totimagesize + $image['filesize'];
+			$totimagesize += $image['filesize'];
 		}
-		
 		// prepare total image size
 		$data['selected_folder_info']['total_file_size'] = ($totimagesize > 1024) ? round($totimagesize/1024, 2).'mb' : $totimagesize.'kb';
 
-		header("Pragma: no-cache");
-		header("Cache-Control: no-store, no-cache, max-age=0, must-revalidate");
-		header('Content-Type: text/x-json'); 
 		$ci->load->view($this->view_path.'image_'.$ci->session->userdata('cimm_view').'_list', $data);
 	}
   
@@ -199,14 +172,13 @@ class TinyCIMM_image extends TinyCIMM {
 			$response['outcome'] = 'error';
 			$response['message'] = "The folder name must be less than 24 characters.\n(The supplied folder name is "+captionID.length+" characters).";
 		}
-	
+		
 		if (isset($response)) {
 			$this->response_encode($response);
 			exit;
 		}
-
+		
 		$ci->tinycimm_model->insert_folder($name);
-
 		$this->get_folders_html();
   	}
   	
@@ -309,19 +281,12 @@ class TinyCIMM_image extends TinyCIMM {
 	/**
 	*
 	**/
-	private function change_view($view){
+	public function change_view($view='thumb', $folder_id=0){
 		$ci = &get_instance();
 		$ci->session->set_userdata('cimm_view', $view);
+		$this->get_browser((int) $folder_id);
 	}
 	
-	/**
-	*
-	**/
-	public function change_view_adv($args = array('view' => '')) {
-		$ci = &get_instance();
-		$ci->session->set_userdata('cimm_view', $args['view']);
-	}
-
 	/**
 	* get extension of filename
 	**/

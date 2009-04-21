@@ -491,7 +491,7 @@ var ImageDialog = {
 		}
 
 		tinymce.util.XHR.send({
-			url : ImageDialog.baseURL('assetmanager/image/get_file_folder_list/'+folder),
+			url : ImageDialog.baseURL('assetmanager/image/get_browser/'+folder),
 			error : function(text) {
 				tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the images.');
 			},
@@ -501,12 +501,11 @@ var ImageDialog = {
 		});
 	},
 
- 
 	changeView : function(view) {
 		// show loading image
 		tinyMCEPopup.dom.setHTML('filebrowser', '<span id="loading">loading</span>');
 		tinymce.util.XHR.send({
-			url : ImageDialog.baseURL('assetmanager/image/change_view_adv/view/'+view),
+			url : ImageDialog.baseURL('assetmanager/image/change_view/'+view),
 			error : function(text) {
 				tinyMCEPopup.editor.windowManager.alert('There was an error processing the request.');
 			},
