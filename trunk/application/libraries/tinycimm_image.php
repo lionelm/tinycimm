@@ -187,7 +187,7 @@ class TinyCIMM_image extends TinyCIMM {
   	**/
 	public function add_folder($name=''){ 
 		$ci = &get_instance();
-		$name = $this->input->xss_clean($name);
+		$name = urldecode(trim($name));
 	
 		if ($name == '') {
 			$response['outcome'] = 'error';
@@ -202,43 +202,13 @@ class TinyCIMM_image extends TinyCIMM {
 	
 		if (isset($response)) {
 			$this->response_encode($response);
+			exit;
 		}
 
 		$ci->tinycimm_model->insert_folder($name);
-	
-		$data['folders'][0] = array('id'=>0,'name'=>'General');
-		foreach($folders = $ci->tinycimm_model->get_folders('name', $ci->user_id) AS $folderinfo) {
-			$data['folders'][] = $folderinfo;
-		}
-		die($ci->load->view($this->view_path.'image_folder_list', $data, true));
-  	}
-  	
-  	/**
-  	* @TODO would become obsolete if we switched away from a multi folder system and went with categories @Liam
-  	**/
-	public function edit_folder($arg) {
-		header("Cache-Control: no-cache, must-revalidate");
-		header("Cache-Control: no-store");
-		
-		$folder = isset($arg['folder']) ? (int) $this->input->xss_clean($arg['folder']) : '';
 
-		if ($folder == '' OR $folder == '0') {
-			echo '';
-		} else {
-			$sql = 'SELECT name
-				FROM asset_folder
-				WHERE id = ?
-				LIMIT 1';
-			$query = $this->db->query($sql, array($folder));
-			$folderinfo = $query->row_array();
-			$html = '<input type="text" value="'.$folderinfo['caption'].'" class="input" style="font-family: tahoma, verdana, sans-serif;font-size:11px;float:left;padding:0 1px" />';
-		  	$html .= '<img style="float:left;margin-left:3px" title="save" src="/images/save.gif" />';
-			$html .= '<img style="float:left;margin-left:3px" title="cancel/undo" onclick="getFolderList()" src="/images/admin/undo.gif" />';
-			$html .= '<br class="clear" />';
-			echo $html;
-		}
-		exit;
-	}
+		$this->get_folders_html();
+  	}
   	
   	/**
   	* @TODO would become obsolete if we switched away from a multi folder system and went with categories @Liam
