@@ -35,8 +35,8 @@ class Tinycimm_model extends Model {
 	*
 	* @param integer|$asset_id The id of the image to delete
 	**/
-	function delete_asset($asset_id){
-		$this->db->where('id', (int) $asset_id)->delete('asset');	
+	function delete_asset($asset_id=0){
+		return $this->db->where('id', (int) $asset_id)->delete('asset');	
 	}
 
 	/** 
@@ -44,7 +44,7 @@ class Tinycimm_model extends Model {
 	*
 	* @returns integer|insert_id the last insert id from the id sequence colmn
 	**/
-	function insert_asset($folder_id, $name, $filename, $description, $extension, $mimetype){
+	function insert_asset($folder_id=0, $name='', $filename='', $description='', $extension='', $mimetype=''){
 		$fields = array(
 			'folder_id' => $folder_id, 
 			'name' => $name, 
@@ -56,6 +56,21 @@ class Tinycimm_model extends Model {
 		$this->db->set($fields)->insert('asset');
 		return $this->db->insert_id();
 	}
+	
+	/** 
+	* Updates an asset details in the database
+	*
+	* @returns integer|insert_id the last insert id from the id sequence colmn
+	**/
+	function update_asset($asset_id=0, $folder_id=0, $name='', $description=''){
+		$fields = array(
+			'folder_id' => $folder_id, 
+			'name' => $name, 
+			'description' => $description, 
+			);
+		return $this->db->where('id', $asset_id)->update('asset', $fields); 
+	}
+
 
 	/** 
 	* Inserts a folder into the database
