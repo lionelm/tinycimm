@@ -774,8 +774,7 @@ var ImageDialog = {
 	
 	// add image folder
 	addFolder : function() {
-		var captionID = o('add_folder_caption').value.replace(/^\s+|\s+$/g, '');
-		// send request
+		var captionID = encodeURIComponent(o('add_folder_caption').value.replace(/^\s+|\s+$/g, ''));
 		var requesturl = ImageDialog.baseURL('assetmanager/image/add_folder')+'/'+captionID;
 		tinymce.util.XHR.send({
 			url : requesturl,
@@ -784,7 +783,7 @@ var ImageDialog = {
 			},
 			success : function(response) {
 				var obj = tinymce.util.JSON.parse(response);
-				if (obj != undefined && obj.outcome == 'error') {
+				if (obj && obj.outcome == 'error') {
 						tinyMCEPopup.editor.windowManager.alert('Error: '+obj.message);
 				}
 				else {
