@@ -131,12 +131,21 @@ class TinyCIMM_image extends TinyCIMM {
 	/**
 	* update asset row
 	**/
-	public function update_details($arg) {
-		$sql = 'UPDATE asset
-			SET name = ?, alttext = ?, folder = ?
-			WHERE id = ?
-			LIMIT 1';
-		$this->db->query($sql, array($arg['name'], $arg['alttext'], $arg['folder'], $arg['imageid']));
+	public function update($image_id=0) {
+		if (!count($_POST)) {
+			exit;
+		}
+		$ci = &get_instance();
+		if (!$ci->tinycimm_model->update_asset((int) $image_id, $_POST['folder_id'], $_POST['name'], $_POST['description'])) {
+			$response['outcome'] = 'error';
+			$response['message'] = 'Image not found.';
+			$this->response_encode($response);
+			exit;
+		}
+		$response['outcome'] = 'success';
+		$response['message'] = 'Image successfully deleted.';
+		$this->response_encode($response);
+		exit;
 	}
 
   	/**
@@ -144,14 +153,12 @@ class TinyCIMM_image extends TinyCIMM {
   	**/
 	public function delete_image($image_id=0) {
 		$ci = &get_instance();
-		$image_id = (int) $this->input->xss_clean($image_id);
-		if (!$image = $ci->tinycimm_model->get_asset($image_id)) {
+		if (!$this->delete_asset((int) $image_id)) {
 			$response['outcome'] = 'error';
 			$response['message'] = 'Image not found.';
 			$this->response_encode($response);
 			exit;
 		}
-		$this->delete_asset($image_id);
 		$response['outcome'] = 'success';
 		$response['message'] = 'Image successfully deleted.';
 		$this->response_encode($response);
