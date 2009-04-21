@@ -18,9 +18,9 @@
 			<br/>
 			<div class="heading">&raquo; Folder Info</div>
 			<table border="0" cellpadding="2" cellspacing="1">
-				<tr><td>Images:</td><td><?=$folderinfo['num_files'];?></td></tr>
-				<tr><td>Size:</td><td><?=$folderinfo['tot_file_size'];?></td></tr>
-				<tr><td>Owner:</td><td><?=$folderinfo['username'];?></td></tr>
+				<tr><td>Images:</td><td><?=$selected_folder_info['total_assets'];?></td></tr>
+				<tr><td>Size:</td><td><?=$selected_folder_info['total_file_size'];?></td></tr>
+				<tr><td>Owner:</td><td><?=$selected_folder_info['username'];?></td></tr>
 				<tr>
 					<td>View:</td>
 					<td>
@@ -36,7 +36,7 @@
 		</td>
 		<td width="5">&nbsp;</td>
 		<td valign="top">
-			<div class="heading">&raquo; <?=$folderinfo['name'];?></div>
+			<div class="heading">&raquo; <?=$selected_folder_info['name'];?></div>
 			<div id="filelist">
 				<ul class="folderlist">
 				<?if (sizeof($images) == 0) {?>
@@ -44,7 +44,7 @@
 				<?} else {?>
 					<?foreach($images AS $image):?>
 					<li>
-						<span id="image-<?=$image['id'];?>" onclick="ImageDialog.insertPreviewImage('<?=$image['id'];?>', '<?=$image['alttext'];?>');" style="cursor:pointer;display:block" title="insert image" onMouseOver="this.style.color='#000066';this.style.background='#EEEEEE';" onMouseOut="this.style.color='#000000';this.style.background='#FFFFFF';">
+						<span id="image-<?=$image['id'];?>" onclick="ImageDialog.insertPreviewImage('<?=$image['id'];?>', '<?=$image['description'];?>');" style="cursor:pointer;display:block" title="insert image" onMouseOver="this.style.color='#000066';this.style.background='#EEEEEE';" onMouseOut="this.style.color='#000000';this.style.background='#FFFFFF';">
 						<span class="image_dimensions" style="display:inline;"><?=$image['dimensions'];?></span>
 						<img id="img-<?=$image['id'];?>" class="image_preview" src="img/icons/<?=$image['extension'];?>.gif" />
 						<?=$image['name'];?>
