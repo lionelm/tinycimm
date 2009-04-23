@@ -4,8 +4,8 @@ class TinyCIMM {
 
 	public function __construct(){
 		$ci = &get_instance();
-                $this->db = &$ci->db;
-                $this->config = &$ci->config;
+		$this->db = &$ci->db;
+		$this->config = &$ci->config;
 		$this->input = &$ci->input;
 	}
 
@@ -119,9 +119,9 @@ class TinyCIMM {
 		// no file specified to upload
 		else {
 			die("<script type=\"text/javascript\">
-                        parent.removedim();
+parent.removedim();
 			parent.parent.tinyMCEPopup.editor.windowManager.alert('Please select an image to upload.');
-                        </script>");
+</script>");
 			//$this->tinymce_alert('Please select an image to upload');
 		}
   	}
@@ -152,7 +152,7 @@ class TinyCIMM {
 		}
 
 		// delete from database
-		$ci->tinycimm_model->delete_asset($asset_id);
+		return $ci->tinycimm_model->delete_asset($asset_id);
 	}
 
 	
@@ -166,6 +166,43 @@ class TinyCIMM {
 
 		// remove folder from database
 		return $ci->tinycimm_model->delete_folder((int) $folder_id);
+	}
+
+	public function add_folder($name=''){
+		$ci = &get_instance();
+		$name = urldecode(trim($name));
+
+		if ($name == '') {
+			return array('outcome' => 'error', 'message' => 'Please specify a valid folder name.');
+		} else if (strlen($name) == 1) {
+			return array('outcome' => 'error', 'message' => 'The folder name must be at least 2 characters in length.');
+		} else if (strlen($name) > 24) {
+			return array('outcome' => 'error', 'message' => 'The folder name must be less than 24 characters.\n(The supplied folder name is "+captionID.length+" characters).');
+		}
+
+		$ci->tinycimm_model->insert_folder($name);
+	}
+
+	/**
+	* @TODO would become obsolete if we switched away from a multi folder system and went with categories @Liam
+	**/
+	public function get_folders_select($folder_id=0){
+		$ci = &get_instance();
+		$data['folder_id'] = $folder_id;
+		$data['folders'] = array();
+		foreach($folders = $ci->tinycimm_model->get_folders('name', $ci->user_id) as $folderinfo) {
+			$data['folders'][] = $folderinfo;
+		}
+		$ci->load->view($this->view_path.'image_folder_select', $data);
+	}
+
+	public function get_folders_html(){
+		$ci = &get_instance();
+		$data['folders'][0] = array('id'=>0,'name'=>'General');
+		foreach($folders = $ci->tinycimm_model->get_folders('name', $ci->user_id) as $folderinfo) {
+			$data['folders'][] = $folderinfo;
+		}
+		$ci->load->view($this->view_path.'image_folder_list', $data);
 	}
 
 	/**
@@ -193,7 +230,7 @@ class TinyCIMM {
 	/** 
 	* check if image directories exist, if not then try to create them with 0777/0755 permissions
 	* Added config variable to allow user to choose between 0777 and 0755, as different server setups require different settings
-	**/    
+	**/
 	public function check_paths() {
 		// what CHMOD permissions should we use for the upload folders?
 		$chmod = $this->config->item('tinycimm_asset_upload_chmod');
