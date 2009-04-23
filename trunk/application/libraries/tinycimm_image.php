@@ -15,16 +15,33 @@ class TinyCIMM_image extends TinyCIMM {
 	// returns an asset database object
 	public function get_image($image_id=0){
 		$ci = &get_instance();
-		$image = $ci->tinycimm_model->get_asset($image_id);
-		$image->outcome = 'success';
-		$this->response_encode($image);
+		if ($image = $ci->tinycimm_model->get_asset($image_id)) {
+			$image->outcome = 'success';
+			$this->response_encode($image);
+		}
 	}
 	
 	/**
 	* uploads an asset and insert info into db
 	**/
 	public function upload_image(){
-		$this->upload_asset();
+		$ci = &get_instance();
+
+		$asset = $this->upload_asset();
+		$max_x = (int) $ci->input->post('max_x');
+		$max_y = (int) $ci->input->post('max_y');
+		$adjust_size = (int) $ci->input->post('adjust_size') === 1 and ($asset->width > $max_x or $asset->height > $max_y);
+		// resize image
+		if ($adjust_size) {
+			$this->resize_asset($asset, $max_x, $max_y, 85, false);
+		}
+
+		echo
+		"<script type=\"text/javascript\">
+		parent.removedim();
+		parent.updateimg('".$asset->id.$asset->extension."', '".$asset->description."');
+		</script>";
+		exit;
 	}
 
 	/**
@@ -32,10 +49,10 @@ class TinyCIMM_image extends TinyCIMM {
 	**/
 	public function get_browser($folder=0) {
 		$ci = &get_instance();
-	
-		$assets = $ci->tinycimm_model->get_assets();
+
 		// 'uncategorized' folder
-		$data['folders'][] = array('id'=>'0','user_id' => '0','username' => 'demo','name' => 'General', 'total_assets' => count($assets));
+		$assets = $ci->tinycimm_model->get_assets();
+		$data['folders'][] = array('id'=>'0', 'name' => 'General', 'total_assets' => count($assets));
 		// get a list of folders, and store the total amount of assets
 		foreach($folders = $ci->tinycimm_model->get_folders() as $folderinfo) {
 			$folderinfo['total_assets'] = count($ci->tinycimm_model->get_assets($folderinfo['id']));
@@ -52,16 +69,13 @@ class TinyCIMM_image extends TinyCIMM {
 		
 		$data['images'] = array();
 		$totimagesize = 0;
-		foreach($assets as $image) {
+		foreach($assets = $ci->tinycimm_model->get_assets((int) $folder) as $image) {
 			$image_path = $this->config->item('tinycimm_asset_path').$image['id'].$image['extension'];
 			$image_size = ($imgsize = @getimagesize($image_path)) ? $imgsize : array(0,0);
-			
 			$image['width'] = $image_size[0];
 			$image['height'] = $image_size[1];
 			$image['dimensions'] = $image_size[0].'x'.$image_size[1];
-			$image['extension'] = str_replace('.', '', $image['extension']);
 			$image['filesize'] = round(@filesize($image_path)/1024, 0);
-			
 			$data['images'][] = $image;	 
 			$totimagesize += $image['filesize'];
 		}
@@ -198,7 +212,7 @@ class TinyCIMM_image extends TinyCIMM {
 	* resizes an image
 	**/
 	public function save_image_size($filename, $width, $height, $quality=90, $replace_original=0){
-		if (!(int)$width or !(int)$height) {
+		if (!(int) $width or !(int) $height) {
 			TinyCIMM::response_encode(array('outcome'=>'error','message'=>'Incorrect dimensions supplied. (Cant have value of 0)'));
 		}
 
@@ -207,8 +221,8 @@ class TinyCIMM_image extends TinyCIMM {
 		$config['source_image'] = $image_path;
 		$config['new_image'] = $image_path;
 		$config['maintain_ratio'] = TRUE;
-		$config['height'] = (int)$height;
-		$config['width'] = (int)$width;
+		$config['height'] = (int) $height;
+		$config['width'] = (int) $width;
 		$this->image_lib->initialize($config);
 		$this->image_lib->resize();
 		$this->image_lib->clear();
