@@ -58,6 +58,9 @@ span#loading {background:url(../img/ajax-loader.gif) no-repeat;padding-left:20px
 .folderlist li .image_dimensions {float:right;color:#777;width:76px;display:block;text-align:right;padding-right:4px}
 .folderlist li .image_preview {}
 
+.filelist li {overflow:hidden;}
+.filelist li span {cursor:pointer;display:block;white-space:nowrap;}
+
 .thumb_wrapper {cursor:pointer;display:block;width:99px;height:99px;float:left;border:1px solid #DFDFDF;z-index:1;}
 .thumb_wrapper span {position:absolute;display:block;width:95px;height:95px;margin:2px 0 0 2px;background:#FFF;z-index:1;filter:alpha(opacity=0);-moz-opacity:0;opacity:0;text-align:center;}
 .thumb_wrapper img {display:block;margin:auto;}
@@ -75,7 +78,7 @@ select#view-type, select#sort-type {font-weight:normal;border-left:1px solid #AA
 /* manage image panel */
 td.mng_img {height:14px;line-height:14px}
 td.mng_img img {float:left;margin:0 2px 0 0}
-img#manage_thumb_img {float:left;border:1px solid #444;margin:10px 10px 0 2px}
+#manage_thumb_img {float:left;border:1px solid #444;margin:10px 10px 0 2px;text-align:center;width:95px;height:95px;background-position:center center}
 div#folder_select_list img {float:left;margin-right:5px}
 div#folder_select_list select {width:160px}
 

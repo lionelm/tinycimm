@@ -20,7 +20,7 @@
 			<table border="0" cellpadding="2" cellspacing="1">
 				<tr><td>Images:</td><td><?=$selected_folder_info['total_assets'];?></td></tr>
 				<tr><td>Size:</td><td><?=$selected_folder_info['total_file_size'];?></td></tr>
-				<tr><td>Owner:</td><td><?=$selected_folder_info['username'];?></td></tr>
+				<!--<tr><td>Owner:</td><td><?=$selected_folder_info['username'];?></td></tr>-->
 				<tr>
 					<td>View:</td>
 					<td>
@@ -42,11 +42,11 @@
 				<?if (sizeof($images) == 0) {?>
 					<li>(folder is empty)</li>
 				<?} else {?>
-					<?foreach($images AS $image):?>
+					<?foreach($images as $image):?>
 					<li>
 						<span id="image-<?=$image['id'];?>" onclick="ImageDialog.insertPreviewImage('<?=$image['id'];?>', '<?=$image['description'];?>');" style="cursor:pointer;display:block" title="insert image" onMouseOver="this.style.color='#000066';this.style.background='#EEEEEE';" onMouseOut="this.style.color='#000000';this.style.background='#FFFFFF';">
 						<span class="image_dimensions" style="display:inline;"><?=$image['dimensions'];?></span>
-						<img id="img-<?=$image['id'];?>" class="image_preview" src="img/icons/<?=$image['extension'];?>.gif" />
+						<img id="img-<?=$image['id'];?>" class="image_preview" src="img/icons/<?=str_replace('.', '', $image['extension']);?>.gif" />
 						<?=$image['name'];?>
 						<br class="clear" /></span>
 					</li>

@@ -293,10 +293,7 @@
 			<legend>Manage Image</legend>
 			<input id="image_id" type="hidden" value="" />
 			<div style="width:218px;float:right;margin:6px 6px 0 0">
-				<div style="padding:2px 2px 0 2px;height:64px;border:1px solid #CCC;color:#444;">
-					These are the default settings for this image as stored in the database. Please note that in most cases it's not a good idea deleting the image, rather place it in the Trash folder.
-				</div>
-				<table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-top:20px">
+				<table border="0" cellpadding="0" cellspacing="0" width="100%">
 					<tr>
 						<td class="mng_img">
 							<a href="javascript:;">
@@ -318,7 +315,8 @@
 					</tr>
 				</table>
 			</div>
-			<img id="manage_thumb_img" src="" />
+			<div id="manage_thumb_img"> 
+			</div>
 			<div style="display:none">
 				<b>Image Name:</b>
 				<br/><input id="image_caption" type="text" style="width:160px" value="" disabled />
@@ -332,8 +330,10 @@
 			<div id="folder_select_list">
 				<img src="img/ajax-loader.gif" /> loading..
 			</div>
+			<!--
 			<strong>Image Info:</strong>
 			<br/> 640 x 480px - 23KB
+			-->
 		</fieldset>
 	</div>
       

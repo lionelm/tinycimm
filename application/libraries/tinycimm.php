@@ -36,18 +36,20 @@ class TinyCIMM {
 		if ($cache) {
 			$asset->new_filepath = $this->config->item('tinycimm_asset_path').'cache/'.$asset->id.'_'.$width.'_'.$height.'_'.$quality.$asset->extension;
 		} else {
-			$asset->new_filepath = $asset->filepath;
+			$asset->new_filepath = $this->config->item('tinycimm_asset_path').$asset->id.$asset->extension;
 		}
-		$resize_config = $this->config->item('tinycimm_image_resize_config');		
-		$resize_config['source_image'] = $asset->filepath;
-		$resize_config['new_image'] = $asset->new_filepath;
-		$resize_config['width'] = $width;
-		$resize_config['height'] = $height;
-		$ci->load->library('image_lib');
-		$ci->image_lib->initialize($resize_config);
-		if (!$ci->image_lib->resize()) {
-			$this->tinymce_alert($ci->image_lib->display_errors());
-			exit;
+		if (($cache and !file_exists($asset->new_filepath)) or !$cache) {
+			$resize_config = $this->config->item('tinycimm_image_resize_config');		
+			$resize_config['source_image'] = $this->config->item('tinycimm_asset_path').$asset->id.$asset->extension;
+			$resize_config['new_image'] = $asset->new_filepath;
+			$resize_config['width'] = $width;
+			$resize_config['height'] = $height;
+			$ci->load->library('image_lib');
+			$ci->image_lib->initialize($resize_config);
+			if (!$ci->image_lib->resize()) {
+				$this->tinymce_alert($ci->image_lib->display_errors());
+				exit;
+			}
 		}
 		$asset->filepath = $asset->new_filepath;
 		return $asset;
@@ -60,7 +62,7 @@ class TinyCIMM {
 		$ci = &get_instance();
 		$upload_config = $this->config->item('tinycimm_upload_config');
 		// if file has been uploaded
-		if (isset($_FILES[$upload_config['field_name']]['name']) AND $_FILES[$upload_config['field_name']]['name'] != '') {
+		if (isset($_FILES[$upload_config['field_name']]['name']) and $_FILES[$upload_config['field_name']]['name'] != '') {
 
 			// load upload library
 			$ci->load->library('upload', $upload_config);
@@ -71,58 +73,32 @@ class TinyCIMM {
 				$this->tinymce_alert('There was an error processing the request: '.$this->upload->display_errors());
 				exit;
 	  		}
-			$image_data = $ci->upload->data();
-			$alttext = str_replace($image_data['file_ext'], '', strtolower($image_data['orig_name']));
+			$asset_data = $ci->upload->data();
+			$alttext = str_replace($asset_data['file_ext'], '', strtolower($asset_data['orig_name']));
 			$folder = (int) $ci->input->post('uploadfolder');
 
 			$last_insert_id = $ci->tinycimm_model->get_last_id('asset');
 			$last_insert_id++;
 		 
 			// insert the asset info into the db
-			$ci->tinycimm_model->insert_asset($folder, basename($image_data['orig_name']), $last_insert_id.$image_data['file_ext'], $alttext, $image_data['file_ext'], $_FILES[$upload_config['field_name']]['type']);
+			$ci->tinycimm_model->insert_asset($folder, basename($asset_data['orig_name']), $last_insert_id.$asset_data['file_ext'], $alttext, $asset_data['file_ext'], $_FILES[$upload_config['field_name']]['type']);
+			
+			$asset = $ci->tinycimm_model->get_asset($last_insert_id);
+			$asset->width = $asset_data['image_width'];
+			$asset->height = $asset_data['image_height'];
 
 			// rename the uploaded file, CI's Upload library does not handle custom file naming 	
-			rename($image_data['full_path'], $image_data['file_path'].$last_insert_id.$image_data['file_ext']);
-			
-			$max_x = (int) $ci->input->post('max_x');
-			$max_y = (int) $ci->input->post('max_y');
-			$adjust_size = (int) $ci->input->post('adjust_size');
-			
-			// resize image
-			if ($adjust_size === 1 AND ($image_data['image_width'] > $max_x OR $image_data['image_height'] > $max_y)) {
-				$resize_config = $this->config->item('tinycimm_resize_config');		
-				$resize_config['source_image'] = $image_data['file_path'].$last_insert_id.$image_data['file_ext'];
-				$resize_config['width'] = $max_x;
-				$resize_config['height'] = $max_y;
-				$ci->load->library('image_lib');
-				$ci->image_lib->initialize($resize_config);
-				if (!$ci->image_lib->resize()) {
-					$this->tinymce_alert($ci->image_lib->display_errors());
-					exit;
-				}
-			}
-			
-			/**
-			* @TODO Assumes uploaded folder is /images/uploaded/
-			* @Liam
-			**/
-			die("<script type=\"text/javascript\">
-			parent.removedim();
-			parent.updateimg('".base_url('images/uploaded/'.basename($image_data['full_path']))."', '".$alttext."');
-			</script>");
-			/**
-			* @TODO Assumes uploaded folder is /images/uploaded/
-			* @Liam
-			**/
+			rename($asset_data['full_path'], $asset_data['file_path'].$asset->id.$asset->extension);
+
+			return $asset;
 			  
-		}
-		// no file specified to upload
-		else {
-			die("<script type=\"text/javascript\">
-parent.removedim();
+		} else {
+			echo 
+			"<script type=\"text/javascript\">
+			parent.removedim();
 			parent.parent.tinyMCEPopup.editor.windowManager.alert('Please select an image to upload.');
-</script>");
-			//$this->tinymce_alert('Please select an image to upload');
+			</script>";
+			exit;
 		}
   	}
   	
@@ -218,7 +194,7 @@ parent.removedim();
 			die(json_encode($response));
 		} else {
 			$response_txt = '{';
-			foreach($response AS $key => $value) {
+			foreach($response as $key => $value) {
 				$response_txt .= '"'.$key.'":"'.$value.'",';
 			}
 			$response_txt = rtrim($response_txt, ',').'}';

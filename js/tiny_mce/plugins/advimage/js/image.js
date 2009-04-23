@@ -451,7 +451,8 @@ var ImageDialog = {
 	// Developer: Richard Willis
 	//----------------------------------------------------------
 
-	ci_controller : 'assetmanager',
+	ciController : 'assetmanager',
+	assetPath : '/assets/',
 	
 	/* these following methods handle the different tab panels */
 	showGeneral : function() {
@@ -560,9 +561,9 @@ var ImageDialog = {
 		var imgsrc = imgsrc_arr[imgsrc_arr.length-1];
 		var imgid = imgsrc.replace(/(.*\/)?([0-9]+)\.([a-zA-Z]+)/, "$2");
 		// set thumb	
-		o('manage_thumb_img').src = 'img/progress.gif';
-		o('manage_thumb_img').width = 95;
-		o('manage_thumb_img').height = 95;
+		o('manage_thumb_img').style.background = 'url(img/progress.gif) no-repeat center center';
+		//o('manage_thumb_img').width = 95;
+		//o('manage_thumb_img').height = 95;
 	
 		// display panel
 		mcTabs.displayTab('manager_tab','manager_panel');
@@ -579,7 +580,7 @@ var ImageDialog = {
 				}
 				else {
 					o('del_image').rel = obj.id;
-					o('manage_thumb_img').src = ImageDialog.baseURL('/assetmanager/image/get/'+obj.id+'/95/95');
+					o('manage_thumb_img').style.background = 'url('+ImageDialog.baseURL('/assetmanager/image/get/'+obj.id+'/95/95')+') no-repeat center center';
 					ImageDialog.loadSelectManager(obj.folder);
 					ImageDialog.loadAltTextManager(obj.alttext);
 				}
@@ -592,7 +593,7 @@ var ImageDialog = {
 
 	// updates image form fields after successfull upload
 	updateImage : function(imgsrc, alttext) {
-		var imgsrc = o('src').value=ImageDialog.baseURL(imgsrc.replace('thumbs/',''));
+		var imgsrc = o('src').value = ImageDialog.baseURL(this.assetPath+imgsrc);
 		o('alt').value = alttext;
 		this.showPreviewImage(imgsrc);
 		this.loadManager();
