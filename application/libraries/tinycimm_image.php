@@ -11,6 +11,14 @@ class TinyCIMM_image extends TinyCIMM {
 	public function get($asset_id, $width=200, $height=200){
 		$this->get_asset((int) $asset_id, $width, $height);
 	}
+
+	// returns an asset database object
+	public function get_image($image_id=0){
+		$ci = &get_instance();
+		$image = $ci->tinycimm_model->get_asset($image_id);
+		$image->outcome = 'success';
+		$this->response_encode($image);
+	}
 	
 	/**
 	* uploads an asset and insert info into db
@@ -159,49 +167,22 @@ class TinyCIMM_image extends TinyCIMM {
   	* @TODO would become obsolete if we switched away from a multi folder system and went with categories @Liam
   	**/
 	public function add_folder($name=''){ 
-		$ci = &get_instance();
-		$name = urldecode(trim($name));
-	
-		if ($name == '') {
-			$response['outcome'] = 'error';
-			$response['message'] = 'Please specify a valid folder name.';
-		} else if (strlen($name) == 1) {
-			$response['outcome'] = 'error';
-			$response['message'] = 'The folder name must be at least 2 characters in length.';
-		} else if (strlen($name) > 24) {
-			$response['outcome'] = 'error';
-			$response['message'] = "The folder name must be less than 24 characters.\n(The supplied folder name is "+captionID.length+" characters).";
-		}
-		
-		if (isset($response)) {
-			$this->response_encode($response);
-			exit;
-		}
-		
-		$ci->tinycimm_model->insert_folder($name);
+		if (is_array($response = parent::add_folder($name))) {
+                        $this->response_encode($response);
+                        exit;
+                }
 		$this->get_folders_html();
   	}
   	
   	/**
   	* @TODO would become obsolete if we switched away from a multi folder system and went with categories @Liam
   	**/
-	public function get_folder_select($args){
-		$data['folderid'] = isset($args['folder']) ? (int) $args['folder'] : 0;
-		$ci = &get_instance();
-		$data['folders'] = array();
-		foreach($folders = $ci->tinycimm_model->get_folders('name', $ci->user_id) AS $folderinfo) {
-			$data['folders'][] = $folderinfo;
-		}
-		die($ci->load->view($this->view_path.'image_folder_select', $data, true));
+	public function get_folders_select($folder_id=0){
+		parent::get_folders_select((int) $folder_id);
 	}
 
 	public function get_folders_html(){
-		$ci = &get_instance();
-		$data['folders'][0] = array('id'=>0,'name'=>'General');
-		foreach($folders = $ci->tinycimm_model->get_folders('name', $ci->user_id) as $folderinfo) {
-			$data['folders'][] = $folderinfo;
-		}
-		$ci->load->view($this->view_path.'image_folder_list', $data);
+		parent::get_folders_html();
 	}
 	
 	/**
@@ -210,7 +191,7 @@ class TinyCIMM_image extends TinyCIMM {
 	public function get_alttext_textbox($args){
 		$ci = &get_instance();
 		$data['alttext'] = isset($args['alttext']) ? $this->input->xss_clean($args['alttext']) : '';
-		die($ci->load->view($this->view_path.'image_alttext_textbox', $data, true));
+		$ci->load->view($this->view_path.'image_alttext_textbox', $data);
 	}
 	
 	/**

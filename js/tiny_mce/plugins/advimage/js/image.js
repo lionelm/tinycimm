@@ -522,7 +522,7 @@ var ImageDialog = {
 			o('upload_target_ajax').src = 'uploadform.htm';
 		} 
 		this.loadselect();
-		// show loading msg
+		/*// show loading msg
 		tinyMCEPopup.dom.setHTML('fileuploader_info', '<span id="loading">loading</span>');
 		// send a request for user info
 		tinymce.util.XHR.send({
@@ -534,6 +534,7 @@ var ImageDialog = {
 				 tinyMCEPopup.dom.setHTML('fileuploader_info', text);
 			}
 		});
+		*/
 		tinyMCEPopup.resizeToInnerSize();
 	},
 	
@@ -603,7 +604,7 @@ var ImageDialog = {
 	loadSelectManager : function(folder) {
 		folder = folder==undefined?'':folder;
 		tinymce.util.XHR.send({
-			url : ImageDialog.baseURL('assetmanager/image/get_folder_select/folder/'+folder),
+			url : ImageDialog.baseURL('assetmanager/image/get_folders_select/'+folder),
 			error : function(response) {
 				tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the select list.');
 			},
@@ -697,7 +698,7 @@ var ImageDialog = {
 	loadselect : function(folder) {
 		folder = folder==undefined?'':folder;
 		tinymce.util.XHR.send({
-			url : ImageDialog.baseURL('assetmanager/image/get_folder_select/folder/'+folder),
+			url : ImageDialog.baseURL('assetmanager/image/get_folders_select/'+folder),
 			error : function(text) {
 				tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the select list.');
 			},
