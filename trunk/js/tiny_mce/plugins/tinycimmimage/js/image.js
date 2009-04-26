@@ -11,7 +11,7 @@ var TinyCIMMImage = {
 		var f = document.forms[0], nl = f.elements, ed = tinyMCEPopup.editor, dom = ed.dom, n = ed.selection.getNode();
 
 		tinyMCEPopup.resizeToInnerSize();
-
+		this.showBrowser(0);
 	},
 
 	ciController : 'assetmanager',
