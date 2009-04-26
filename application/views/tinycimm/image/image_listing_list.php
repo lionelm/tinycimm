@@ -4,12 +4,12 @@
 			<div id="addfolder" style="display:none;">
 				<div class="heading">&raquo; Add Folder</div>
 				<input type="text" id="add_folder_caption" class="input" style="width:156px;float:left;margin-right:5px">
-				<img src="img/save.gif" onClick="ImageDialog.addFolder();" style="cursor:pointer;float:left" alt="save folder" title="save folder" />
+				<img src="img/save.gif" onClick="TinyCIMMImage.addFolder();" style="cursor:pointer;float:left" alt="save folder" title="save folder" />
 				<div style="clear:left"></div>
 			</div>
 			<div class="heading">
 				<span style="float:right;padding-right:2px;font-weight:normal">
-					[<a href="#" onclick="o('addfolder').style.display='block';o('add_folder_caption').focus()">add</a>]
+					[<a href="#" onclick="tinyMCEPopup.dom.get('addfolder').style.display='block';tinyMCEPopup.dom.get('add_folder_caption').focus()">add</a>]
 				</span>&raquo; Folders
 			</div>
 			<div id="folderlist">
@@ -24,7 +24,7 @@
 				<tr>
 					<td>View:</td>
 					<td>
-						<select style="border:1px solid #AAA" onchange="ImageDialog.changeView(this.options[this.selectedIndex].value)">
+						<select style="border:1px solid #AAA" onchange="TinyCIMMImage.changeView(this.options[this.selectedIndex].value)">
 							<optgroup label="Views">
 								<option value="listing" selected>File Listing</option>
 								<option value="thumbnails">Thumbnails</option>
@@ -44,7 +44,7 @@
 				<?} else {?>
 					<?foreach($images as $image):?>
 					<li>
-						<span id="image-<?=$image['id'];?>" onclick="ImageDialog.insertPreviewImage('<?=$image['id'];?>', '<?=$image['description'];?>');" style="cursor:pointer;display:block" title="insert image" onMouseOver="this.style.color='#000066';this.style.background='#EEEEEE';" onMouseOut="this.style.color='#000000';this.style.background='#FFFFFF';">
+						<span id="image-<?=$image['id'];?>" onclick="TinyCIMMImage.insertPreviewImage('<?=$image['id'];?>', '<?=$image['description'];?>');" style="cursor:pointer;display:block" title="insert image" onMouseOver="this.style.color='#000066';this.style.background='#EEEEEE';" onMouseOut="this.style.color='#000000';this.style.background='#FFFFFF';">
 						<span class="image_dimensions" style="display:inline;"><?=$image['dimensions'];?></span>
 						<img id="img-<?=$image['id'];?>" class="image_preview" src="img/icons/<?=str_replace('.', '', $image['extension']);?>.gif" />
 						<?=$image['name'];?>
