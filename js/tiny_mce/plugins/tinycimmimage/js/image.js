@@ -284,17 +284,26 @@ var TinyCIMMImage = {
 	},
 	
 	
-	// populates the image src and description form fields, 
-	// and shows the preview image in the dialog window
+	// populates the image src and description form fields of the ImageDialog window
 	insertPreviewImage : function(imgsrc, alttext) {
-		//imgsrc = imgsrc.replace(/\@/, "");
-		imgsrc = tinyMCEPopup.dom.get('src').value = TinyCIMMImage.baseURL('assets/'+imgsrc);
-		tinyMCEPopup.dom.get('alt').value = alttext;
-		tinyMCEPopup.dom.get('title').value = '';
-		this.showPreviewImage(imgsrc);
-		this.showGeneral();
+		var URL = TinyCIMMImage.baseURL('assets/'+imgsrc);
+		var win = tinyMCEPopup.getWindowArg("window");
+		win.document.getElementById(tinyMCEPopup.getWindowArg("input")).value = URL;
+		if (typeof(win.ImageDialog) != "undefined") {
+			if (win.ImageDialog.getImageData) {
+				win.ImageDialog.getImageData();
+			}
+			if (win.ImageDialog.showPreviewImage) {
+				win.ImageDialog.showPreviewImage(URL);
+			}
+			win.document.getElementById('alt').value = alttext;
+			//tinyMCEPopup.dom.get('title').value = '';
+		}
+ 		tinyMCEPopup.close();
+		return;
 	},
 	
+	// @TODO
 	saveImgDetails : function() {
 		tinyMCEPopup.editor.windowManager.alert('Image details changed.');
 	},

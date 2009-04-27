@@ -70,7 +70,7 @@ class TinyCIMM {
 			// move file into specified upload directory	
 			if (!$ci->upload->do_upload($upload_config['field_name']))  {
 			 	/* upload failed */  
-				$this->tinymce_alert('There was an error processing the request: '.$this->upload->display_errors());
+				$this->tinymce_alert('There was an error processing the request: '.preg_replace('/<[^>]+>/', '', $ci->upload->display_errors()));
 				exit;
 	  		}
 			$asset_data = $ci->upload->data();
@@ -93,11 +93,7 @@ class TinyCIMM {
 			return $asset;
 			  
 		} else {
-			echo 
-			"<script type=\"text/javascript\">
-			parent.removedim();
-			parent.parent.tinyMCEPopup.editor.windowManager.alert('Please select an image to upload.');
-			</script>";
+			$this->tinymce_alert('Please select a file to upload.');
 			exit;
 		}
   	}
@@ -228,7 +224,7 @@ class TinyCIMM {
 		echo "<script type=\"text/javascript\">
 		parent.removedim();
 		parent.parent.tinyMCEPopup.editor.windowManager.alert('".$message."');
-		</script";
+		</script>";
 	}
 	
 } // class TinyCIMM
