@@ -18,7 +18,7 @@
 				ed.windowManager.open({
 					file : url + '/image.htm',
 					width : 570,
-					height : 414,
+					height : 416,
 					inline : 1
 				}, {
 					plugin_url : url
