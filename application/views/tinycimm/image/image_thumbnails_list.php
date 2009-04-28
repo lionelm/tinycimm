@@ -38,7 +38,7 @@
 					(folder is empty)
 				<?} else {?>
 					<?foreach($images AS $image):?>
-						<span class="thumb_wrapper" title="insert image" onclick="TinyCIMMImage.insertPreviewImage('<?=$image['filename'];?>', '<?=$image['description'];?>');" onMouseOver="this.className='thumb_wrapper_over';" onMouseOut="this.className='thumb_wrapper';" style="background:url(/assetmanager/image/get/<?=$image['id'];?>/99/99) no-repeat center center;">
+						<span class="thumb_wrapper" title="<?=$image['description'];?>" onclick="TinyCIMMImage.insertPreviewImage('<?=$image['filename'];?>', '<?=$image['description'];?>');" onMouseOver="this.className='thumb_wrapper_over';" onMouseOut="this.className='thumb_wrapper';" style="background:url(/assetmanager/image/get/<?=$image['id'];?>/99/99) no-repeat center center;">
 							<span id="image-<?=$image['id'];?>"></span>
 						</span>
 					<?endforeach;?>

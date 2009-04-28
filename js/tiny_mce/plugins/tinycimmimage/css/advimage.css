@@ -1,17 +1,3 @@
-#src_list, #over_list, #out_list {width:280px;}
-.mceActionPanel {margin-top:7px;}
-.alignPreview {border:1px solid #000; width:140px; height:140px; overflow:hidden; padding:5px;}
-.checkbox {border:0;}
-.panel_wrapper div.current {height:305px;}
-#prev {margin:0; border:1px solid #000; width:99%; height:150px; overflow:auto;}
-#align, #classlist {width:150px;}
-#width, #height {vertical-align:middle; width:50px; text-align:center;}
-#vspace, #hspace, #border {vertical-align:middle; width:30px; text-align:center;}
-#class_list {width:180px;}
-input {width: 280px;}
-#constrain, #onmousemovecheck {width:auto;}
-#id, #dir, #lang, #usemap, #longdesc {width:200px;}
-
 /* 
 TinyCIMM Media Manager
 Developer: Richard Willis 
@@ -24,8 +10,9 @@ a img {border:0}
 
 img {border:0}
 
+#browser_panel {height:auto;}
 #filebrowser {}
-#filelist {height:304px;margin:0;width:100%;padding-left:3px;overflow:auto;z-index:999;position:relative;}
+#filelist {height:310px;margin:0;width:100%;padding-left:3px;overflow:auto;z-index:999;position:relative;}
 
 #fileuploader {height:150px;width:100%;overflow:hidden;}
 #upload_target_ajax {height:150px;width:100%;border:0}
@@ -61,13 +48,12 @@ span#loading {background:url(../img/ajax-loader.gif) no-repeat;padding-left:20px
 .filelist li {overflow:hidden;}
 .filelist li span {cursor:pointer;display:block;white-space:nowrap;}
 
-.thumb_wrapper {cursor:pointer;display:block;width:99px;height:99px;float:left;border:1px solid #DFDFDF;z-index:1;}
-.thumb_wrapper span {position:absolute;display:block;width:95px;height:95px;margin:2px 0 0 2px;background:#FFF;z-index:1;filter:alpha(opacity=0);-moz-opacity:0;opacity:0;text-align:center;}
-.thumb_wrapper img {display:block;margin:auto;}
+.thumb_wrapper, .thumb_wrapper_over {cursor:pointer;display:block;width:99px;height:99px;float:left;z-index:1;margin:0px 3px 3px 0px;}
+.thumb_wrapper {border:1px solid #DDD;}
+.thumb_wrapper_over {border:1px solid #8094A4;}
+.thumb_wrapper span, .thumb_wrapper_over span {position:absolute;display:block;width:95px;height:95px;margin:2px 0 0 2px;background:#FFF;z-index:1;filter:alpha(opacity=0);-moz-opacity:0;opacity:0;text-align:center;}
+.thumb_wrapper img, .thumb_wrapper_over img {display:block;margin:auto;}
 
-.thumb_wrapper_over {cursor:pointer;display:block;width:99px;height:99px;float:left;border:1px solid #8094A4;z-index:1;}
-.thumb_wrapper_over span {position:absolute;display:block;width:95px;height:95px;margin:2px 0 0 2px;background:#FFF;z-index:1;filter:alpha(opacity=0);-moz-opacity:0;opacity:0;}
-.thumb_wrapper_over img {display:block;margin:auto;}
 
 select#view-type, select#sort-type {font-weight:normal;border-left:1px solid #AAA;border-width:0 0 0 1px;background:#FFF;background-color:transparent;width:120px}
 
@@ -83,3 +69,4 @@ div#folder_select_list img {float:left;margin-right:5px}
 div#folder_select_list select {width:160px}
 
 .clear {clear:left}
+.hidden {display:none;}
