@@ -3,8 +3,7 @@
 	TinyCIMM media manager
 */
 
-class Assetmanager extends Controller
-{
+class Assetmanager extends Controller {
 	
 	var $user_id;
   
@@ -35,7 +34,7 @@ class Assetmanager extends Controller
 	*/
 	function _remap($lib){
 		$param = array_slice(explode("/", $this->uri->uri_string()),4);
-		$method = $this->uri->segment(3);
+		$method = trim($this->uri->segment(3));
 		$tinycimm_lib = "tinycimm_{$lib}";
 		$count = 0;
                 foreach ($param as $element) {
@@ -43,7 +42,10 @@ class Assetmanager extends Controller
 			$count++;
 		}
 		$this->{$tinycimm_lib}->view_path = $this->view_path = $this->config->item('tinycimm_views_root').$this->config->item('tinycimm_views_root_'.$lib);
+		if (empty($method)) { 
+			$method = 'index';
+		}
 		eval('$this->'.$tinycimm_lib. "->" . $method . "(".join(",", $param).");");
 	}
 	
-} // class Assetmanager
+}

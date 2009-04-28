@@ -8,6 +8,9 @@ class TinyCIMM_image extends TinyCIMM {
 		parent::__construct();
 	}
 
+	public function index(){
+	}
+
 	public function get($asset_id, $width=200, $height=200){
 		$this->get_asset((int) $asset_id, $width, $height);
 	}

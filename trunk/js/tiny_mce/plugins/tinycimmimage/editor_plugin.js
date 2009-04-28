@@ -14,19 +14,18 @@
 		 * @param {string} url Absolute URL to where the plugin is located.
 		 */
 		init : function(ed, url) {
-			// Register the command so that it can be invoked by using tinyMCE.activeEditor.execCommand('mceExample');
 			ed.addCommand('mceTinyCIMMImage', function() {
 				ed.windowManager.open({
 					file : url + '/image.htm',
-					width : 600,
-					height : 440,
+					width : 570,
+					height : 414,
 					inline : 1
 				}, {
 					plugin_url : url
 				});
 			});
 
-			// Register example button
+			// register button
 			ed.addButton('tinycimmimage', {
 				title : 'test',
 				cmd : 'mceTinyCIMMImage',
@@ -52,7 +51,7 @@
 				author : 'Richard Willis & Liam Gooding',
 				authorurl : 'http://tinymce.moxiecode.com',
 				infourl : 'http://wiki.moxiecode.com/index.php/TinyMCE:Plugins/example',
-				version : "1.0"
+				version : "0.1"
 			};
 		}
 	});

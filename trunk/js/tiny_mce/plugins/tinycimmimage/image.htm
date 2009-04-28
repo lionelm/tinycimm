@@ -16,15 +16,45 @@
 		
 		<div class="tabs">
 			<ul>
-				<li id="browser_tab" class="current"><span><a href="javascript:TinyCIMMImage.showBrowser();" onmousedown="return false;">Browse</a></span></li>
-				<li id="resize_tab"><span><a href="javascript:TinyCIMMImage.loadresizer();" onmousedown="return false;">Resize</a></span></li>
-				<li id="upload_tab"><span><a href="javascript:TinyCIMMImage.showUploader();" onmousedown="return false;">Upload</a></span></li>
-				<li id="manager_tab"><span><a href="javascript:TinyCIMMImage.showManager();" onmousedown="return false;">Manage</a></span></li>
-				<li id="info_tab" style="float:right"><span><a id="info_tab_link" href="javascript:;" onmousedown="return false;" title="reload dialog"><img border="0" style="display:block;margin-top:1px" src="img/loader_st.gif" onclick="this.src='img/loader.gif';TinyCIMMImage.reload()" /></a></span></li>
+				<li id="browser_tab" class="current">
+					<span>
+						<a href="javascript:TinyCIMMImage.showBrowser();" onmousedown="return false;">
+							Browse
+						</a>
+					</span>
+				</li>
+				<li id="upload_tab">
+					<span>
+						<a href="javascript:TinyCIMMImage.showUploader();" onmousedown="return false;">
+							Upload
+						</a>
+					</span>
+				</li>
+				<li id="resize_tab" style="display:none">
+					<span>
+						<a href="javascript:TinyCIMMImage.loadresizer();" onmousedown="return false;">
+							Resize
+						</a>
+					</span>
+				</li>
+				<li id="manager_tab" style="display:none">
+					<span>
+						<a href="javascript:TinyCIMMImage.showManager();" onmousedown="return false;">
+							Manage
+						</a>
+					</span>
+				</li>
+				<li id="info_tab" style="float:right;margin:0px">
+					<span>
+						<a id="info_tab_link" href="javascript:;" onmousedown="return false;" title="reload dialog">
+							<img border="0" style="display:block;margin-top:1px" src="img/loader_st.gif" onclick="this.src='img/loader.gif';TinyCIMMImage.reload()" />
+						</a>
+					</span>
+				</li>
 			</ul>
 		</div>
 	
-		<div id="image_wrapper_panel" style="height:350px" class="panel_wrapper">
+		<div id="image_wrapper_panel" class="panel_wrapper">
 
 			<!-- BROWSER PANEL -->
 			<div id="browser_panel" class="panel">
@@ -130,16 +160,6 @@
 		<!-- END PANELS -->
 		</div>
 
-		<div class="mceActionPanel">
-			<div style="float: left">
-				<input type="button" id="insert" name="insert" value="{#insert}" onclick="TinyCIMMImage.insert();" />
-			        <!-- <input type="button" id="insertthumb" name="insert_thumb" value="Insert Thumb" onclick="TinyCIMMImage.insertThumb();" /> -->
-			</div>
-
-			<div style="float: right">
-				<input type="button" id="cancel" name="cancel" value="{#cancel}" onclick="tinyMCEPopup.close();" />
-			</div>
-		</div>
 	</form>
 </body> 
 </html> 
