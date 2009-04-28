@@ -1,5 +1,8 @@
 <?php  if (!defined('BASEPATH')) exit('No direct script access allowed');
 
+$config['tinycimm_controller'] = '/assetmanager/';
+$config['tinycimm_tinymce_path'] = '/js/tiny_mce/';
+
 $config['tinycimm_views_root'] = 'tinycimm/';
 $config['tinycimm_views_root_image'] = 'image/';
 $config['tinycimm_asset_path'] = $_SERVER['DOCUMENT_ROOT'].'/assets/';
