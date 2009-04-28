@@ -8,7 +8,9 @@ class TinyCIMM_image extends TinyCIMM {
 		parent::__construct();
 	}
 
-	public function index(){
+	public function load($plugin_path){
+		$ci = &get_instance();
+		$ci->load->view($this->view_path.'image_dialog');
 	}
 
 	public function get($asset_id, $width=200, $height=200){
@@ -79,6 +81,10 @@ class TinyCIMM_image extends TinyCIMM {
 			$image['height'] = $image_size[1];
 			$image['dimensions'] = $image_size[0].'x'.$image_size[1];
 			$image['filesize'] = round(@filesize($image_path)/1024, 0);
+			// format image name
+			if (strlen($image['name']) > 34) {
+				$image['name'] = substr($image['name'], 0, 34);
+			}
 			$data['images'][] = $image;	 
 			$totimagesize += $image['filesize'];
 		}
