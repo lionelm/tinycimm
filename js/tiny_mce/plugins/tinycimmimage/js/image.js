@@ -154,13 +154,10 @@ var TinyCIMMImage = {
 		//tinyMCEPopup.resizeToInnerSize();
 	},
 
-	// updates image form fields after successfull upload
-	updateImage : function(imgsrc, alttext) {
-		var imgsrc = tinyMCEPopup.dom.get('src').value = TinyCIMMImage.baseURL(this.assetPath+imgsrc);
-		tinyMCEPopup.dom.get('alt').value = alttext;
-		this.showPreviewImage(imgsrc);
-		this.loadManager();
-		tinyMCEPopup.editor.windowManager.alert('Image uploaded successfully, please update the image description.');
+	// file upload callback function
+	imageUploaded : function(folder) {
+		tinyMCEPopup.editor.windowManager.alert('Image successfully uploaded!');
+		TinyCIMMImage.showBrowser(folder);
 	},
 	
 	

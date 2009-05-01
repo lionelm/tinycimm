@@ -1,58 +1,56 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>Upload Image Form</title>
-<link href="css/advimage.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript">
-var tinymce = parent.tinymce;
-// load popup css
-tinymce.EditorManager.activeEditor.windowManager.createInstance('tinymce.dom.DOMUtils', document).loadCSS(tinymce.EditorManager.activeEditor.settings.popup_css);
+	<title>Upload Image Form</title>
+	<link href="css/advimage.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript">
+		var tinymce = parent.tinymce;
+		// load popup css
+		tinymce.EditorManager.activeEditor.windowManager.createInstance('tinymce.dom.DOMUtils', document).loadCSS(tinymce.EditorManager.activeEditor.settings.popup_css);
 
-/**
-* remove overlay layer and spinner image
-**/
-function removedim() {
-	try {
-		var dim = parent.document.getElementById("dimwindow");
-		dim.parentNode.removeChild(dim);
-		var img = parent.document.getElementById("dimwindowimg");
-		img.parentNode.removeChild(img);
-	} catch(e) {}
-}
+		/**
+		* remove overlay layer and spinner image
+		**/
+		function removedim() {
+			try {
+				var dim = parent.document.getElementById("dimwindow");
+				dim.parentNode.removeChild(dim);
+				var img = parent.document.getElementById("dimwindowimg");
+				img.parentNode.removeChild(img);
+			} catch(e) {}
+		}
 
-/**
-* create overlay layer and spinner image and add to the dom
-**/
-function dimimage() {
-	var dim = parent.document.createElement("div");
-	dim.setAttribute("id", "dimwindow");
-	var img = parent.document.createElement("div");
-	img.setAttribute("id", "dimwindowimg");
-	img.innerHTML = '<div><img src="img/progress.gif" /></div>';
-	var bodyRef = parent.document.getElementById("upload_panel");
-	bodyRef.appendChild(dim);
-	bodyRef.appendChild(img);
-}
+		/**
+		* create overlay layer and spinner image and add to the dom
+		**/
+		function dimimage() {
+			var dim = parent.document.createElement("div");
+			dim.setAttribute("id", "dimwindow");
+			var img = parent.document.createElement("div");
+			img.setAttribute("id", "dimwindowimg");
+			img.innerHTML = '<div><img src="img/progress.gif" /></div>';
+			var bodyRef = parent.document.getElementById("upload_panel");
+			bodyRef.appendChild(dim);
+			bodyRef.appendChild(img);
+		}
 
-/**
-*
-**/
-function updateimg(imgurl, alttext) {
-	document.forms[0].reset();
-	parent.ImageDialog.updateImage(imgurl, alttext);
-}
+		/**
+		*
+		**/
+		function updateimg(folder) {
+			document.forms[0].reset();
+			parent.TinyCIMMImage.imageUploaded(folder);
+		}
 
-window.onload = function() {
-	/* CHANGE ACCORDINGLY, this is terrible we need to find a way for javascript to use the tinycimm CI config @author richw */
- 	//document.forms[0].action = parent.tinyMCEPopup.editor.documentBaseURI.toAbsolute('tinycimm/image/upload_image/');
-	document.forms[0].action = '/assetmanager/image/upload_image';
-}
-</script>
-<base target="_self" />
+		window.onload = function() {
+			document.forms[0].action = parent.tinyMCEPopup.editor.documentBaseURI.toAbsolute(parent.tinyMCE.settings.tinycimm_controller+'image/upload');
+		}
+	</script>
+	<base target="_self" />
 </head>
 <body id="advimage" style="background:#FFF;margin:0">
 	<iframe id="hidden_iframe" name="hidden_iframe" src="javascript:false" style="display:none"></iframe>
-	<form method="post" target="hidden_iframe" enctype="multipart/form-data" action="" id="uploadform" name="uploadform">
+	<form method="post" target="hidden_iframe" enctype="multipart/form-data" action="#" id="uploadform" name="uploadform">
 		<table border="0" cellpadding="4" cellspacing="0">
 			<tr><td>Select File</td><td colspan="3"><input type="file" id="fileupload" name="fileupload" size="25" style="display:inline;width:220px;" /></td></tr>
 			<tr>
@@ -92,6 +90,6 @@ window.onload = function() {
 			</tr>
 		</table>
 	</form>
-	<br/><br/>&nbsp;
+	<br /><br />
 </body>
 </html>

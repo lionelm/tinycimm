@@ -17,7 +17,7 @@ class Assetmanager extends Controller {
 		TinyCIMM::check_paths();
 
 		// set default view type in user session
-		!$this->session->userdata('cimm_view')) and $this->session->set_userdata('cimm_view', 'thumbnails');
+		!$this->session->userdata('cimm_view') and $this->session->set_userdata('cimm_view', 'thumbnails');
 
 		// add your user auth check here to secure tinycimm
 		// eg $this->auth->is_logged_in() or die('Access denied.');
