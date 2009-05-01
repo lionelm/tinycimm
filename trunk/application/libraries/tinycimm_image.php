@@ -29,22 +29,23 @@ class TinyCIMM_image extends TinyCIMM {
 	/**
 	* uploads an asset and insert info into db
 	**/
-	public function upload_image(){
+	public function upload(){
 		$ci = &get_instance();
 
 		$asset = $this->upload_asset();
+		
+		// resize image
 		$max_x = (int) $ci->input->post('max_x');
 		$max_y = (int) $ci->input->post('max_y');
 		$adjust_size = (int) $ci->input->post('adjust_size') === 1 and ($asset->width > $max_x or $asset->height > $max_y);
-		// resize image
-		if ($adjust_size) {
+		if ($adjust_size and ($asset->width > $max_x or $asset->height > $max_y)) {
 			$this->resize_asset($asset, $max_x, $max_y, 85, false);
 		}
 
 		echo
 		"<script type=\"text/javascript\">
 		parent.removedim();
-		parent.updateimg('".$asset->id.$asset->extension."', '".$asset->description."');
+		parent.updateimg('".$asset->folder."');
 		</script>";
 		exit;
 	}
@@ -55,16 +56,15 @@ class TinyCIMM_image extends TinyCIMM {
 	public function get_browser($folder=0) {
 		$ci = &get_instance();
 
-		// 'uncategorized' folder
-		$assets = $ci->tinycimm_model->get_assets();
-		$data['folders'][] = array('id'=>'0', 'name' => 'General', 'total_assets' => count($assets));
+		// store an 'uncategorized' root folder (aka smart folder)
+		$data['folders'][] = array( 'id'=>'0', 'name' => 'General', 'total_assets' => count($ci->tinycimm_model->get_assets()));
+
 		// get a list of folders, and store the total amount of assets
 		foreach($folders = $ci->tinycimm_model->get_folders() as $folderinfo) {
 			$folderinfo['total_assets'] = count($ci->tinycimm_model->get_assets($folderinfo['id']));
 			$data['folders'][] = $folderinfo;
 			// selected folder info
 			if ($folderinfo['id'] == $folder) {
-				$folderinfo['username'] = 'demo';
 				$data['selected_folder_info'] = $folderinfo;
 		  	}
 		}

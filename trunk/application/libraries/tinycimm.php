@@ -70,7 +70,7 @@ class TinyCIMM {
 			// move file into specified upload directory	
 			if (!$ci->upload->do_upload($upload_config['field_name']))  {
 			 	/* upload failed */  
-				$this->tinymce_alert('There was an error processing the request: '.preg_replace('/<[^>]+>/', '', $ci->upload->display_errors()));
+				$this->tinymce_alert(preg_replace('/<[^>]+>/', '', $ci->upload->display_errors()));
 				exit;
 	  		}
 			$asset_data = $ci->upload->data();
@@ -86,6 +86,7 @@ class TinyCIMM {
 			$asset = $ci->tinycimm_model->get_asset($last_insert_id);
 			$asset->width = $asset_data['image_width'];
 			$asset->height = $asset_data['image_height'];
+			$asset->folder = $folder;
 
 			// rename the uploaded file, CI's Upload library does not handle custom file naming 	
 			rename($asset_data['full_path'], $asset_data['file_path'].$asset->id.$asset->extension);
@@ -162,7 +163,7 @@ class TinyCIMM {
 		$ci = &get_instance();
 		$data['folder_id'] = $folder_id;
 		$data['folders'] = array();
-		foreach($folders = $ci->tinycimm_model->get_folders('name', $ci->user_id) as $folderinfo) {
+		foreach($folders = $ci->tinycimm_model->get_folders('name') as $folderinfo) {
 			$data['folders'][] = $folderinfo;
 		}
 		$ci->load->view($this->view_path.'image_folder_select', $data);
