@@ -14,6 +14,62 @@ var TinyCIMMImage = {
 		this.showBrowser(0);
 	},
 
+	// modified tiny_mce function
+	insert : function(file, title) {
+		var ed = tinyMCEPopup.editor, t = this, f = document.forms[0], imgid = file.replace(/\.[a-z]+/, '');
+
+		// get the image info from the database
+		tinymce.util.XHR.send({
+                        url : TinyCIMMImage.baseURL('assetmanager/image/get_image/'+imgid),
+                        error : function(response) {
+                                tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the image info.');
+                        },
+                        success : function(response) {
+                                var obj = tinymce.util.JSON.parse(response);
+                                if (obj.outcome == 'error') {
+                                        tinyMCEPopup.editor.windowManager.alert(obj.message);
+                                }
+                                else {
+					t.insertAndClose(obj);
+                                }
+                        }
+                });
+
+	},
+
+	// modified tiny_mce function
+	insertAndClose : function(image) {
+		var ed = tinyMCEPopup.editor, f = document.forms[0], nl = f.elements, v, args = {}, el;
+
+		tinyMCEPopup.restoreSelection();
+
+		// Fixes crash in Safari
+		if (tinymce.isWebKit) {
+			ed.getWin().focus();
+		}
+
+		args = {
+			src : TinyCIMMImage.baseURL('assets/'+image.filename),
+			width : '',
+			height : '',
+			alt : image.description,
+			title : image.description
+		};
+
+		el = ed.selection.getNode();
+
+		if (el && el.nodeName == 'IMG') {
+			ed.dom.setAttribs(el, args);
+		} else {
+			ed.execCommand('mceInsertContent', false, '<img id="__mce_tmp" />', {skip_undo : 1});
+			ed.dom.setAttribs('__mce_tmp', args);
+			ed.dom.setAttrib('__mce_tmp', 'id', '');
+			ed.undoManager.add();
+		}
+
+		tinyMCEPopup.close();
+	},
+
 	ciController : 'assetmanager',
 	assetPath : '/assets/',
 	
@@ -283,20 +339,25 @@ var TinyCIMMImage = {
 	
 	// populates the image src and description form fields of the ImageDialog window
 	insertPreviewImage : function(imgsrc, alttext) {
+		// use tinmce setting for this!
 		var URL = TinyCIMMImage.baseURL('assets/'+imgsrc);
 		var win = tinyMCEPopup.getWindowArg("window");
-		win.document.getElementById(tinyMCEPopup.getWindowArg("input")).value = URL;
-		if (typeof(win.ImageDialog) != "undefined") {
-			if (win.ImageDialog.getImageData) {
-				win.ImageDialog.getImageData();
+		if (win != undefined) {
+			win.document.getElementById(tinyMCEPopup.getWindowArg("input")).value = URL;
+			if (typeof(win.ImageDialog) != "undefined") {
+				if (win.ImageDialog.getImageData) {
+					win.ImageDialog.getImageData();
+				}
+				if (win.ImageDialog.showPreviewImage) {
+					win.ImageDialog.showPreviewImage(URL);
+				}
+				win.document.getElementById('alt').value = alttext;
+				//tinyMCEPopup.dom.get('title').value = '';
 			}
-			if (win.ImageDialog.showPreviewImage) {
-				win.ImageDialog.showPreviewImage(URL);
-			}
-			win.document.getElementById('alt').value = alttext;
-			//tinyMCEPopup.dom.get('title').value = '';
+ 			tinyMCEPopup.close();
+		} else {
+			this.insert(imgsrc, alttext);
 		}
- 		tinyMCEPopup.close();
 		return;
 	},
 	

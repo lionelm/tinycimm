@@ -27,9 +27,9 @@
 
 			// register button
 			ed.addButton('tinycimmimage', {
-				title : 'test',
+				title : 'Image Manager',
 				cmd : 'mceTinyCIMMImage',
-				image : url + '/img/example.gif'
+				image : url + '/img/insertimage.gif'
 			});
 
 			// Add a node change handler, selects the button in the UI when a image is selected
@@ -37,7 +37,6 @@
 				cm.setActive('example', n.nodeName == 'IMG');
 			});
 		},
-
 
 		/**
 		 * Returns information about the plugin as a name/value array.
