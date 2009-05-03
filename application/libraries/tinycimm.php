@@ -26,7 +26,6 @@ class TinyCIMM {
 		}
 		header('Content-type: '.$resize_asset->mimetype);
 		header("Content-Length: ".filesize($resize_asset->filepath));
-		//ob_clean();
 		flush();
 		readfile($resize_asset->filepath);
 	}
@@ -172,7 +171,7 @@ class TinyCIMM {
 	public function get_folders_html(){
 		$ci = &get_instance();
 		$data['folders'][0] = array('id'=>0,'name'=>'General');
-		foreach($folders = $ci->tinycimm_model->get_folders('name', $ci->user_id) as $folderinfo) {
+		foreach($folders = $ci->tinycimm_model->get_folders('name') as $folderinfo) {
 			$data['folders'][] = $folderinfo;
 		}
 		$ci->load->view($this->view_path.'image_folder_list', $data);
