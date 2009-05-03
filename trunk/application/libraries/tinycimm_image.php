@@ -1,4 +1,15 @@
-<?php  if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php  
+/*
+ *
+ * tinycimm_image.php
+ * Copyright (c) 2009 Richard Willis & Liam Gooding
+ * MIT license  : http://www.opensource.org/licenses/mit-license.php
+ * Project      : http://tinycimm.googlecode.com/
+ * Contact      : willis.rh@gmail.com
+ *
+ */
+
+if (!defined('BASEPATH')) exit('No direct script access allowed');
  
 class TinyCIMM_image extends TinyCIMM {
 
@@ -6,11 +17,6 @@ class TinyCIMM_image extends TinyCIMM {
 
 	public function __construct(){
 		parent::__construct();
-	}
-
-	public function load($plugin_path){
-		$ci = &get_instance();
-		$ci->load->view($this->view_path.'image_dialog');
 	}
 
 	public function get($asset_id, $width=200, $height=200){
