@@ -36,18 +36,16 @@ class TinyCIMM {
 			header('Pragma: public');
 		}
 		header('Content-type: '.$resize_asset->mimetype);
-		header("Content-Length: ".filesize($resize_asset->filepath));
+		header("Content-Length: ".filesize($resize_asset->new_filepath));
 		flush();
-		readfile($resize_asset->filepath);
+		readfile($resize_asset->new_filepath);
 	}
 
-	public function resize_asset($asset, $width=200, $height=200, $quality=85, $cache=true){
+	public function resize_asset($asset, $width=200, $height=200, $quality=85, $cache=true, $update=false){
 		$ci = &get_instance();
-		if ($cache) {
-			$asset->new_filepath = $this->config->item('tinycimm_asset_path').'cache/'.$asset->id.'_'.$width.'_'.$height.'_'.$quality.$asset->extension;
-		} else {
-			$asset->new_filepath = $this->config->item('tinycimm_asset_path').$asset->id.$asset->extension;
-		}
+		$asset->filename = 'cache/'.$asset->id.'_'.$width.'_'.$height.'_'.$quality.$asset->extension;
+		$asset->new_filepath = $this->config->item('tinycimm_asset_path').$asset->filename;
+
 		if (($cache and !file_exists($asset->new_filepath)) or !$cache) {
 			$resize_config = $this->config->item('tinycimm_image_resize_config');		
 			$resize_config['source_image'] = $this->config->item('tinycimm_asset_path').$asset->id.$asset->extension;
@@ -61,7 +59,8 @@ class TinyCIMM {
 				exit;
 			}
 		}
-		$asset->filepath = $asset->new_filepath;
+		$update and $ci->tinycimm_model->update_asset('id', $asset->id, 0, '', '', $asset->filename);
+		
 		return $asset;
 	}
 
