@@ -240,8 +240,7 @@ class TinyCIMM_image extends TinyCIMM {
 		if (!(int) $width or !(int) $height) {
 			TinyCIMM::response_encode(array('outcome'=>'error','message'=>'Incorrect dimensions supplied. (Cant have value of 0)'));
 		}
-		$image = $ci->tinycimm_model->get_asset($image_id);
-		$filename = $this->resize_asset($image, $width, $height, $quality, true, true);
+		$this->resize_asset($ci->tinycimm_model->get_asset($image_id), $width, $height, $quality, true, true);
 		
 		$response['outcome'] = 'success';
 		$response['message'] = 'Image size successfully saved.';
