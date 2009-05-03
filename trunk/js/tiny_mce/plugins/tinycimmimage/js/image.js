@@ -34,9 +34,9 @@ var TinyCIMMImage = {
 		});
 	},
 
-	insert : function(file, title) {
+	insert : function(imageid, title) {
 		var t = this;
-		this.getImage(file.replace(/\.[a-z]+/, ''), function(image){
+		this.getImage(imageid, function(image){
 			t.insertAndClose(image);
 		});
 	},
@@ -276,7 +276,7 @@ var TinyCIMMImage = {
 	
 	// show resizer image
 	showResizeImage : function(preImage) {
-		this.getImage(preImage.src.replace(/.*\/([0-9]+)\.[a-z]+$/, '$1'), function(image){
+		this.getImage(preImage.src.replace(/.*\/([0-9]+)_?.*$/, '$1'), function(image){
 			// load image 
 			tinyMCEPopup.dom.get('slider_img').src = preImage.src;
 			tinyMCEPopup.dom.get('slider_img').width = max_w = image.width; 
@@ -347,7 +347,7 @@ var TinyCIMMImage = {
 			}
  			tinyMCEPopup.close();
 		} else {
-			this.insert(imgsrc, alttext);
+			this.insert(imgsrc.replace(/.*\/([0-9]+)_?.*$/, '$1'), alttext);
 		}
 		return;
 	},
