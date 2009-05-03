@@ -45,6 +45,7 @@
 				<?}?>
 				<br class="clear" />
 			</div>
+			<?=$this->pagination->create_links();?>
 		</td>
 	</tr>
 </table>

@@ -61,20 +61,23 @@ class TinyCIMM_image extends TinyCIMM {
 	/**
 	* get browser 
 	**/
-	public function get_browser($folder=0) {
+	public function get_browser($folder=0, $offset=0) {
 		$ci = &get_instance();
 		$ci->load->library('pagination');
 		$ci->load->helper('url');
 
-		$total_assets = count($ci->tinycimm_model->get_assets());
+		$total_assets = count($ci->tinycimm_model->get_assets($folder));
 
-		$pagination_config['base_url'] = base_url($ci->config->item('tinycimm_controller'));
+		$pagination_config['base_url'] = base_url($ci->config->item('tinycimm_controller').'image/get_browser/'.$folder);
 		$pagination_config['total_rows'] = $total_assets;
+		$pagination_config['full_tag_open'] = '<div class="heading pagination">';
+		$pagination_config['full_tag_close'] = '</div>';
 		$pagination_config['per_page'] = $ci->config->item('tinycimm_pagination_per_page'); 
+		$pagination_config['uri_segment'] = 5;
 		$ci->pagination->initialize($pagination_config);
 	
 		// store an 'uncategorized' root folder (aka smart folder)
-		$data['folders'][] = array( 'id'=>'0', 'name' => 'General', 'total_assets' => $total_assets);
+		$data['folders'][] = array( 'id'=>'0', 'name' => 'All images', 'total_assets' => $total_assets);
 
 		// get a list of folders, and store the total amount of assets
 		foreach($folders = $ci->tinycimm_model->get_folders() as $folderinfo) {
@@ -91,7 +94,7 @@ class TinyCIMM_image extends TinyCIMM {
 		
 		$data['images'] = array();
 		$totimagesize = 0;
-		foreach($assets = $ci->tinycimm_model->get_assets((int) $folder) as $image) {
+		foreach($assets = $ci->tinycimm_model->get_assets((int) $folder, $offset, $ci->config->item('tinycimm_pagination_per_page')) as $image) {
 			$image_path = $this->config->item('tinycimm_asset_path').$image['id'].$image['extension'];
 			$image_size = ($imgsize = @getimagesize($image_path)) ? $imgsize : array(0,0);
 			$image['width'] = $image_size[0];
