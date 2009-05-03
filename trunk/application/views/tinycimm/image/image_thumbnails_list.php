@@ -37,9 +37,14 @@
 				<?if (sizeof($images) == 0) {?>
 					(folder is empty)
 				<?} else {?>
-					<?foreach($images AS $image):?>
-						<span class="thumb_wrapper" title="<?=$image['description'];?>" onclick="TinyCIMMImage.insertPreviewImage('<?=$image['filename'];?>', '<?=$image['description'];?>');" onMouseOver="this.className='thumb_wrapper_over';" onMouseOut="this.className='thumb_wrapper';" style="background:url(/assetmanager/image/get/<?=$image['id'];?>/99/99) no-repeat center center;">
-							<span id="image-<?=$image['id'];?>"></span>
+					<?foreach($images as $image):?>
+						<span class="thumb_wrapper" title="<?=$image['description'];?>" onMouseOver="this.className='thumb_wrapper_over';" onMouseOut="this.className='thumb_wrapper';"> 
+							<span class="thumb" onclick="TinyCIMMImage.insertPreviewImage('<?=$image['filename'];?>', '<?=$image['description'];?>');" style="background:url(/assetmanager/image/get/<?=$image['id'];?>/92/92) no-repeat center center;"></span>
+							<span class="controls-bg"></span>
+							<span class="controls">
+								<a href="#" onclick="TinyCIMMImage.loadresizer('<?=$image['filename'];?>');return false;">Resize</a> |
+								<a href="#" onclick="TinyCIMMImage.deleteImage(<?=$image['id'];?>);return false">Delete</a>
+							</span>
 						</span>
 					<?endforeach;?>
 				<?}?>

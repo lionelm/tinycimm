@@ -27,6 +27,10 @@ class TinyCIMM_image extends TinyCIMM {
 	public function get_image($image_id=0){
 		$ci = &get_instance();
 		if ($image = $ci->tinycimm_model->get_asset($image_id)) {
+			// get image dimenions
+			$dimensions = getimagesize($ci->config->item('tinycimm_asset_path').$image->filename);
+			$image->width = $dimensions[0];
+			$image->height = $dimensions[1];
 			$image->outcome = 'success';
 			$this->response_encode($image);
 		} else {

@@ -12,35 +12,35 @@ var TinyCIMMImage = {
 
 	init : function(ed) {
 		var f = document.forms[0], nl = f.elements, ed = tinyMCEPopup.editor, dom = ed.dom, n = ed.selection.getNode();
-
 		tinyMCEPopup.resizeToInnerSize();
 		this.showBrowser(0);
 	},
 
-	// modified tiny_mce function
-	insert : function(file, title) {
-		var ed = tinyMCEPopup.editor, t = this, f = document.forms[0], imgid = file.replace(/\.[a-z]+/, '');
-
-		// get the image info from the database
+	getImage : function(imageid, callback) {
 		tinymce.util.XHR.send({
-                        url : TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_controller+'image/get_image/'+imgid),
-                        error : function(response) {
-                                tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the image info.');
-                        },
-                        success : function(response) {
-                                var obj = tinymce.util.JSON.parse(response);
-                                if (obj.outcome == 'error') {
-                                        tinyMCEPopup.editor.windowManager.alert(obj.message);
-                                }
-                                else {
-					t.insertAndClose(obj);
-                                }
-                        }
-                });
-
+			url : TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_controller+'image/get_image/'+imageid),
+			error : function(response) {
+				tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the image info.');
+				return false;
+			},
+			success : function(response) {
+				var obj = tinymce.util.JSON.parse(response);
+				if (obj.outcome == 'error') {
+					tinyMCEPopup.editor.windowManager.alert(obj.message);
+				} else {
+					(callback) && callback(obj);
+				}
+			}
+		});
 	},
 
-	// modified tiny_mce function
+	insert : function(file, title) {
+		var t = this;
+		this.getImage(file.replace(/\.[a-z]+/, ''), function(image){
+			t.insertAndClose(image);
+		});
+	},
+
 	insertAndClose : function(image) {
 		var ed = tinyMCEPopup.editor, f = document.forms[0], nl = f.elements, v, args = {}, el;
 
@@ -73,25 +73,18 @@ var TinyCIMMImage = {
 		tinyMCEPopup.close();
 	},
 
-	showGeneral : function() {
-		mcTabs.displayTab('general_tab','general_panel');
-	},
-	showAdvanced : function() {
-		mcTabs.displayTab('advanced_tab','advanced_panel');
-	},
 	showUploader : function() {
 		mcTabs.displayTab('upload_tab','upload_panel');
+		tinyMCEPopup.dom.get('resize_tab').style.display = 'none';
 		TinyCIMMImage.loaduploader();
-	},
-	showAppearance : function() {
-		mcTabs.displayTab('appearance_tab','appearance_panel');
 	},
 	showManager : function() {
 		TinyCIMMImage.loadManager();
 	},
 	showBrowser : function(folder) {
 		mcTabs.displayTab('browser_tab','browser_panel');
-		TinyCIMMImage.fileBrowser(folder)
+		tinyMCEPopup.dom.get('resize_tab').style.display = 'none';
+		TinyCIMMImage.fileBrowser(folder);
 	},
 
 	// clear all image data fields
@@ -115,11 +108,21 @@ var TinyCIMMImage = {
 			success : function(response) {
 				tinyMCEPopup.dom.setHTML('filebrowser', response);
 				// bind click event to pagination links
-				pagination_anchors = tinyMCEPopup.dom.select('div.pagination a');
+				var pagination_anchors = tinyMCEPopup.dom.select('div.pagination a');
 				for(var anchor in pagination_anchors) {
 					pagination_anchors[anchor].onclick = function(e){
 						e.preventDefault();
 						TinyCIMMImage.fileBrowser(folder, this.href.replace(/.*\/([0-9]+)$/, '$1'));
+					};
+				}
+				// bind hover event to thumbnail
+				var thumb_images = tinyMCEPopup.dom.select('.thumb_wrapper');
+				for(var image in thumb_images) {
+					thumb_images[image].onmouseover = function(e){
+						tinyMCE.activeEditor.dom.addClass(this, 'show')
+					};
+					thumb_images[image].onmouseout = function(e){
+						tinyMCE.activeEditor.dom.removeClass(this, 'show')
 					};
 				}
 			}
@@ -165,6 +168,7 @@ var TinyCIMMImage = {
 			});
 			return;
 		}
+		
 		// show loading img
 		tinyMCEPopup.dom.setHTML('folder_select_list', '<select><option>loading..</option></select>');
 		// prep thumb path
@@ -173,8 +177,6 @@ var TinyCIMMImage = {
 		var imgid = imgsrc.replace(/(.*\/)?([0-9]+)\.([a-zA-Z]+)/, "$2");
 		// set thumb	
 		tinyMCEPopup.dom.get('manage_thumb_img').style.background = 'url(img/progress.gif) no-repeat center center';
-		//tinyMCEPopup.dom.get('manage_thumb_img').width = 95;
-		//tinyMCEPopup.dom.get('manage_thumb_img').height = 95;
 	
 		// display panel
 		mcTabs.displayTab('manager_tab','manager_panel');
@@ -236,70 +238,66 @@ var TinyCIMMImage = {
 		});
 	},
 	
-	// prepare image attributes
-	loadresizer : function() {
-		if (tinyMCEPopup.dom.get('src').value == '') {
-			tinyMCEPopup.editor.windowManager.alert('You need to select an image first.', 
-			function(s) {
-					// if not already viewing the browser
-					if (tinyMCEPopup.dom.get('browser_tab').className != "current") {
-						TinyCIMMImage.showBrowser();
-					}
-			});
-			return;
-		}
+	// prepare the resizer panel
+	loadresizer : function(imagesrc) {
 		// ensure image is cached before loading the resizer
-		this.loadImage(TinyCIMMImage.baseURL(tinyMCEPopup.dom.get('src').value));
+		this.loadImage(TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_assets_path+imagesrc));
 	},
 
 	// pre-cache an image
 	loadImage : function(img) { 
-		preImage = new Image();
+		var preImage = new Image();
 		preImage.src = img;
 		//console.debug(preImage);
-		setTimeout("TinyCIMMImage.checkImgLoad()",10);	// ie
+		setTimeout(function(){
+			TinyCIMMImage.checkImgLoad(preImage);
+		},10);	// ie
 	},
 
 	// show loading text if image not already cached
-	checkImgLoad : function() {
+	checkImgLoad : function(preImage) {
 		if (!preImage.complete) {
 			mcTabs.displayTab('resize_tab','resize_panel');
-			tinyMCEPopup.dom.setHTML('image-info-dimensions', '<img style="float:left;margin-right:4px" src="'+ajax_img+'"/> caching image');
+			tinyMCEPopup.dom.setHTML('image-info-dimensions', '<img style="float:left;margin-right:4px" src=""/> caching image');
 		}
-		this.checkLoad();
+		this.checkLoad(preImage);
 	},	
 
-	checkLoad : function() {
+	checkLoad : function(preImage) {
 		if (preImage.complete) { 
 			//console.debug(preImage.complete);
-			preImage = null;
-			this.showResizeImage();
+			this.showResizeImage(preImage);
 			return;
 		}
- 		setTimeout("TinyCIMMImage.checkLoad()", 10);
+ 		setTimeout(function(){
+			TinyCIMMImage.checkLoad(preImage)
+		}, 10);
 	},
 	
 	// show resizer image
-	showResizeImage : function() {
-		// load image 
-		tinyMCEPopup.dom.get('slider_img').src = TinyCIMMImage.baseURL(tinyMCEPopup.dom.get('src').value);
-		tinyMCEPopup.dom.get('slider_img').width = max_w = tinyMCEPopup.dom.get('width').value;
-		tinyMCEPopup.dom.get('slider_img').height = max_h = tinyMCEPopup.dom.get('height').value;
-		// display panel
-		mcTabs.displayTab('resize_tab','resize_panel');
-		// image dimensions overlay layer
-		tinyMCEPopup.dom.setHTML('image-info-dimensions', '<span id="slider_width_val"></span> x <span id="slider_height_val"></span>');
-		// image scroller
-		new ScrollSlider(tinyMCEPopup.dom.get('image-slider'), {
-			min : 0,
-			max : max_w,
-			value : max_w,
-			size : 380,
-			scroll : function(new_w) {
-				// onscroll => update image dimensions
-				tinyMCEPopup.dom.get('slider_width_val').innerHTML = (tinyMCEPopup.dom.get('slider_img').width=new_w);
-				tinyMCEPopup.dom.get('slider_height_val').innerHTML = (tinyMCEPopup.dom.get('slider_img').height=Math.round((parseInt(new_w)/parseInt(max_w))*max_h))+'px';
-			}
+	showResizeImage : function(preImage) {
+		this.getImage(preImage.src.replace(/.*\/([0-9]+)\.[a-z]+$/, '$1'), function(image){
+			// load image 
+			tinyMCEPopup.dom.get('slider_img').src = preImage.src;
+			tinyMCEPopup.dom.get('slider_img').width = max_w = image.width; 
+			tinyMCEPopup.dom.get('slider_img').height = max_h = image.height;
+			// display panel
+			mcTabs.displayTab('resize_tab','resize_panel');
+			tinyMCEPopup.dom.get('resize_tab').style.display = 'block';
+			// image dimensions overlay layer
+			tinyMCEPopup.dom.setHTML('image-info-dimensions', '<span id="slider_width_val"></span> x <span id="slider_height_val"></span>');
+			
+			new ScrollSlider(tinyMCEPopup.dom.get('image-slider'), {
+				min : 0,
+				max : max_w,
+				value : max_w,
+				size : 380,
+				scroll : function(new_w) {
+					tinyMCEPopup.dom.get('slider_width_val').innerHTML = (tinyMCEPopup.dom.get('slider_img').width=new_w);
+					tinyMCEPopup.dom.get('slider_height_val').innerHTML = (tinyMCEPopup.dom.get('slider_img').height=Math.round((parseInt(new_w)/parseInt(max_w))*max_h))+'px';
+				}
+			});
+
 		});
 	},
 	
@@ -387,8 +385,6 @@ var TinyCIMMImage = {
 						tinyMCEPopup.dom.get('src').value = imgsrc;
 						tinyMCEPopup.dom.get('width').value = tinyMCEPopup.dom.get('slider_img').width;
 						tinyMCEPopup.dom.get('height').value = tinyMCEPopup.dom.get('slider_img').height;
-						TinyCIMMImage.updateStyle();
-						TinyCIMMImage.showPreviewImage(imgsrc, 1);
 						TinyCIMMImage.showGeneral();
 					});
 				}
@@ -409,9 +405,7 @@ var TinyCIMMImage = {
 				var obj = tinymce.util.JSON.parse(response);
 				if (obj && obj.outcome == 'error') {
 						tinyMCEPopup.editor.windowManager.alert('Error: '+obj.message);
-				}
-				else {
-					//success
+				} else {
 					tinyMCEPopup.dom.setHTML('folderlist', response)
 					tinyMCEPopup.dom.get('addfolder').style.display = 'none';
 					tinyMCEPopup.dom.get('add_folder_caption').value = '';
@@ -435,7 +429,7 @@ var TinyCIMMImage = {
 				success : function(response) {
 		 			var obj = tinymce.util.JSON.parse(response);
 					if (obj && obj.outcome == 'error') {
-						tinyMCEPopup.editor.windowManager.alert('Error: '+obj['message']);
+						tinyMCEPopup.editor.windowManager.alert('Error: '+obj.message);
 		 			} else {
 						TinyCIMMImage.getFoldersHTML(function(folderHTML){
 							tinyMCEPopup.dom.setHTML('folderlist', folderHTML)
@@ -458,7 +452,7 @@ var TinyCIMMImage = {
 		 		tinyMCEPopup.editor.windowManager.alert('There was an error processing the request.');
 			},
 			success : function(response) {
-				callback(response.toString());	
+				(callback) && callback(response.toString());	
 			}
 		});
 	},
@@ -467,31 +461,19 @@ var TinyCIMMImage = {
 	deleteImage : function(imageID) {
 		tinyMCEPopup.editor.windowManager.confirm('Are you sure you want to delete this image?', function(s) {
 			if (!s) {return false;}
-
-			// loading img
-			var img_delete_src = tinyMCEPopup.dom.get('img_delete').src, folder = '';
-			tinyMCEPopup.dom.get('img_delete').src = ajax_img;
-			// send request
-			var requesturl = TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_controller+'image/delete_image/'+imageID);
 			tinymce.util.XHR.send({
-				url : requesturl,
+				url : TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_controller+'image/delete_image/'+imageID),
 				error : function(response) {
-					tinyMCEPopup.dom.get('img_delete').src = img_delete_src;
 					tinyMCEPopup.editor.windowManager.alert('There was an error processing the request.');
 				},
 				success : function(response) {
-					tinyMCEPopup.dom.get('img_delete').src = img_delete_src;
 					var obj = tinymce.util.JSON.parse(response);
 					if (obj.outcome == 'error') {
 						tinyMCEPopup.editor.windowManager.alert('Error: '+obj.message);
-					}
-					else {
+					} else {
 						tinyMCEPopup.editor.windowManager.alert(obj.message);
 						folder = obj.folder
 					}
- 					// reset inputs, loadbrowser
- 					TinyCIMMImage.resetTinyCIMMImage();
-				 	TinyCIMMImage.showPreviewImage();
 				 	TinyCIMMImage.showBrowser(folder);
 				}
 			});
@@ -524,11 +506,7 @@ var TinyCIMMImage = {
 			//ScrollSlider.change();
 			
 		}
-		catch(e) {
-			// do nothing
-			 alert(e);
-			 return;
-		}
+		catch(e) { return; }
 	},
 
 	baseURL : function(url) {
