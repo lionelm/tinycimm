@@ -25,6 +25,7 @@ tinyMCE.init(
 	button_tile_map : true,
 	file_browser_callback : 'tinycimm',
 	tinycimm_controller : '<?=$this->config->item('tinycimm_controller');?>',
+	tinycimm_assets_path : '/assets/'
 });
 
 function tinycimm(field_name, url, type, win) {

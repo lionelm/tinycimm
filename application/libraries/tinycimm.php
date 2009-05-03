@@ -1,4 +1,15 @@
-<?php  if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php  
+/*
+ *
+ * tinycimm.php
+ * Copyright (c) 2009 Richard Willis & Liam Gooding
+ * MIT license  : http://www.opensource.org/licenses/mit-license.php
+ * Project      : http://tinycimm.googlecode.com/
+ * Contact      : willis.rh@gmail.com
+ *
+ */
+
+if (!defined('BASEPATH')) exit('No direct script access allowed');
  
 class TinyCIMM {
 
