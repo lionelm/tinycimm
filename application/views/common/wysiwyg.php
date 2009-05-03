@@ -35,7 +35,7 @@ function tinycimm(field_name, url, type, win) {
 	tinyMCE.activeEditor.windowManager.open({
 		file : url,
 		width : 570,
-		height : 416,
+		height : 446,
 		resizable : "yes",
 		inline : "yes",  
 		close_previous : "no"

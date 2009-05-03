@@ -100,22 +100,28 @@ var TinyCIMMImage = {
 	},
 
 	 // load list of folders and images via json request
-	fileBrowser : function(folder) {
+	fileBrowser : function(folder, offset) {
 		folder = folder || 0;
+		offset = offset || 0;
 		if (tinyMCEPopup.dom.get('img-'+folder) == null) {
 			tinyMCEPopup.dom.setHTML('filebrowser', '<span id="loading">loading</span>');
 		}
-		else {
-			tinyMCEPopup.dom.get('img-'+folder).src = ajax_img;
-		}
 
 		tinymce.util.XHR.send({
-			url : TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_controller+'image/get_browser/'+folder),
-			error : function(text) {
+			url : TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_controller+'image/get_browser/'+folder+'/'+offset),
+			error : function(reponse) {
 				tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the images.');
 			},
-			success : function(text) {
-				tinyMCEPopup.dom.setHTML('filebrowser', text);
+			success : function(response) {
+				tinyMCEPopup.dom.setHTML('filebrowser', response);
+				// bind click event to pagination links
+				pagination_anchors = tinyMCEPopup.dom.select('div.pagination a');
+				for(var anchor in pagination_anchors) {
+					pagination_anchors[anchor].onclick = function(e){
+						e.preventDefault();
+						TinyCIMMImage.fileBrowser(folder, this.href.replace(/.*\/([0-9]+)$/, '$1'));
+					};
+				}
 			}
 		});
 	},
