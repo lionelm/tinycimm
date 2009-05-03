@@ -233,79 +233,22 @@ class TinyCIMM_image extends TinyCIMM {
 	}
 	
 	/**
-	*
-	**/
-	public function get_alttext_textbox($args){
-		$ci = &get_instance();
-		$data['alttext'] = isset($args['alttext']) ? $this->input->xss_clean($args['alttext']) : '';
-		$ci->load->view($this->view_path.'image_alttext_textbox', $data);
-	}
-	
-	/**
 	* resizes an image
 	**/
-	public function save_image_size($filename, $width, $height, $quality=90, $replace_original=0){
+	public function save_image_size($image_id, $width, $height, $quality=90){
+		$ci = &get_instance();
 		if (!(int) $width or !(int) $height) {
 			TinyCIMM::response_encode(array('outcome'=>'error','message'=>'Incorrect dimensions supplied. (Cant have value of 0)'));
 		}
-
-		$image_path = $this->config->item('tinycimm_image_upload_path').$filename;
-		$config['image_library'] = 'gd2';
-		$config['source_image'] = $image_path;
-		$config['new_image'] = $image_path;
-		$config['maintain_ratio'] = TRUE;
-		$config['height'] = (int) $height;
-		$config['width'] = (int) $width;
-		$this->image_lib->initialize($config);
-		$this->image_lib->resize();
-		$this->image_lib->clear();
-
+		$image = $ci->tinycimm_model->get_asset($image_id);
+		$this->resize_asset($image, $width, $height, $quality, false);
+		
 		$response['outcome'] = 'success';
 		$response['message'] = 'Image size successfully saved.';
-		TinyCIMM::response_encode($response);
+		$this->response_encode($response);
 	}
 
   
-	/**
-	* @TODO not sure if its worth assuming a multi-user system yet.
-	**/
-	public function get_user_info(){
-		$ci = &get_instance();
-		// get user info: total images uploaded, privelages, max upload sizes etc etc
-
-	
-		$sql = 'SELECT COUNT(id) AS tot_images
-			FROM asset 
-			WHERE user_id = ?';
-		$query = $this->db->query($sql, array($ci->user_id));
-		$data['user'] = $query->row_array();
-	
-		// num gif
-		$sql = 'SELECT id
-			FROM asset
-			WHERE filename LIKE \'%.gif\'';
-		$query = $this->db->query($sql);
-		$data['user']['tot_gif'] = $query->num_rows();
-		// num jpg
-		$sql = 'SELECT id
-			FROM asset
-			WHERE filename LIKE \'%.jpg\'';
-		$query = $this->db->query($sql);
-		$data['user']['tot_jpg'] = $query->num_rows();
-		// num png
-		$sql = 'SELECT id
-			FROM asset
-			WHERE filename LIKE \'%.png\'';
-		$query = $this->db->query($sql);
-		$data['user']['tot_png'] = $query->num_rows();
-
-		header("Pragma: no-cache");
-		header("Cache-Control: no-store, no-cache, max-age=0, must-revalidate");
-		header('Content-Type: text/x-json');
-		
-		$ci->load->view($this->view_path.'image_user_info', $data);
-	}
-	
 	/**
 	*
 	**/

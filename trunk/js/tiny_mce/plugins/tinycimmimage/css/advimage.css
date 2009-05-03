@@ -22,10 +22,11 @@ select#folderselect {}
 #contextmenu {border: 1px solid #91A7B4;background-color: #FFFFFF;}
 #contextmenu .menuTitle {background:#EEE url(../img/heading.gif) repeat-x;height:20px;font-weight:bold;padding:3px 0 0 3px}
 
-#resizer {height:296px;overflow:none}
+#resize_panel {height:394px;}
+#resizer {height:368px;overflow:none}
 
 #image-slider {margin-bottom:20px;padding-top:6px;}
-#image-info {height:272px;width:508px;display:block;overflow:auto;border:1px solid #000000}
+#image-info {height:320px;width:508px;display:block;overflow:auto;border:1px solid #000000}
 
 #image-info-dimensions {padding:1px 4px;position:absolute;background:#FFFFFF;border:1px solid #000;border-width:0 1px 1px 0;filter:alpha(opacity=75);-moz-opacity:0.75;opacity:0.75;font-weight:bold;z-index:9999}
 
@@ -55,6 +56,8 @@ span#loading {background:url(../img/ajax-loader.gif) no-repeat;padding-left:20px
 .thumb_wrapper .controls, .thumb_wrapper_over .controls {position:absolute;bottom:0;height:20px;width:100%;z-index:100;text-align:right}
 .thumb_wrapper span, .thumb_wrapper_over span {display:none;}
 .show span {display:block;}
+.thumb_wrapper .controls .resize, .thumb_wrapper_over .controls .resize {text-decoration:none;cursor:pointer;display:block;width:16px;height:16px;float:right;background:url(../img/arrow_in.png) no-repeat 0 0;filter:alpha(opacity=70);-moz-opacity:0.7;opacity:0.7;}
+.thumb_wrapper .controls .delete, .thumb_wrapper_over .controls .delete {margin-left:0.4em;text-decoration:none;cursor:pointer;display:block;width:16px;height:16px;float:right;background:url(../img/delete.png) no-repeat 0 0;filter:alpha(opacity=70);-moz-opacity:0.7;opacity:0.7;}
 
 select#view-type, select#sort-type {font-weight:normal;border-left:1px solid #AAA;border-width:0 0 0 1px;background:#FFF;background-color:transparent;width:120px}
 

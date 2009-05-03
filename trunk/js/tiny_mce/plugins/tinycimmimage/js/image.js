@@ -364,7 +364,7 @@ var TinyCIMMImage = {
 		// prepare request url
 		var replace = tinyMCEPopup.dom.get('replace').checked == true ? '1' : '0';
 		var imgsrc_arr = tinyMCEPopup.editor.documentBaseURI.toRelative(tinyMCEPopup.dom.get('slider_img').src).split('/');
-		var requesturl = TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_controller+'image/save_image_size/'+imgsrc_arr[imgsrc_arr.length-1]+'/'+tinyMCEPopup.dom.get('slider_img').width+'/'+tinyMCEPopup.dom.get('slider_img').height+'/90/'+replace);
+		var requesturl = TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_controller+'image/save_image_size/'+imgsrc_arr[imgsrc_arr.length-1].replace(/\.[a-z]+$/, '')+'/'+tinyMCEPopup.dom.get('slider_img').width+'/'+tinyMCEPopup.dom.get('slider_img').height+'/90/'+replace);
 		// send request
 		tinymce.util.XHR.send({
 			url : requesturl,
@@ -382,10 +382,7 @@ var TinyCIMMImage = {
 					tinyMCEPopup.editor.windowManager.alert('Image size successfully saved.', 
 					function(s) {
 						var imgsrc = TinyCIMMImage.baseURL(tinyMCEPopup.dom.get('slider_img').src);
-						tinyMCEPopup.dom.get('src').value = imgsrc;
-						tinyMCEPopup.dom.get('width').value = tinyMCEPopup.dom.get('slider_img').width;
-						tinyMCEPopup.dom.get('height').value = tinyMCEPopup.dom.get('slider_img').height;
-						TinyCIMMImage.showGeneral();
+						TinyCIMMImage.showBrowser();
 					});
 				}
 			}

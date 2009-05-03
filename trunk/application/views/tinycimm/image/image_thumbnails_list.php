@@ -42,8 +42,8 @@
 							<span class="thumb" onclick="TinyCIMMImage.insertPreviewImage('<?=$image['filename'];?>', '<?=$image['description'];?>');" style="background:url(/assetmanager/image/get/<?=$image['id'];?>/92/92) no-repeat center center;"></span>
 							<span class="controls-bg"></span>
 							<span class="controls">
-								<a href="#" onclick="TinyCIMMImage.loadresizer('<?=$image['filename'];?>');return false;">Resize</a> |
-								<a href="#" onclick="TinyCIMMImage.deleteImage(<?=$image['id'];?>);return false">Delete</a>
+								<a href="#" title="delete image" class="delete" onclick="TinyCIMMImage.deleteImage(<?=$image['id'];?>);return false">&nbsp;</a>
+								<a href="#" title="resize image" class="resize" onclick="TinyCIMMImage.loadresizer('<?=$image['filename'];?>');return false;">&nbsp;</a>
 							</span>
 						</span>
 					<?endforeach;?>
