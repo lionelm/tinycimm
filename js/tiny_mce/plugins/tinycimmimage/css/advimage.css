@@ -22,7 +22,8 @@ select#folderselect {}
 #contextmenu {border: 1px solid #91A7B4;background-color: #FFFFFF;}
 #contextmenu .menuTitle {background:#EEE url(../img/heading.gif) repeat-x;height:20px;font-weight:bold;padding:3px 0 0 3px}
 
-#resize_panel {height:394px;}
+#image_wrapper_panel, #resize_panel {height:392px;}
+#image_wrapper_panel fieldset {height:382px;}
 #resizer {height:368px;overflow:none}
 
 #image-slider {margin-bottom:20px;padding-top:6px;}
@@ -64,6 +65,11 @@ select#view-type, select#sort-type {font-weight:normal;border-left:1px solid #AA
 #dimwindow {top:0;left:0;width:100%;height:100%;position:absolute;z-index:1000;background:#FFF;filter:alpha(opacity=50);-moz-opacity:0.5;opacity:0.5;}
 #dimwindowimg {width:50px;height:50px;position:absolute;left:50%;top:50%;margin:-55px 0 0 -45px;z-index:1001}
 #dimwindowimg div {text-align:center}
+
+/* pagination */
+.pagination a, .pagination a:visited, .pagination b {border:1px solid #F4F4F0;padding:0px 2px;text-decoration:none;}
+.pagination b {color:#2B6FB6}
+.pagination a:hover {border:1px solid #aaa;padding:0px 2px;}
 
 /* manage image panel */
 td.mng_img {height:14px;line-height:14px}
