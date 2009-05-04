@@ -1,6 +1,8 @@
 #summary Details on how to install tinycimm in your codeigniter project
 #labels Phase-Deploy,Phase-Implementation
 
+(TinyMCE Version: 3.2.3 and CodeIgniter Version 1.7.1)
+
 = Details =
 
   * Download and extract the zip file
