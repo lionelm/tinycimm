@@ -34,7 +34,7 @@ var TinyCIMMImage = {
 		});
 	},
 
-	insert : function(imageid, title) {
+	insert : function(imageid) {
 		var t = this;
 		this.getImage(imageid, function(image){
 			t.insertAndClose(image);
@@ -332,6 +332,7 @@ var TinyCIMMImage = {
 		// use tinmce setting for this!
 		var win = tinyMCEPopup.getWindowArg("window");
 		var URL = TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_assets_path+imgsrc);
+
 	
 		if (win != undefined) {
 			win.document.getElementById(tinyMCEPopup.getWindowArg("input")).value = URL;
@@ -347,7 +348,7 @@ var TinyCIMMImage = {
 			}
  			tinyMCEPopup.close();
 		} else {
-			this.insert(imgsrc.replace(/.*\/([0-9]+)_?.*$/, '$1'), alttext);
+			this.insert(imgsrc.replace(/.*\/([0-9]+)_?.*$/, '$1'));
 		}
 		return;
 	},
@@ -362,9 +363,8 @@ var TinyCIMMImage = {
 		tinyMCEPopup.dom.get('saveimg').src = tinyMCEPopup.dom.get('saveimg').src.replace('save.gif', 'ajax-loader.gif');
 		
 		// prepare request url
-		var replace = tinyMCEPopup.dom.get('replace').checked == true ? '1' : '0';
 		var imgsrc_arr = tinyMCEPopup.editor.documentBaseURI.toRelative(tinyMCEPopup.dom.get('slider_img').src).split('/');
-		var requesturl = TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_controller+'image/save_image_size/'+imgsrc_arr[imgsrc_arr.length-1].replace(/\.[a-z]+$/, '')+'/'+tinyMCEPopup.dom.get('slider_img').width+'/'+tinyMCEPopup.dom.get('slider_img').height+'/90/'+replace);
+		var requesturl = TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_controller+'image/save_image_size/'+imgsrc_arr[imgsrc_arr.length-1].replace(/^([0-9]+)_?.*$/, '$1')+'/'+tinyMCEPopup.dom.get('slider_img').width+'/'+tinyMCEPopup.dom.get('slider_img').height+'/90');
 		// send request
 		tinymce.util.XHR.send({
 			url : requesturl,
@@ -377,12 +377,13 @@ var TinyCIMMImage = {
 				var obj = tinymce.util.JSON.parse(response);
 				if (obj.outcome == 'error') {
 					tinyMCEPopup.editor.windowManager.alert(obj.message); 
-				}
-				else if (obj.outcome == 'success') {
-					tinyMCEPopup.editor.windowManager.alert('Image size successfully saved.', 
-					function(s) {
-						var imgsrc = TinyCIMMImage.baseURL(tinyMCEPopup.dom.get('slider_img').src);
-						TinyCIMMImage.showBrowser();
+				} else if (obj.outcome == 'success') {
+					tinyMCEPopup.editor.windowManager.confirm('Image size successfully saved.\n\nClick OK to insert image or cancel to return.', function(s) {
+						if (!s) {
+							TinyCIMMImage.showBrowser();
+							return false;
+						}
+						TinyCIMMImage.insertPreviewImage(obj.filename, obj.description);
 					});
 				}
 			}

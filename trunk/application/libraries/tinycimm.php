@@ -86,12 +86,10 @@ class TinyCIMM {
 			$alttext = str_replace($asset_data['file_ext'], '', strtolower($asset_data['orig_name']));
 			$folder = (int) $ci->input->post('uploadfolder');
 
-			$last_insert_id = $ci->tinycimm_model->get_last_id('asset');
-			$last_insert_id++;
-		 
 			// insert the asset info into the db
-			$ci->tinycimm_model->insert_asset($folder, basename($asset_data['orig_name']), $last_insert_id.$asset_data['file_ext'], $alttext, $asset_data['file_ext'], $_FILES[$upload_config['field_name']]['type']);
-			
+			$last_insert_id = $ci->tinycimm_model->insert_asset($folder, basename($asset_data['orig_name']), '', $alttext, $asset_data['file_ext'], $_FILES[$upload_config['field_name']]['type']);
+
+			$ci->tinycimm_model->update_asset('id', $last_insert_id, 0, '', '', $last_insert_id.$asset_data['file_ext']);
 			$asset = $ci->tinycimm_model->get_asset($last_insert_id);
 			$asset->width = $asset_data['image_width'];
 			$asset->height = $asset_data['image_height'];
