@@ -20,6 +20,7 @@ class Assetmanager extends Controller {
 		$this->load->library('tinycimm_image');
 		$this->load->model('tinycimm_model');
 		$this->load->config('tinycimm');
+		$this->load->helper('url');
 		TinyCIMM::check_paths();
 
 		// set default view type in user session
