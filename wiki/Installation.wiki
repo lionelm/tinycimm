@@ -10,5 +10,8 @@ Installing tinycimm is pretty straight forward.
   * Download and extract the zip file
   * Copy the files into your CodeIgniter project root directory
   * Edit the application/config/autoload.php file
-  * -- add 'tinycimm' to the *config* key and 'url' to the *helper*
-  * -- make sure the {{{$config['base_url']}}} is set correctly in your application/config/config.php
+  * -- add 'tinycimm' to the *config* key, 'url' to the *helpers*, and 'database' to the *libraries* 
+  * make sure the {{{$config['base_url']}}} is set correctly in your application/config/config.php
+  * make sure the database details in {{{application/config/database.php}}} are correct
+  * use the {{{sql/mysql/tinycimm.sql}}} to create the tables
+  * use the {{{application/common/wysiwyg.php}}} view as an example to load tinymce and the tinycimm plugin
