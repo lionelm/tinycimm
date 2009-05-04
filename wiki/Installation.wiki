@@ -1,4 +1,6 @@
+#summary Details on how to install tinycimm in your codeigniter project
 #labels Phase-Deploy,Phase-Implementation
+
 = Details =
 
   * Download and extract the zip file
