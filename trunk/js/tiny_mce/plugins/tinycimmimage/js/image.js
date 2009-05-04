@@ -119,10 +119,13 @@ var TinyCIMMImage = {
 				var thumb_images = tinyMCEPopup.dom.select('.thumb_wrapper');
 				for(var image in thumb_images) {
 					thumb_images[image].onmouseover = function(e){
-						tinyMCE.activeEditor.dom.addClass(this, 'show')
+						tinyMCE.activeEditor.dom.addClass(this, 'show');
+						tinyMCE.activeEditor.dom.addClass(this, 'thumb_wrapper_over');
 					};
 					thumb_images[image].onmouseout = function(e){
-						tinyMCE.activeEditor.dom.removeClass(this, 'show')
+						tinyMCE.activeEditor.dom.removeClass(this, 'show');
+						tinyMCE.activeEditor.dom.removeClass(this, 'thumb_wrapper_over');
+						tinyMCE.activeEditor.dom.addClass(this, 'thumb_wrapper');
 					};
 				}
 			}
@@ -328,11 +331,17 @@ var TinyCIMMImage = {
 	
 	
 	// populates the image src and description form fields of the ImageDialog window
-	insertPreviewImage : function(imgsrc, alttext) {
-		// use tinmce setting for this!
+	insertPreviewImage : function(thumbspan, imgsrc, alttext) {
+	
+		// show loading spinner and hide the controls
+		tinyMCE.activeEditor.dom.addClass(thumbspan, 'showloader');
+		var controls = tinyMCEPopup.dom.select('.controls, .controls-bg');
+                for(var i in controls) {
+			controls[i].style.display = 'none';
+		}
+
 		var win = tinyMCEPopup.getWindowArg("window");
 		var URL = TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_assets_path+imgsrc);
-
 	
 		if (win != undefined) {
 			win.document.getElementById(tinyMCEPopup.getWindowArg("input")).value = URL;
@@ -344,7 +353,6 @@ var TinyCIMMImage = {
 					win.ImageDialog.showPreviewImage(URL);
 				}
 				win.document.getElementById('alt').value = alttext;
-				//tinyMCEPopup.dom.get('title').value = '';
 			}
  			tinyMCEPopup.close();
 		} else {

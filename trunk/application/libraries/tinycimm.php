@@ -43,23 +43,34 @@ class TinyCIMM {
 
 	public function resize_asset($asset, $width=200, $height=200, $quality=85, $cache=true, $update=false){
 		$ci = &get_instance();
+		
+		if (!isset($asset->filepath)) {
+			$asset->filepath = $this->config->item('tinycimm_asset_path').$asset->id.$asset->extension;
+		}
 		$asset->filename = 'cache/'.$asset->id.'_'.$width.'_'.$height.'_'.$quality.$asset->extension;
 		$asset->new_filepath = $this->config->item('tinycimm_asset_path').$asset->filename;
 
+
 		if (($cache and !file_exists($asset->new_filepath)) or !$cache) {
 			$resize_config = $this->config->item('tinycimm_image_resize_config');		
+			$imagesize = @getimagesize($asset->filepath) or die('asset not found');
+			if ($imagesize[0] > $width or $imagesize[1] > $height) {
+				$resize_config['width'] = $width;
+				$resize_config['height'] = $height;
+			} else {
+				$resize_config['width'] = $imagesize[0];
+				$resize_config['height'] = $imagesize[1];
+			}
 			$resize_config['source_image'] = $this->config->item('tinycimm_asset_path').$asset->id.$asset->extension;
 			$resize_config['new_image'] = $asset->new_filepath;
-			$resize_config['width'] = $width;
-			$resize_config['height'] = $height;
 			$ci->load->library('image_lib');
 			$ci->image_lib->initialize($resize_config);
 			if (!$ci->image_lib->resize()) {
 				$this->tinymce_alert($ci->image_lib->display_errors());
 				exit;
 			}
+			$update and $ci->tinycimm_model->update_asset('id', $asset->id, 0, '', '', $asset->filename);
 		}
-		$update and $ci->tinycimm_model->update_asset('id', $asset->id, 0, '', '', $asset->filename);
 		
 		return $asset;
 	}
@@ -94,6 +105,7 @@ class TinyCIMM {
 			$asset->width = $asset_data['image_width'];
 			$asset->height = $asset_data['image_height'];
 			$asset->folder = $folder;
+			$asset->filepath = $this->config->item('tinycimm_asset_path').$asset->id.$asset->extension;
 
 			// rename the uploaded file, CI's Upload library does not handle custom file naming 	
 			rename($asset_data['full_path'], $asset_data['file_path'].$asset->id.$asset->extension);
