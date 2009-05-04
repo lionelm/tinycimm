@@ -11,9 +11,12 @@
 var TinyCIMMImage = {
 
 	init : function(ed) {
-		var f = document.forms[0], nl = f.elements, ed = tinyMCEPopup.editor, dom = ed.dom, n = ed.selection.getNode();
-		tinyMCEPopup.resizeToInnerSize();
-		this.showBrowser(0);
+		var n = ed.selection.getNode();
+		if (tinyMCEPopup.params.resize) {
+			this.loadresizer(n.src);
+		} else {
+			this.showBrowser(0);
+		}
 	},
 
 	getImage : function(imageid, callback) {
@@ -202,7 +205,6 @@ var TinyCIMMImage = {
 				}
 			}
 		});
-		
 		return;
 		//tinyMCEPopup.resizeToInnerSize();
 	},
@@ -228,30 +230,17 @@ var TinyCIMMImage = {
 		});
 	},
 
- 	// get select list of folders in html select & option format (var folder would give option selected attr)
-	loadAltTextManager : function(alttext) {
-		tinymce.util.XHR.send({
-			url : TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_controller+'image/get_alttext_textbox/alttext/'+alttext),
-			error : function(response) {
-				tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the image description.');
-			},
-			success : function(response) {
-					tinyMCEPopup.dom.setHTML('alttext_container', response);
-			}
-		});
-	},
-	
 	// prepare the resizer panel
 	loadresizer : function(imagesrc) {
+		var path = /^http/.test(imagesrc) ? imagesrc : tinyMCEPopup.editor.settings.tinycimm_assets_path+imagesrc;
 		// ensure image is cached before loading the resizer
-		this.loadImage(TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_assets_path+imagesrc));
+		this.loadImage(TinyCIMMImage.baseURL(path));
 	},
 
 	// pre-cache an image
 	loadImage : function(img) { 
 		var preImage = new Image();
 		preImage.src = img;
-		//console.debug(preImage);
 		setTimeout(function(){
 			TinyCIMMImage.checkImgLoad(preImage);
 		},10);	// ie
@@ -306,7 +295,7 @@ var TinyCIMMImage = {
 	
 	// load list of folders via request
 	loadselect : function(folder) {
-		folder = folder==undefined?'':folder;
+		folder = folder || '';
 		tinymce.util.XHR.send({
 			url : TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_controller+'image/get_folders_select/'+folder),
 			error : function(text) {
@@ -329,20 +318,18 @@ var TinyCIMMImage = {
 		});
 	},
 	
-	
-	// populates the image src and description form fields of the ImageDialog window
+	// either inserts the image into the image dialog, or into the editor	
 	insertPreviewImage : function(thumbspan, imgsrc, alttext) {
 	
 		// show loading spinner and hide the controls
 		tinyMCE.activeEditor.dom.addClass(thumbspan, 'showloader');
 		var controls = tinyMCEPopup.dom.select('.controls, .controls-bg');
-                for(var i in controls) {
-			controls[i].style.display = 'none';
-		}
+                for(var i in controls) { controls[i].style.display = 'none'; }
 
 		var win = tinyMCEPopup.getWindowArg("window");
 		var URL = TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_assets_path+imgsrc);
-	
+
+		// if loaded from a dialog window	
 		if (win != undefined) {
 			win.document.getElementById(tinyMCEPopup.getWindowArg("input")).value = URL;
 			if (typeof(win.ImageDialog) != "undefined") {
@@ -356,15 +343,11 @@ var TinyCIMMImage = {
 			}
  			tinyMCEPopup.close();
 		} else {
-			this.insert(imgsrc.replace(/.*\/([0-9]+)_?.*$/, '$1'));
+			this.insert(imgsrc.replace(/.*\/([0-9]+).*$/, '$1'));
 		}
 		return;
 	},
 	
-	// @TODO
-	saveImgDetails : function() {
-		tinyMCEPopup.editor.windowManager.alert('Image details changed.');
-	},
 	
 	saveImgSize : function() {
 		// show loading animation
@@ -391,7 +374,7 @@ var TinyCIMMImage = {
 							TinyCIMMImage.showBrowser();
 							return false;
 						}
-						TinyCIMMImage.insertPreviewImage(obj.filename, obj.description);
+						TinyCIMMImage.insertPreviewImage(null, obj.filename, obj.description);
 					});
 				}
 			}
@@ -423,9 +406,7 @@ var TinyCIMMImage = {
 	// delete image folder
 	deleteFolder : function(folderID) {
 		tinyMCEPopup.editor.windowManager.confirm('Are you sure you want to delete this folder?', function(s) {
-			if (!s) {
-				return false;
-			}
+			if (!s) { return false; }
  			var requesturl = TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_controller+'image/delete_folder/'+folderID);
 			tinymce.util.XHR.send({
 				url : requesturl,
@@ -523,7 +504,7 @@ var TinyCIMMImage = {
 	reload : function() {
 		tinyMCEPopup.dom.get('info_tab_link').className = 'rightclick';
 		setTimeout(function() {
-			location.reload();
+			window.location.reload();
 			tinyMCEPopup.resizeToInnerSize();
 		}, 300);
 	}

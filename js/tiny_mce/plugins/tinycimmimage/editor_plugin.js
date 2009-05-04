@@ -14,14 +14,15 @@
 		 * @param {string} url Absolute URL to where the plugin is located.
 		 */
 		init : function(ed, url) {
-			ed.addCommand('mceTinyCIMMImage', function() {
+			ed.addCommand('mceTinyCIMMImage', function(resize) {
 				ed.windowManager.open({
 					file : url + '/image.htm',
 					width : 570,
 					height : 446,
 					inline : 1
 				}, {
-					plugin_url : url
+					plugin_url : url,
+					resize : resize
 				});
 			});
 
@@ -34,7 +35,7 @@
 
 			// Add a node change handler, selects the button in the UI when a image is selected
 			ed.onNodeChange.add(function(ed, cm, n) {
-				cm.setActive('example', n.nodeName == 'IMG');
+				cm.setActive('tinycimmimage', n.nodeName == 'IMG');
 			});
 		},
 
