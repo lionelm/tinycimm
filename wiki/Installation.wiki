@@ -1,3 +1,4 @@
+#labels Phase-Deploy,Phase-Implementation
 How to install and setup tinycimm
 
 = Introduction =
@@ -9,6 +10,8 @@ Installing tinycimm is pretty straight forward.
 
   * Download and extract the zip file
   * Copy the files into your CodeIgniter project root directory
+  * Make sure the {{{assets/}}} and {{{assets/cache/}}} folders have write permissions
+  * The plugin requires you to have the correct urls, so it's important to check the example {{{.htaccess}}} is placed in the root of your codeigniter project.
   * Edit the application/config/autoload.php file
   * -- add 'tinycimm' to the *config* key, 'url' to the *helpers*, and 'database' to the *libraries* 
   * make sure the {{{$config['base_url']}}} is set correctly in your application/config/config.php
