@@ -10,5 +10,5 @@ Installing tinycimm is pretty straight forward.
   * Download and extract the zip file
   * Copy the files into your CodeIgniter project root directory
   * Edit the application/config/autoload.php file
-  *  * add 'tinycimm' to the *config* key and 'url' to the *helper*
-  *  * make sure the $config['base_url'] is set correctly in your application/config/config.php
+  * -- add 'tinycimm' to the *config* key and 'url' to the *helper*
+  * -- make sure the {{{$config['base_url']}}} is set correctly in your application/config/config.php
