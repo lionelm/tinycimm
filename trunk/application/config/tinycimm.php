@@ -1,5 +1,7 @@
 <?php  if (!defined('BASEPATH')) exit('No direct script access allowed');
 
+// you  mostly don't need to touch this
+
 $config['tinycimm_controller'] = '/assetmanager/';
 $config['tinycimm_views_root'] = 'tinycimm/';
 $config['tinycimm_views_root_image'] = 'image/';
