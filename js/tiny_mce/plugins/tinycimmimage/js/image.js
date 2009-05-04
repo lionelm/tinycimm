@@ -81,9 +81,11 @@ var TinyCIMMImage = {
 		tinyMCEPopup.dom.get('resize_tab').style.display = 'none';
 		TinyCIMMImage.loaduploader();
 	},
+
 	showManager : function() {
 		TinyCIMMImage.loadManager();
 	},
+
 	showBrowser : function(folder) {
 		mcTabs.displayTab('browser_tab','browser_panel');
 		tinyMCEPopup.dom.get('resize_tab').style.display = 'none';
