@@ -112,17 +112,10 @@ class Tinycimm_model extends Model {
 	function delete_folder($folder_id=0){
 		return $this->db->where('id', (int) $folder_id)->delete('asset_folder');	
 	}
-
+	
 	/**
-	* Get the last auto-incremented id value from the specified table
-	* RW Note:: this method is buggy, need to get last auto-increment value 
-	*
-	* @param String|$tablename - the name of the db table
+	* Returns number of affected rows
 	**/
-	function get_last_id($tablename=''){
-		return (int) $this->db->query('SELECT MAX(id) as last_id FROM '.$tablename.' LIMIT 1')->row()->last_id;
-	}
-
 	function affected_rows(){
 		return $this->db->affected_rows();
 	}
