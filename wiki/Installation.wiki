@@ -13,3 +13,23 @@
   * make sure the database details in {{{application/config/database.php}}} are correct
   * use the {{{sql/mysql/tinycimm.sql}}} to create the tables
   * use the {{{application/common/wysiwyg.php}}} view as an example to load tinymce and the tinycimm plugin
+
+
+
+=== Context menu integration ===
+
+  * If you have enabled the 'contextmenu' tinymce plugin, then you can add a menu item to appear when you right-click on an image.
+  * Copy {{{tinymce/plugins/contextmenu/editor_plugin_src.js}}} over {{{tinymce/plugins/contextmenu/editor_plugin.js}}}
+  * Edit {{{tinymce/plugins/contextmenu/editor_plugin.js}}}
+
+*Find this line*
+{{{
+m.add({title : 'advanced.unlink_desc', icon : 'unlink', cmd : 'UnLink'});
+}}}
+
+*Add this after*
+{{{
+m.add({title : 'Resize image', icon : 'image', cmd : 'mceTinyCIMMImage', ui : true});
+}}}
+
+  * This will display a new item that will open the tinycimm image resizer
