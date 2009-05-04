@@ -31,6 +31,7 @@ m.add({title : 'advanced.unlink_desc', icon : 'unlink', cmd : 'UnLink'});
 
 *Add this after*
 {{{
+m.addSeparator();
 m.add({title : 'Resize image', icon : 'image', cmd : 'mceTinyCIMMImage', ui : true});
 }}}
 
