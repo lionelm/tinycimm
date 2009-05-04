@@ -50,7 +50,6 @@ class TinyCIMM {
 		$asset->filename = 'cache/'.$asset->id.'_'.$width.'_'.$height.'_'.$quality.$asset->extension;
 		$asset->new_filepath = $this->config->item('tinycimm_asset_path').$asset->filename;
 
-
 		if (($cache and !file_exists($asset->new_filepath)) or !$cache) {
 			$resize_config = $this->config->item('tinycimm_image_resize_config');		
 			$imagesize = @getimagesize($asset->filepath) or die('asset not found');
