@@ -26,6 +26,7 @@
   * make sure the {{{$config['base_url']}}} is set correctly in your application/config/config.php
   * make sure the database details in {{{application/config/database.php}}} are correct
   * use the {{{sql/mysql/tinycimm.sql}}} to create the tables
+  * secure TinyCIMM in the {{{controllers/assetmanager.php}}} class
   * use the {{{application/common/wysiwyg.php}}} view as an example to load tinymce and the tinycimm plugin
 
 
