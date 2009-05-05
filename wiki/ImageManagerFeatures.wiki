@@ -1,6 +1,9 @@
 #summary A brief overview of the Image Manager features.
 #labels Phase-Design,Phase-Requirements
 
+== Please note ==
+_This information was last updated on (Jan 22, 2008 by willis.rh) and is outdated._ 
+
 = Introduction =
 
 The Image Manager is part of the core Media Manager package, and is the most useful and probably most used plugin in the package. It allows you to easily manage you images and easily insert them into the tinyMCE editor. I've focused on simplicity for the end user. Less is more, from a layout point of view. All the features you expect from a "fancy" image manager are there for you to use, they are just cleanly tucked away.
