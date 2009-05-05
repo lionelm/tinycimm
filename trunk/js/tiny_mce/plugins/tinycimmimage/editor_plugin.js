@@ -49,8 +49,8 @@
 			return {
 				longname : 'TinyCIMM Image Plugin',
 				author : 'Richard Willis & Liam Gooding',
-				authorurl : 'http://tinymce.moxiecode.com',
-				infourl : 'http://wiki.moxiecode.com/index.php/TinyMCE:Plugins/example',
+				authorurl : 'http://badsyntax.co.uk',
+				infourl : 'http://tinycimm.googlecode.com/',
 				version : "0.1"
 			};
 		}
