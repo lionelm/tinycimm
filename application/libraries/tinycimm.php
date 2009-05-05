@@ -165,11 +165,11 @@ class TinyCIMM {
 		$name = urldecode(trim($name));
 
 		if ($name == '') {
-			return array('outcome' => 'error', 'message' => 'Please specify a valid folder name.');
+			return array('outcome' => false, 'message' => 'Please specify a valid folder name.');
 		} else if (strlen($name) == 1) {
-			return array('outcome' => 'error', 'message' => 'The folder name must be at least 2 characters in length.');
+			return array('outcome' => false, 'message' => 'The folder name must be at least 2 characters in length.');
 		} else if (strlen($name) > 24) {
-			return array('outcome' => 'error', 'message' => 'The folder name must be less than 24 characters.\n(The supplied folder name is "+captionID.length+" characters).');
+			return array('outcome' => false, 'message' => 'The folder name must be less than 24 characters.\n(The supplied folder name is "+captionID.length+" characters).');
 		}
 
 		$ci->tinycimm_model->insert_folder($name);
