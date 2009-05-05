@@ -13,6 +13,7 @@
   * TinyMCE advimage plugin
   * TinyMCE inlinepopups plugin
   * TinyMCE contextmenu plugin 
+  * To use the file browser callback functionality, you need to enable the following TinyMCE plugins: advimage, advlink, media
 
 === Installation details ====
 
