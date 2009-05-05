@@ -6,6 +6,7 @@
 === Base requirements ===
   * CodeIgniter V 1.7 (although it may work with older versions)
   * TinyMCE 3.X
+  * PHP 5.X
   * MySQL
   * GD or ImageMagick
 
