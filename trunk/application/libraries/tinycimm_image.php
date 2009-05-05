@@ -118,37 +118,6 @@ class TinyCIMM_image extends TinyCIMM {
 		$ci->load->view($this->view_path.'image_'.$ci->session->userdata('cimm_view').'_list', $data);
 	}
   
-	/**
-	* this geneates a javascript array of images that is
-	* used in the adv image dialog window as drop down list
-	**/
-	public function image_list() {
-		header("text/javascript");
-
-		$output = 'var tinyMCEImageList = new Array('."\n";
-		// get images in folder
-		$sql = 'SELECT img.*, fld.name AS foldername
-			FROM asset
-			LEFT JOIN asset_folder
-				ON asset.folder = asset_folder.id
-			ORDER by asset.folder ASC, asset.name ASC';
-		$query = $this->db->query($sql);
-		
-		foreach($query->result_array() AS $image) {
-			$image['foldername'] = 'General/'.($image['foldername']!=''?$image['foldername'].'/':'');
-			
-			/**
-			* @TODO Assumes uploaded folder is /images/uploaded/
-			* @Liam
-			**/
-			$output .= '["'.$image['foldername'].$image['name'].'", "'.base_url('images/uploaded/'.$image['filename']).'", "desc"],'."\n";
-			/**/
-			
-		}
-		
-		die(rtrim($output, ",\n").');');
-  	}
-  	
   	/**
   	* set view type for asset listing (list or thumbnails) in user session
   	**/
