@@ -12,7 +12,7 @@
 					<img onclick="TinyCIMMImage.deleteFolder('<?=$folder['id'];?>');" title="remove" src="img/delete.gif"/>
 				</a>
 			</span>
-			<span style="cursor:pointer;" onClick="TinyCIMMImage.fileBrowser('<?=$folder['id'];?>');">
+			<span style="cursor:pointer;" onClick="TinyCIMMImage.fileBrowser('<?=$folder['id'];?>', 0, this);">
 				<img class="folderimg" id="img-<?=$folder['id'];?>" src="img/folder.gif" />
 				<?=$folder['name'];?>/
 			</span>

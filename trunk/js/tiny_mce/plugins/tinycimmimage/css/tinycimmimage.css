@@ -25,6 +25,7 @@ select#folderselect {}
 #image_wrapper_panel, #resize_panel {height:392px;}
 #image_wrapper_panel fieldset {height:382px;}
 #resizer {height:368px;overflow:none}
+#save_size {width:96px;padding-top:0;float:right}
 
 #image-slider {margin-bottom:20px;padding-top:6px;}
 #image-info {height:320px;width:508px;display:block;overflow:auto;border:1px solid #000000}
@@ -53,8 +54,8 @@ span#loading {background:url(../img/ajax-loader.gif) no-repeat;padding-left:20px
 .thumb_wrapper, .thumb_wrapper .thumb, .thumb_wrapper_over .thumb_wrapper_over .thumb {cursor:pointer;display:block;width:99px;height:99px;float:left;z-index:1;margin:0px 3px 3px 0px;position:relative}
 .thumb_wrapper {border:1px solid #DDD;}
 .thumb_wrapper_over {border:1px solid #8094A4;}
-.thumb_wrapper .controls-bg, .thumb_wrapper_over .controls-bg {background:#FFF;position:absolute;bottom:0;height:20px;width:100%;z-index:99;text-align:right;filter:alpha(opacity=80);-moz-opacity:0.8;opacity:0.8;}
-.thumb_wrapper .controls, .thumb_wrapper_over .controls {position:absolute;bottom:0;height:20px;width:100%;z-index:100;text-align:right}
+.thumb_wrapper .controls-bg, .thumb_wrapper_over .controls-bg {background:#FFF;position:absolute;bottom:0;height:18px;width:100%;z-index:99;text-align:right;filter:alpha(opacity=80);-moz-opacity:0.8;opacity:0.8;}
+.thumb_wrapper .controls, .thumb_wrapper_over .controls {position:absolute;bottom:0;height:18px;width:100%;z-index:100;text-align:right}
 .thumb_wrapper .loader, .thumb_wrapper_over .loader {position:absolute;height:100%;width:100%;z-index:100;background:#FFF url(../img/progress.gif) no-repeat center center;filter:alpha(opacity=40);-moz-opacity:0.4;opacity:0.4;}
 .thumb_wrapper span, .thumb_wrapper_over span {display:none;}
 .show span.controls-bg, .show span.controls {display:block;}
