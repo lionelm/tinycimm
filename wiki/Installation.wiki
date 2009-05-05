@@ -22,7 +22,7 @@
   * Make sure the {{{assets/}}} and {{{assets/cache/}}} folders have write permissions
   * The plugin requires you to have the correct urls, so it's important to check the example {{{.htaccess}}} is placed in the root of your codeigniter project.
   * Edit the {{{application/config/autoload.php}}} file
-  * -- add '_tinycimm_' to the *config* key, '_url_' to the *helpers*, and '_database_' to the *libraries* 
+    * add '_tinycimm_' to the *config* key, '_url_' to the *helpers*, and '_database_' to the *libraries* 
   * make sure the {{{$config['base_url']}}} is set correctly in your application/config/config.php
   * make sure the database details in {{{application/config/database.php}}} are correct
   * use the {{{sql/mysql/tinycimm.sql}}} to create the tables
