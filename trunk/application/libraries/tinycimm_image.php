@@ -31,7 +31,7 @@ class TinyCIMM_image extends TinyCIMM {
 			$dimensions = getimagesize($ci->config->item('tinycimm_asset_path').$image->filename);
 			$image->width = $dimensions[0];
 			$image->height = $dimensions[1];
-			$image->outcome = 'success';
+			$image->outcome = true;
 			$this->response_encode($image);
 		} else {
 			die('image not found');
@@ -134,12 +134,12 @@ class TinyCIMM_image extends TinyCIMM {
 		}
 		$ci = &get_instance();
 		if (!$ci->tinycimm_model->update_asset((int) $image_id, $_POST['folder_id'], $_POST['name'], $_POST['description'])) {
-			$response['outcome'] = 'error';
+			$response['outcome'] = false;
 			$response['message'] = 'Image not found.';
 			$this->response_encode($response);
 			exit;
 		}
-		$response['outcome'] = 'success';
+		$response['outcome'] = true;
 		$response['message'] = 'Image successfully deleted.';
 		$this->response_encode($response);
 		exit;
@@ -153,7 +153,7 @@ class TinyCIMM_image extends TinyCIMM {
 		$image = $ci->tinycimm_model->get_asset($image_id);
 		$this->delete_asset((int) $image_id);
 		
-		$response['outcome'] = 'success';
+		$response['outcome'] = true;
 		$response['message'] = 'Image successfully deleted.';
 		$response['folder'] = $image->folder_id; 
 		$this->response_encode($response);
@@ -166,12 +166,12 @@ class TinyCIMM_image extends TinyCIMM {
 	public function delete_folder($folder_id=0) {
 		$ci = &get_instance();
 		if (!parent::delete_folder((int) $folder_id)) {
-			$response['outcome'] = 'error';
+			$response['outcome'] = false;
 			$response['message'] = 'Image not found.';
 			$this->response_encode($response);
 			exit;
 		}
-		$response['outcome'] = 'success';
+		$response['outcome'] = true;
 		$response['images_affected'] = $this->images_affected;
 		$this->response_encode($response);
 		exit;
@@ -205,11 +205,11 @@ class TinyCIMM_image extends TinyCIMM {
 	public function save_image_size($image_id, $width, $height, $quality=90){
 		$ci = &get_instance();
 		if (!(int) $width or !(int) $height) {
-			TinyCIMM::response_encode(array('outcome'=>'error','message'=>'Incorrect dimensions supplied. (Cant have value of 0)'));
+			TinyCIMM::response_encode(array('outcome'=>false,'message'=>'Incorrect dimensions supplied. (Cant have value of 0)'));
 		}
 		$response = $this->resize_asset($ci->tinycimm_model->get_asset($image_id), $width, $height, $quality, true, true);
 		
-		$response->outcome = 'success';
+		$response->outcome = true;
 		$response->message = 'Image size successfully saved.';
 		$this->response_encode($response);
 	}

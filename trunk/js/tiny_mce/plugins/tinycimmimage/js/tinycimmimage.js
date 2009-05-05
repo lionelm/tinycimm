@@ -9,7 +9,7 @@
  */
 
 String.prototype.toId = function(){ 
-	return this.replace(/.*\/([0-9]+).*$/, '$1');
+	return /\//.test(this) ? this.replace(/.*\/([0-9]+).*$/, '$1') : this.replace(/([0-9]+).*$/, '$1')
 };
 
 var TinyCIMMImage = {
@@ -38,7 +38,7 @@ var TinyCIMMImage = {
 			},
 			success : function(response) {
 				var obj = tinymce.util.JSON.parse(response);
-				if (obj.outcome == 'error') {
+				if (!obj.outcome) {
 					tinyMCEPopup.editor.windowManager.alert(obj.message);
 				} else {
 					(callback) && callback(obj);
@@ -60,7 +60,7 @@ var TinyCIMMImage = {
 		tinyMCEPopup.restoreSelection();
 
 		// Fixes crash in Safari
-		if (tinymce.isWebKit) && ed.getWin().focus();
+		(tinymce.isWebKit) && ed.getWin().focus();
 
 		args = {
 			src : this.baseURL(this.settings.tinycimm_assets_path+image.filename),
@@ -117,7 +117,7 @@ var TinyCIMMImage = {
 				for(var anchor in pagination_anchors) {
 					pagination_anchors[anchor].onclick = function(e){
 						e.preventDefault();
-						_this.fileBrowser(folder, this.href.toId());
+						_this.fileBrowser(folder, this.href.toId().toString());
 					};
 				}
 				// bind hover event to thumbnail
@@ -322,10 +322,11 @@ var TinyCIMMImage = {
 			success : function(response) {
 				tinyMCEPopup.dom.get('saveimg').src = tinyMCEPopup.dom.get('saveimg').src.replace('ajax-loader.gif', 'save.gif');
 				var obj = tinymce.util.JSON.parse(response);
-				if (obj.outcome == 'error') {
+				if (!obj.outcome) {
 					tinyMCEPopup.editor.windowManager.alert(obj.message); 
-				} else if (obj.outcome == 'success') {
-					tinyMCEPopup.editor.windowManager.confirm('Image size successfully saved.\n\nClick OK to insert image or cancel to return.', function(s) {
+				} else { 
+					tinyMCEPopup.editor.windowManager.confirm(
+					'Image size successfully saved.\n\nClick OK to insert image or cancel to return.', function(s) {
 						if (!s) {
 							TinyCIMMImage.showBrowser();
 							return false;
@@ -348,7 +349,7 @@ var TinyCIMMImage = {
 			},
 			success : function(response) {
 				var obj = tinymce.util.JSON.parse(response);
-				if (obj && obj.outcome == 'error') {
+				if (!obj.outcome) {
 						tinyMCEPopup.editor.windowManager.alert('Error: '+obj.message);
 				} else {
 					tinyMCEPopup.dom.setHTML('folderlist', response)
@@ -372,7 +373,7 @@ var TinyCIMMImage = {
 				},
 				success : function(response) {
 		 			var obj = tinymce.util.JSON.parse(response);
-					if (obj && obj.outcome == 'error') {
+					if (!obj.outcome) {
 						tinyMCEPopup.editor.windowManager.alert('Error: '+obj.message);
 		 			} else {
 						_this.getFoldersHTML(function(folderHTML){
@@ -412,7 +413,7 @@ var TinyCIMMImage = {
 				},
 				success : function(response) {
 					var obj = tinymce.util.JSON.parse(response);
-					if (obj.outcome == 'error') {
+					if (!outcome) {
 						tinyMCEPopup.editor.windowManager.alert('Error: '+obj.message);
 					} else {
 						tinyMCEPopup.editor.windowManager.alert(obj.message);
