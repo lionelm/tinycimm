@@ -1,27 +1,37 @@
 #summary Details on how to install tinycimm in your codeigniter project
 #labels Phase-Deploy,Phase-Implementation
 
-(TinyMCE Version: 3.2.3 and CodeIgniter Version 1.7.1)
+(These instructions were written using TinyMCE Version 3.2.3, CodeIgniter Version 1.7.1 to setup TinyCIMM Version 0.1A)
 
-= Details =
+=== Base requirements ===
+  * CodeIgniter V 1.7 (although it may work with older versions)
+  * TinyMCE 3.X
+  * MySQL
+  * GD or ImageMagick
 
-  * Download and extract the zip file
-  * Copy the files into your CodeIgniter project root directory
+=== Optional (but recommended) ===
+  * TinyMCE advimage plugin
+  * TinyMCE inlinepopups plugin
+  * TinyMCE contextmenu plugin 
+
+=== Installation details ====
+
+  * Download and extract the tiniycimm zip file
+  * Copy the extracted files into your CodeIgniter project root directory
   * Make sure the {{{assets/}}} and {{{assets/cache/}}} folders have write permissions
   * The plugin requires you to have the correct urls, so it's important to check the example {{{.htaccess}}} is placed in the root of your codeigniter project.
-  * Edit the application/config/autoload.php file
-  * -- add 'tinycimm' to the *config* key, 'url' to the *helpers*, and 'database' to the *libraries* 
+  * Edit the {{{application/config/autoload.php}}} file
+  * -- add '_tinycimm_' to the *config* key, '_url_' to the *helpers*, and '_database_' to the *libraries* 
   * make sure the {{{$config['base_url']}}} is set correctly in your application/config/config.php
   * make sure the database details in {{{application/config/database.php}}} are correct
   * use the {{{sql/mysql/tinycimm.sql}}} to create the tables
   * use the {{{application/common/wysiwyg.php}}} view as an example to load tinymce and the tinycimm plugin
 
 
-
 === Context menu integration ===
 
   * If you have enabled the 'contextmenu' tinymce plugin, then you can add a menu item to appear when you right-click on an image.
-  * Copy {{{tinymce/plugins/contextmenu/editor_plugin_src.js}}} over {{{tinymce/plugins/contextmenu/editor_plugin.js}}}
+  * Copy {{{tinymce/plugins/contextmenu/editor_plugin_src.js}}} over {{{tinymce/plugins/contextmenu/editor_plugin.js}}} (The plugin uses the {{{editor_plugin.js}}} file but it comes compressed and un-readable; the {{{editor_plugin_src.js}}} contains the uncompressed code.
   * Edit {{{tinymce/plugins/contextmenu/editor_plugin.js}}}
 
 *Find this line*
