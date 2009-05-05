@@ -8,7 +8,13 @@
  *
  */
 
+String.prototype.toId = function(){ 
+	return this.replace(/.*\/([0-9]+).*$/, '$1');
+};
+
 var TinyCIMMImage = {
+
+	settings : tinyMCEPopup.editor.settings,
 
 	init : function(ed) {
 		var n = ed.selection.getNode();
@@ -18,10 +24,14 @@ var TinyCIMMImage = {
 			this.showBrowser(0);
 		}
 	},
+	
+	baseURL : function(url) {
+		return tinyMCEPopup.editor.documentBaseURI.toAbsolute(url);
+	},
 
 	getImage : function(imageid, callback) {
 		tinymce.util.XHR.send({
-			url : TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_controller+'image/get_image/'+imageid),
+			url : this.baseURL(this.settings.tinycimm_controller+'image/get_image/'+imageid),
 			error : function(response) {
 				tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the image info.');
 				return false;
@@ -55,7 +65,7 @@ var TinyCIMMImage = {
 		}
 
 		args = {
-			src : TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_assets_path+image.filename),
+			src : this.baseURL(this.settings.tinycimm_assets_path+image.filename),
 			width : '',
 			height : '',
 			alt : image.description,
@@ -79,26 +89,22 @@ var TinyCIMMImage = {
 	showUploader : function() {
 		mcTabs.displayTab('upload_tab','upload_panel');
 		tinyMCEPopup.dom.get('resize_tab').style.display = 'none';
-		TinyCIMMImage.loaduploader();
+		this.loaduploader();
 	},
 
 	showManager : function() {
-		TinyCIMMImage.loadManager();
+		this.loadManager();
 	},
 
 	showBrowser : function(folder) {
 		mcTabs.displayTab('browser_tab','browser_panel');
 		tinyMCEPopup.dom.get('resize_tab').style.display = 'none';
-		TinyCIMMImage.fileBrowser(folder);
+		this.fileBrowser(folder);
 	},
 
-	// clear all image data fields
-	resetTinyCIMMImage : function() {
-		tinyMCEPopup.dom.get('src').value = tinyMCEPopup.dom.get('alt').value = tinyMCEPopup.dom.get('title').value = tinyMCEPopup.dom.get('width').value = tinyMCEPopup.dom.get('height').value = tinyMCEPopup.dom.get('style').value = '';
-	},
-
-	 // load list of folders and images via json request
+	// load list of folders and images via json request
 	fileBrowser : function(folder, offset) {
+		var _this = this;
 		folder = folder || 0;
 		offset = offset || 0;
 		if (tinyMCEPopup.dom.get('img-'+folder) == null) {
@@ -106,7 +112,7 @@ var TinyCIMMImage = {
 		}
 
 		tinymce.util.XHR.send({
-			url : TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_controller+'image/get_browser/'+folder+'/'+offset),
+			url : this.baseURL(this.settings.tinycimm_controller+'image/get_browser/'+folder+'/'+offset),
 			error : function(reponse) {
 				tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the images.');
 			},
@@ -117,7 +123,7 @@ var TinyCIMMImage = {
 				for(var anchor in pagination_anchors) {
 					pagination_anchors[anchor].onclick = function(e){
 						e.preventDefault();
-						TinyCIMMImage.fileBrowser(folder, this.href.replace(/.*\/([0-9]+)$/, '$1'));
+						_this.fileBrowser(folder, this.href.toId());
 					};
 				}
 				// bind hover event to thumbnail
@@ -141,7 +147,7 @@ var TinyCIMMImage = {
 		// show loading image
 		tinyMCEPopup.dom.setHTML('filebrowser', '<span id="loading">loading</span>');
 		tinymce.util.XHR.send({
-			url : TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_controller+'image/change_view/'+view),
+			url : this.baseURL(this.settings.tinycimm_controller+'image/change_view/'+view),
 			error : function(text) {
 				tinyMCEPopup.editor.windowManager.alert('There was an error processing the request.');
 			},
@@ -163,15 +169,17 @@ var TinyCIMMImage = {
 	
 	// prepare image manager panel
 	loadManager : function() {
+		var _this = this;
 		if (tinyMCEPopup.dom.get('image_alttext')) {
-			tinyMCEPopup.dom.setHTML('alttext_container', '<textarea id="image_alttext" style="color:#aaa;width: 160px; height: 36px;">loading</textarea>');
+			tinyMCEPopup.dom.setHTML('alttext_container', 
+			'<textarea id="image_alttext" style="color:#aaa;width: 160px; height: 36px;">loading</textarea>'
+			);
 		}
 		if (tinyMCEPopup.dom.get('src').value == '') {
-			tinyMCEPopup.editor.windowManager.alert('You need to select an image first.', 
-			function(s) {
+			tinyMCEPopup.editor.windowManager.alert('You need to select an image first.', function(s) {
 				// if not already viewing the browser
 				if (tinyMCEPopup.dom.get('browser_tab').className != "current") {
-					TinyCIMMImage.showBrowser();
+					_this.showBrowser();
 				}
 			});
 			return;
@@ -182,15 +190,13 @@ var TinyCIMMImage = {
 		// prep thumb path
 		var imgsrc_arr = tinyMCEPopup.editor.documentBaseURI.toRelative(tinyMCEPopup.dom.get('src').value).split('/');
 		var imgsrc = imgsrc_arr[imgsrc_arr.length-1];
-		var imgid = imgsrc.replace(/(.*\/)?([0-9]+)\.([a-zA-Z]+)/, "$2");
 		// set thumb	
 		tinyMCEPopup.dom.get('manage_thumb_img').style.background = 'url(img/progress.gif) no-repeat center center';
-	
 		// display panel
 		mcTabs.displayTab('manager_tab','manager_panel');
 		// send a request for image info
 		tinymce.util.XHR.send({
-			url : TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_controller+'image/get_image/'+imgid),
+			url : _this.baseURL(this.settings.tinycimm_controller+'image/get_image/'+imgsrc.toId()),
 			error : function(response) {
 				tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the image info.');
 			},
@@ -201,9 +207,9 @@ var TinyCIMMImage = {
 				}
 				else {
 					tinyMCEPopup.dom.get('del_image').rel = obj.id;
-					tinyMCEPopup.dom.get('manage_thumb_img').style.background = 'url('+TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_controller+'image/get/'+obj.id+'/95/95')+') no-repeat center center';
-					TinyCIMMImage.loadSelectManager(obj.folder);
-					TinyCIMMImage.loadAltTextManager(obj.alttext);
+					tinyMCEPopup.dom.get('manage_thumb_img').style.background = 'url('+_this.baseURL(this.settings.tinycimm_controller+'image/get/'+obj.id+'/95/95')+') no-repeat center center';
+					_this.loadSelectManager(obj.folder);
+					_this.loadAltTextManager(obj.alttext);
 				}
 			}
 		});
@@ -214,7 +220,7 @@ var TinyCIMMImage = {
 	// file upload callback function
 	imageUploaded : function(folder) {
 		tinyMCEPopup.editor.windowManager.alert('Image successfully uploaded!');
-		TinyCIMMImage.showBrowser(folder);
+		this.showBrowser(folder);
 	},
 	
 	
@@ -222,7 +228,7 @@ var TinyCIMMImage = {
 	loadSelectManager : function(folder) {
 		folder = folder==undefined?'':folder;
 		tinymce.util.XHR.send({
-			url : TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_controller+'image/get_folders_select/'+folder),
+			url : this.baseURL(this.settings.tinycimm_controller+'image/get_folders_select/'+folder),
 			error : function(response) {
 				tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the select list.');
 			},
@@ -234,17 +240,17 @@ var TinyCIMMImage = {
 
 	// prepare the resizer panel
 	loadresizer : function(imagesrc) {
-		var path = /^http/.test(imagesrc) ? imagesrc : tinyMCEPopup.editor.settings.tinycimm_assets_path+imagesrc;
+		var path = /^http/.test(imagesrc) ? imagesrc : this.settings.tinycimm_assets_path+imagesrc;
 		// ensure image is cached before loading the resizer
-		this.loadImage(TinyCIMMImage.baseURL(path));
+		this.loadImage(this.baseURL(path));
 	},
 
 	// pre-cache an image
 	loadImage : function(img) { 
-		var preImage = new Image();
+		var preImage = new Image(), _this = this;
 		preImage.src = img;
 		setTimeout(function(){
-			TinyCIMMImage.checkImgLoad(preImage);
+			_this.checkImgLoad(preImage);
 		},10);	// ie
 	},
 
@@ -259,18 +265,17 @@ var TinyCIMMImage = {
 
 	checkLoad : function(preImage) {
 		if (preImage.complete) { 
-			//console.debug(preImage.complete);
 			this.showResizeImage(preImage);
 			return;
 		}
  		setTimeout(function(){
-			TinyCIMMImage.checkLoad(preImage)
+			this.checkLoad(preImage)
 		}, 10);
 	},
 	
 	// show resizer image
 	showResizeImage : function(preImage) {
-		this.getImage(preImage.src.replace(/.*\/([0-9]+)_?.*$/, '$1'), function(image){
+		this.getImage(preImage.src.toId(), function(image){
 			// load image 
 			tinyMCEPopup.dom.get('slider_img').src = preImage.src;
 			tinyMCEPopup.dom.get('slider_img').width = max_w = image.width; 
@@ -287,8 +292,11 @@ var TinyCIMMImage = {
 				value : max_w,
 				size : 380,
 				scroll : function(new_w) {
-					tinyMCEPopup.dom.get('slider_width_val').innerHTML = (tinyMCEPopup.dom.get('slider_img').width=new_w);
-					tinyMCEPopup.dom.get('slider_height_val').innerHTML = (tinyMCEPopup.dom.get('slider_img').height=Math.round((parseInt(new_w)/parseInt(max_w))*max_h))+'px';
+					var slider_width = tinyMCEPopup.dom.get('slider_width_val'), slider_height = tinyMCEPopup.dom.get('slider_height_val');
+					if (slider_width && slider_height) {
+						slider_width.innerHTML = (tinyMCEPopup.dom.get('slider_img').width=new_w);
+						slider_height.innerHTML = (tinyMCEPopup.dom.get('slider_img').height=Math.round((parseInt(new_w)/parseInt(max_w))*max_h))+'px';
+					}
 				}
 			});
 
@@ -299,7 +307,7 @@ var TinyCIMMImage = {
 	loadselect : function(folder) {
 		folder = folder || '';
 		tinymce.util.XHR.send({
-			url : TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_controller+'image/get_folders_select/'+folder),
+			url : this.baseURL(this.settings.tinycimm_controller+'image/get_folders_select/'+folder),
 			error : function(text) {
 				tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the select list.');
 			},
@@ -329,7 +337,7 @@ var TinyCIMMImage = {
                 for(var i in controls) { controls[i].style.display = 'none'; }
 
 		var win = tinyMCEPopup.getWindowArg("window");
-		var URL = TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_assets_path+imgsrc);
+		var URL = this.baseURL(this.settings.tinycimm_assets_path+imgsrc);
 
 		// if loaded from a dialog window	
 		if (win != undefined) {
@@ -345,19 +353,21 @@ var TinyCIMMImage = {
 			}
  			tinyMCEPopup.close();
 		} else {
-			this.insert(imgsrc.replace(/.*\/([0-9]+).*$/, '$1'));
+			this.insert(imgsrc.toId());
 		}
 		return;
 	},
 	
 	
 	saveImgSize : function() {
+		var width = tinyMCEPopup.dom.get('slider_img').width, height = tinyMCEPopup.dom.get('slider_img').height, _this = this;
+
 		// show loading animation
 		tinyMCEPopup.dom.get('saveimg').src = tinyMCEPopup.dom.get('saveimg').src.replace('save.gif', 'ajax-loader.gif');
 		
 		// prepare request url
 		var imgsrc_arr = tinyMCEPopup.editor.documentBaseURI.toRelative(tinyMCEPopup.dom.get('slider_img').src).split('/');
-		var requesturl = TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_controller+'image/save_image_size/'+imgsrc_arr[imgsrc_arr.length-1].replace(/^([0-9]+)_?.*$/, '$1')+'/'+tinyMCEPopup.dom.get('slider_img').width+'/'+tinyMCEPopup.dom.get('slider_img').height+'/90');
+		var requesturl = this.baseURL(this.settings.tinycimm_controller+'image/save_image_size/'+imgsrc_arr[imgsrc_arr.length-1].toId()+'/'+width+'/'+height+'/90');
 		// send request
 		tinymce.util.XHR.send({
 			url : requesturl,
@@ -376,7 +386,7 @@ var TinyCIMMImage = {
 							TinyCIMMImage.showBrowser();
 							return false;
 						}
-						TinyCIMMImage.insertPreviewImage(null, obj.filename, obj.description);
+						_this.insertPreviewImage(null, obj.filename, obj.description);
 					});
 				}
 			}
@@ -386,7 +396,7 @@ var TinyCIMMImage = {
 	// add image folder
 	addFolder : function() {
 		var captionID = encodeURIComponent(tinyMCEPopup.dom.get('add_folder_caption').value.replace(/^\s+|\s+$/g, ''));
-		var requesturl = TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_controller+'image/add_folder/'+captionID);
+		var requesturl = this.baseURL(this.settings.tinycimm_controller+'image/add_folder/'+captionID);
 		tinymce.util.XHR.send({
 			url : requesturl,
 			error : function(response) {
@@ -407,9 +417,10 @@ var TinyCIMMImage = {
 	
 	// delete image folder
 	deleteFolder : function(folderID) {
+		var _this = this;
 		tinyMCEPopup.editor.windowManager.confirm('Are you sure you want to delete this folder?', function(s) {
 			if (!s) { return false; }
- 			var requesturl = TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_controller+'image/delete_folder/'+folderID);
+ 			var requesturl = _this.baseURL(this.settings.tinycimm_controller+'image/delete_folder/'+folderID);
 			tinymce.util.XHR.send({
 				url : requesturl,
 				error : function(response) {
@@ -420,7 +431,7 @@ var TinyCIMMImage = {
 					if (obj && obj.outcome == 'error') {
 						tinyMCEPopup.editor.windowManager.alert('Error: '+obj.message);
 		 			} else {
-						TinyCIMMImage.getFoldersHTML(function(folderHTML){
+						_this.getFoldersHTML(function(folderHTML){
 							tinyMCEPopup.dom.setHTML('folderlist', folderHTML)
 						});
 						if (obj.images_affected > 0) {
@@ -434,9 +445,8 @@ var TinyCIMMImage = {
 
 	// get folders as html string
 	getFoldersHTML : function(callback) {
- 		var requesturl = TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_controller+'image/get_folders_html');
 		tinymce.util.XHR.send({
-			url : requesturl,
+			url : this.baseURL(this.settings.tinycimm_controller+'image/get_folders_html'),
 			error : function(response) {
 		 		tinyMCEPopup.editor.windowManager.alert('There was an error processing the request.');
 			},
@@ -448,10 +458,11 @@ var TinyCIMMImage = {
 	
 	// delete image 
 	deleteImage : function(imageID) {
+		var _this = this;
 		tinyMCEPopup.editor.windowManager.confirm('Are you sure you want to delete this image?', function(s) {
 			if (!s) {return false;}
 			tinymce.util.XHR.send({
-				url : TinyCIMMImage.baseURL(tinyMCEPopup.editor.settings.tinycimm_controller+'image/delete_image/'+imageID),
+				url : _this.baseURL(this.settings.tinycimm_controller+'image/delete_image/'+imageID),
 				error : function(response) {
 					tinyMCEPopup.editor.windowManager.alert('There was an error processing the request.');
 				},
@@ -463,7 +474,7 @@ var TinyCIMMImage = {
 						tinyMCEPopup.editor.windowManager.alert(obj.message);
 						folder = obj.folder
 					}
-				 	TinyCIMMImage.showBrowser(folder);
+				 	_this.showBrowser(folder);
 				}
 			});
 		});
@@ -498,10 +509,6 @@ var TinyCIMMImage = {
 		catch(e) { return; }
 	},
 
-	baseURL : function(url) {
-		return tinyMCEPopup.editor.documentBaseURI.toAbsolute(url);
-	},
-	
 	// reload dialog window to initial state
 	reload : function() {
 		tinyMCEPopup.dom.get('info_tab_link').className = 'rightclick';
