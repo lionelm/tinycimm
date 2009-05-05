@@ -115,6 +115,8 @@ class TinyCIMM_image extends TinyCIMM {
 		// prepare total image size
 		$data['selected_folder_info']['total_file_size'] = ($totimagesize > 1024) ? round($totimagesize/1024, 2).'mb' : $totimagesize.'kb';
 
+		sleep(2);
+
 		$ci->load->view($this->view_path.'image_'.$ci->session->userdata('cimm_view').'_list', $data);
 	}
   

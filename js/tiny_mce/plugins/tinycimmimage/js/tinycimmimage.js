@@ -97,10 +97,13 @@ var TinyCIMMImage = {
 	},
 
 	// load list of folders and images via json request
-	fileBrowser : function(folder, offset) {
+	fileBrowser : function(folder, offset, el) {
 		var _this = this;
 		folder = folder || 0;
 		offset = offset || 0;
+		if (el) {
+			// tinyMCEPopup.dom.select('img', el).src = 'img/ajax-loader.gif';
+		}
 		if (tinyMCEPopup.dom.get('img-'+folder) == null) {
 			tinyMCEPopup.dom.setHTML('filebrowser', '<span id="loading">loading</span>');
 		}
@@ -170,7 +173,7 @@ var TinyCIMMImage = {
 	
 	// get select list of folders in html select & option format (var folder would give option selected attr)
 	loadSelectManager : function(folder) {
-		folder = folder==undefined?'':folder;
+		folder = folder || '';
 		tinymce.util.XHR.send({
 			url : this.baseURL(this.settings.tinycimm_controller+'image/get_folders_select/'+folder),
 			error : function(response) {
@@ -202,18 +205,19 @@ var TinyCIMMImage = {
 	checkImgLoad : function(preImage) {
 		if (!preImage.complete) {
 			mcTabs.displayTab('resize_tab','resize_panel');
-			tinyMCEPopup.dom.setHTML('image-info-dimensions', '<img style="float:left;margin-right:4px" src=""/> caching image');
+			tinyMCEPopup.dom.setHTML('image-info-dimensions', '<img style="float:left;margin-right:4px" src="img/ajax-loader.gif"/> caching image');
 		}
 		this.checkLoad(preImage);
 	},	
 
 	checkLoad : function(preImage) {
+		var _this = this;
 		if (preImage.complete) { 
 			this.showResizeImage(preImage);
 			return;
 		}
  		setTimeout(function(){
-			this.checkLoad(preImage)
+			_this.checkLoad(preImage)
 		}, 10);
 	},
 	
@@ -234,7 +238,7 @@ var TinyCIMMImage = {
 				min : 0,
 				max : max_w,
 				value : max_w,
-				size : 380,
+				size : 400,
 				scroll : function(new_w) {
 					var slider_width = tinyMCEPopup.dom.get('slider_width_val'), slider_height = tinyMCEPopup.dom.get('slider_height_val');
 					if (slider_width && slider_height) {
