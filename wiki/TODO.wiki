@@ -5,21 +5,22 @@ Please feel free to add to this list, or add any comments to this page.
 
 = Details =
 
-  * Fix resizing
-  * Fix (or remove, or move functionality to ‘browse’) the ‘Manage’ tab
-  * Correct ‘new folder’ function allowing spaces in folder name
-  * Maybe combine this into it’s own TinyMCE plugin rather than expanding advimage, so we can incorporate movies/flash and allow document uploads
-  * refactor PHP code inside the CI application
+  * (DONE) Fix resizing
+  * (DONE) Fix (or remove, or move functionality to ‘browse’) the ‘Manage’ tab
+  * (DONE) Correct ‘new folder’ function allowing spaces in folder name
+  * (DONE) Maybe combine this into it’s own TinyMCE plugin rather than expanding advimage, so we can incorporate movies/flash and allow document uploads
+  * (DONE) refactor PHP code inside the CI application
   * Apply prettier skin to TinyMCE and the modal pop-up ( http://thebigreason.com/blog/2008/09/29/thebigreason-tinymce-skin )
-  * Model/s: use the db class methods ([http://codeigniter.com/user_guide/database/active_record.html Active Record]) instead of raw queries. 
+  * (DONE) model/s: use the db class methods ([http://codeigniter.com/user_guide/database/active_record.html Active Record]) instead of raw queries. 
   * use model objects instead of arrays. this means a lot of template changes
-  * create and use CI config files
-  * Drink a beer and become CI celebs
+  * (DONE) create and use CI config files
+ 
 
 Other notes:
-After resizing, image doesn't appear as resized until you refresh the dialogue?
-Always overwrites original after saving (after resizing)
-‘Manage’ tab doesn't seem to do much yet (necessary?)
-Validation on adding new folder (removing spaces for dashes - )
+
+  * (DONE) After resizing, image doesn't appear as resized until you refresh the dialogue?
+  * (DONE) Always overwrites original after saving (after resizing) (FIXED!)
+  * (DONE) ‘Manage’ tab doesn't seem to do much yet (necessary?) (REMOVED)
+  * (DONE) Validation on adding new folder (removing spaces for dashes - ) (FIXED)
 
 I notice the file upload types are limited to images, however I think the aim should be to use this uploader/browser for uploading videos/flash files. Currently TinyMCE can generate code for flash/quicktime/wmv types. Also, allowing types such as .doc, .pdf would be ideal. Not sure how the front end is built but I guess this would maybe mean replacing the ‘add image’ ‘add movie’ buttons in Tiny MCE with a general ‘Add Media’ button. Makes sense to me?
