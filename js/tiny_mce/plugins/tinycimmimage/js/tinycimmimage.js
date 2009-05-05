@@ -60,9 +60,7 @@ var TinyCIMMImage = {
 		tinyMCEPopup.restoreSelection();
 
 		// Fixes crash in Safari
-		if (tinymce.isWebKit) {
-			ed.getWin().focus();
-		}
+		if (tinymce.isWebKit) && ed.getWin().focus();
 
 		args = {
 			src : this.baseURL(this.settings.tinycimm_assets_path+image.filename),
@@ -90,10 +88,6 @@ var TinyCIMMImage = {
 		mcTabs.displayTab('upload_tab','upload_panel');
 		tinyMCEPopup.dom.get('resize_tab').style.display = 'none';
 		this.loaduploader();
-	},
-
-	showManager : function() {
-		this.loadManager();
 	},
 
 	showBrowser : function(folder) {
@@ -167,56 +161,6 @@ var TinyCIMMImage = {
 		tinyMCEPopup.resizeToInnerSize();
 	},
 	
-	// prepare image manager panel
-	loadManager : function() {
-		var _this = this;
-		if (tinyMCEPopup.dom.get('image_alttext')) {
-			tinyMCEPopup.dom.setHTML('alttext_container', 
-			'<textarea id="image_alttext" style="color:#aaa;width: 160px; height: 36px;">loading</textarea>'
-			);
-		}
-		if (tinyMCEPopup.dom.get('src').value == '') {
-			tinyMCEPopup.editor.windowManager.alert('You need to select an image first.', function(s) {
-				// if not already viewing the browser
-				if (tinyMCEPopup.dom.get('browser_tab').className != "current") {
-					_this.showBrowser();
-				}
-			});
-			return;
-		}
-		
-		// show loading img
-		tinyMCEPopup.dom.setHTML('folder_select_list', '<select><option>loading..</option></select>');
-		// prep thumb path
-		var imgsrc_arr = tinyMCEPopup.editor.documentBaseURI.toRelative(tinyMCEPopup.dom.get('src').value).split('/');
-		var imgsrc = imgsrc_arr[imgsrc_arr.length-1];
-		// set thumb	
-		tinyMCEPopup.dom.get('manage_thumb_img').style.background = 'url(img/progress.gif) no-repeat center center';
-		// display panel
-		mcTabs.displayTab('manager_tab','manager_panel');
-		// send a request for image info
-		tinymce.util.XHR.send({
-			url : _this.baseURL(this.settings.tinycimm_controller+'image/get_image/'+imgsrc.toId()),
-			error : function(response) {
-				tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the image info.');
-			},
-			success : function(response) {
-				var obj = tinymce.util.JSON.parse(response);
-				if (obj.outcome == 'error') {
-					tinyMCEPopup.editor.windowManager.alert(obj.message);
-				}
-				else {
-					tinyMCEPopup.dom.get('del_image').rel = obj.id;
-					tinyMCEPopup.dom.get('manage_thumb_img').style.background = 'url('+_this.baseURL(this.settings.tinycimm_controller+'image/get/'+obj.id+'/95/95')+') no-repeat center center';
-					_this.loadSelectManager(obj.folder);
-					_this.loadAltTextManager(obj.alttext);
-				}
-			}
-		});
-		return;
-		//tinyMCEPopup.resizeToInnerSize();
-	},
-
 	// file upload callback function
 	imageUploaded : function(folder) {
 		tinyMCEPopup.editor.windowManager.alert('Image successfully uploaded!');
