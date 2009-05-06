@@ -1,0 +1,43 @@
+#summary Thoughts on how to extend TinyCIMM Image into TinyCIMM Media and TinyCIMM File
+#labels Phase-Requirements
+
+== Introduction ==
+
+This page is where I put my ideas down on the best way of extending or abstracting the current codebase into other plugins, please comment.
+
+
+=== On the front end ==
+
+TinyMCE plugin:
+tinycimm/
+
+with html docs:
+  * tinycimm/image.htm
+  * tinycimm/file.htm
+  * tinycimm/media.htm
+
+js files:
+  * tinycimm/js/tinycimm.js
+  * tinycimm/js/tinycimm_image.js
+  * tinycimm/js/tinycimm_file.js
+  * tinycimm/js/tinycimm_media.js
+
+The last 3 files will be extending the tinycimm.js through prototype object properties.
+
+=== On the back end ==
+  * application/libraries/tinycimm.php
+  * application/libraries/tinycimm_image.php
+  * application/libraries/tinycimm_file.php
+  * application/libraries/tinycimm_media.php
+
+The last 3 files will be extending the tinycimm.php file.
+
+*Why not combine everything into one 'asset manager'?*
+
+Good question. 
+  * I like freedom, I like that if it's split like this then I have complete control in the front end (which is good, the file manager _might_ look different, by default, to the image manager). 
+  * The client side events and actions might be different for the different managers. (EG the file manager does not need to be able to resize assets.)
+  * I don't like the idea of 'hacking' functionality into place, EG {{{if this type is 'image' then do that}}}. Doing it this way will make life a lot easier when we want to enhance the plugin.
+  * Likewise we can have that simplicity on the back-end, for example the file browser and media browser do not have to manage resizing; Perhaps some other actions are required after upload etc etc..
+  * The core functionality remains in the parent class tinycimm.php, which you can see as the core asset manager.
+  * All specific functionality depending on what browser you're viewing things through will get routed through the specific child class.
