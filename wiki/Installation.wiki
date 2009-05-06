@@ -1,5 +1,5 @@
 #summary Details on how to install tinycimm in your codeigniter project
-#labels Phase-Deploy,Phase-Implementation
+#labels Phase-Deploy,Phase-Implementation,Featured
 
 (These instructions were written using TinyMCE Version 3.2.3, CodeIgniter Version 1.7.1 to setup TinyCIMM Version 0.1A)
 
