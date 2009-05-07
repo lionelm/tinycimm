@@ -8,7 +8,7 @@ tinyMCE.init(
 	convert_urls : true,
 	relative_urls : false,
 	theme : "advanced",
-	plugins : "tinycimmimage,advimage,advlink,media,paste,pagebreak,inlinepopups,contextmenu",
+	plugins : "tinycimm,advimage,advlink,media,paste,pagebreak,inlinepopups,contextmenu",
 	theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,bullist,numlist,outdent,indent,|,sub,sup,|,pastetext,pasteword,|,undo,redo,|,image,tinycimmimage,media,|,link,unlink,|,code,help",
 	theme_advanced_buttons2 : "",
 	theme_advanced_buttons3 : "",
@@ -30,7 +30,7 @@ tinyMCE.init(
 
 function tinycimm(field_name, url, type, win) {
 
-	var url = win.tinyMCE.baseURI.relative+"/plugins/tinycimm"+type+"/image.htm";
+	var url = win.tinyMCE.baseURI.relative+'/plugins/tinycimm/'+type+'.html';
 
 	tinyMCE.activeEditor.windowManager.open({
 		file : url,

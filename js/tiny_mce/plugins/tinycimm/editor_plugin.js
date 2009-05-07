@@ -1,10 +1,7 @@
-/**
- */
-
 (function() {
 	//tinymce.PluginManager.requireLangPack('tinycimmimage');
 
-	tinymce.create('tinymce.plugins.TinyCIMMImagePlugin', {
+	tinymce.create('tinymce.plugins.TinyCIMM', {
 		/**
 		 * Initializes the plugin, this will be executed after the plugin has been created.
 		 * This call is done before the editor instance has finished it's initialization so use the onInit event
@@ -16,7 +13,7 @@
 		init : function(ed, url) {
 			ed.addCommand('mceTinyCIMMImage', function(resize) {
 				ed.windowManager.open({
-					file : url + '/image.htm',
+					file : url + '/image.html',
 					width : 570,
 					height : 446,
 					inline : 1
@@ -57,5 +54,5 @@
 	});
 
 	// Register plugin
-	tinymce.PluginManager.add('tinycimmimage', tinymce.plugins.TinyCIMMImagePlugin);
+	tinymce.PluginManager.add('tinycimm', tinymce.plugins.TinyCIMM);
 })();
