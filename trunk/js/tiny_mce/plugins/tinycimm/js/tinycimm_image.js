@@ -97,7 +97,7 @@ ImageDialog.prototype.insertImage = function(thumbspan, imgsrc, alttext) {
 ImageDialog.prototype.loadUploader = function() {
 	// load the uploader form
 	if (tinyMCEPopup.dom.get('upload_target_ajax').src == '') {
-		tinyMCEPopup.dom.get('upload_target_ajax').src = 'image_uploadform.htm';
+		tinyMCEPopup.dom.get('upload_target_ajax').src = 'image_upload_form.html';
 	} 
 	this.loadSelect();
 	tinyMCEPopup.resizeToInnerSize();
