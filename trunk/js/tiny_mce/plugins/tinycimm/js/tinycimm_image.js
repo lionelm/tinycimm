@@ -16,7 +16,7 @@ ImageDialog.prototype.getImage = function(imageid, callback) {
 	this.get(imageid, callback);
 };
 
-ImageDialog.prototype.fileBrowser = function(folder, offset, el){
+ImageDialog.prototype.fileBrowser = function(folder, offset){
 	this.getBrowser(folder, offset, function(){
 		// bind hover event to thumbnail
 		var thumb_images = tinyMCEPopup.dom.select('.thumb_wrapper');
@@ -96,8 +96,8 @@ ImageDialog.prototype.insertImage = function(thumbspan, imgsrc, alttext) {
 	
 ImageDialog.prototype.loadUploader = function() {
 	// load the uploader form
-	if (tinyMCEPopup.dom.get('upload_target_ajax').src == '') {
-		tinyMCEPopup.dom.get('upload_target_ajax').src = 'image_upload_form.html';
+	if (!tinyMCEPopup.dom.get('upload_target_ajax').src) {
+		tinyMCEPopup.dom.get('upload_target_ajax').src = 'image_uploadform.htm';
 	} 
 	this.loadSelect();
 	tinyMCEPopup.resizeToInnerSize();

@@ -13,7 +13,7 @@
 		init : function(ed, url) {
 			ed.addCommand('mceTinyCIMMImage', function(resize) {
 				ed.windowManager.open({
-					file : url + '/image.html',
+					file : url + '/image.htm',
 					width : 570,
 					height : 446,
 					inline : 1
