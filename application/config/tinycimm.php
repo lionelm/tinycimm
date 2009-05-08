@@ -8,7 +8,7 @@ $config['tinycimm_views_root_image'] = 'image/';
 $config['tinycimm_asset_path'] = $_SERVER['DOCUMENT_ROOT'].'/assets/';
 $config['tinycimm_asset_cache_path'] = $config['tinycimm_asset_path'].'cache/';
 
-$config['tinycimm_pagination_per_page'] = 18;
+$config['tinycimm_pagination_per_page'] = 9;
 
 // set to either 0777 or 0755 depending on your server setup
 $config['tinycimm_asset_path_chmod'] = 0777;

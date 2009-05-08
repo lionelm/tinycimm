@@ -26,7 +26,7 @@ TinyCIMM.prototype.init = function(ed){
 	if (tinyMCEPopup.params.resize) {
 		this.loadresizer(n.src);
 	} else {
-		this.showBrowser(0);
+		this.showBrowser(0, true);
 	}
 }
 
@@ -52,10 +52,12 @@ TinyCIMM.prototype.get = function(assetid, callback){
 	});
 }
 
-TinyCIMM.prototype.showBrowser = function(folder) {
+TinyCIMM.prototype.showBrowser = function(folder, load) {
+	load = load || false;
+	folder = folder || 0;
 	mcTabs.displayTab('browser_tab','browser_panel');
 	tinyMCEPopup.dom.get('resize_tab').style.display = 'none';
-	(this.fileBrowser) && this.fileBrowser(folder);
+	(load) && (this.fileBrowser) && this.fileBrowser(folder, 0, load);
 }
 
 TinyCIMM.prototype.showUploader = function() {
@@ -85,7 +87,7 @@ TinyCIMM.prototype.getBrowser = function(folder, offset, callback) {
 			for(var anchor in pagination_anchors) {
 				pagination_anchors[anchor].onclick = function(e){
 					e.preventDefault();
-					_this.getBrowser(folder, this.href.toId().toString());
+					_this.fileBrowser(folder, this.href.toId().toString());
 				};
 			}
 			(callback) && callback();
@@ -129,7 +131,7 @@ TinyCIMM.prototype.loadSelect = function(folder) {
 // file upload callback function
 TinyCIMM.prototype.assetUploaded = function(folder) {
 	tinyMCEPopup.editor.windowManager.alert(this.type.ucfirst()+' successfully uploaded!');
-	this.showBrowser(folder);
+	this.showBrowser(folder, true);
 }
 	
 TinyCIMM.prototype.addFolder = function() {
@@ -173,7 +175,7 @@ TinyCIMM.prototype.deleteFolder = function(folderid) {
 					});
 					if (obj.images_affected > 0) {
 						tinyMCEPopup.editor.windowManager.alert(obj.images_affected+" images were moved to the root directory.");
-						_this.showBrowser(0);
+						_this.showBrowser(0, true);
 					}
 	 			}
 			}
@@ -209,7 +211,7 @@ TinyCIMM.prototype.deleteAsset = function(assetid) {
 					tinyMCEPopup.editor.windowManager.alert('Error: '+obj.message);
 				} else {
 					tinyMCEPopup.editor.windowManager.alert(obj.message);
-			 		_this.showBrowser(obj.folder);
+			 		_this.showBrowser(obj.folder, true);
 				}
 			}
 		});

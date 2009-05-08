@@ -30,7 +30,7 @@ tinyMCE.init(
 
 function tinycimm(field_name, url, type, win) {
 
-	var url = win.tinyMCE.baseURI.relative+'/plugins/tinycimm/'+type+'.html';
+	var url = win.tinyMCE.baseURI.relative+'/plugins/tinycimm/'+type+'.htm';
 
 	tinyMCE.activeEditor.windowManager.open({
 		file : url,
