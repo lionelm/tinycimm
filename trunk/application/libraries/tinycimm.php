@@ -36,21 +36,20 @@ class TinyCIMM {
 			header('Pragma: public');
 		}
 		header('Content-type: '.$resize_asset->mimetype);
-		header("Content-Length: ".filesize($resize_asset->new_filepath));
+		header("Content-Length: ".filesize($resize_asset->resize_filepath));
 		flush();
-		readfile($resize_asset->new_filepath);
+		readfile($resize_asset->resize_filepath);
+		exit;
 	}
 
 	public function resize_asset($asset, $width=200, $height=200, $quality=85, $cache=true, $update=false){
 		$ci = &get_instance();
-		
-		if (!isset($asset->filepath)) {
-			$asset->filepath = $this->config->item('tinycimm_asset_path').$asset->id.$asset->extension;
-		}
-		$asset->filename = 'cache/'.$asset->id.'_'.$width.'_'.$height.'_'.$quality.$asset->extension;
-		$asset->new_filepath = $this->config->item('tinycimm_asset_path').$asset->filename;
 
-		if (($cache and !file_exists($asset->new_filepath)) or !$cache) {
+		$asset->filepath = $this->config->item('tinycimm_asset_path').$asset->id.$asset->extension;
+		$asset->filename = 'cache/'.$asset->id.'_'.$width.'_'.$height.'_'.$quality.$asset->extension;
+		$asset->resize_filepath = $this->config->item('tinycimm_asset_path').$asset->filename;
+
+		if (($cache and !file_exists($asset->resize_filepath)) or !$cache) {
 			$resize_config = $this->config->item('tinycimm_image_resize_config');		
 			$imagesize = @getimagesize($asset->filepath) or die('asset not found');
 			if ($imagesize[0] > $width or $imagesize[1] > $height) {
@@ -60,8 +59,8 @@ class TinyCIMM {
 				$resize_config['width'] = $imagesize[0];
 				$resize_config['height'] = $imagesize[1];
 			}
-			$resize_config['source_image'] = $this->config->item('tinycimm_asset_path').$asset->id.$asset->extension;
-			$resize_config['new_image'] = $asset->new_filepath;
+			$resize_config['source_image'] = $asset->filepath;
+			$resize_config['new_image'] = $asset->resize_filepath;
 			$ci->load->library('image_lib');
 			$ci->image_lib->initialize($resize_config);
 			if (!$ci->image_lib->resize()) {
