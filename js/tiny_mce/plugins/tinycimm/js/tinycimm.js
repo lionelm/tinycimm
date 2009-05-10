@@ -177,7 +177,7 @@ TinyCIMM.prototype.deleteFolder = function(folderid) {
 					});
 					if (obj.images_affected > 0) {
 						tinyMCEPopup.editor.windowManager.alert(obj.images_affected+" images were moved to the root directory.");
-						_this.showBrowser(0, true);
+						_this.showBrowser(0, 0, true);
 					}
 	 			}
 			}
@@ -213,7 +213,7 @@ TinyCIMM.prototype.deleteAsset = function(assetid) {
 					tinyMCEPopup.editor.windowManager.alert('Error: '+obj.message);
 				} else {
 					tinyMCEPopup.editor.windowManager.alert(obj.message);
-			 		_this.showBrowser(obj.folder, true);
+			 		_this.showBrowser(obj.folder, 0, true);
 				}
 			}
 		});
