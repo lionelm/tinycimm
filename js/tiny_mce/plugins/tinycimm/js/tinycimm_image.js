@@ -99,8 +99,56 @@ ImageDialog.prototype.insertImage = function(thumbspan, imgsrc, alttext) {
 	}
 	return;
 }
-	
-	
+
+ImageDialog.prototype.insertThumbnail = function(imgsrc){
+	var _this = this, ed = tinyMCEPopup.editor, f = document.forms[0], nl = f.elements, v, args = {}, el, 
+	width = this.settings.tinycimm_thumb_width, height = this.settings.tinycimm_thumb_height,
+	url = this.baseURL(this.settings.tinycimm_controller+'image/save_image_size/'+imgsrc.toId()+'/'+width+'/'+height+'/90/0');
+
+	// save the thumbnail size	
+	tinymce.util.XHR.send({
+		url : url,
+		error : function(response) {
+			tinyMCEPopup.editor.windowManager.alert('There was an error processing the request: '+response+"\nPlease try again.");
+		},
+		success : function(response) {
+			var image = tinymce.util.JSON.parse(response);
+			if (!image.outcome) {
+				tinyMCEPopup.editor.windowManager.alert(obj.message); 
+			} else { 
+				tinyMCEPopup.restoreSelection();
+
+				// Fixes crash in Safari
+				(tinymce.isWebKit) && ed.getWin().focus();
+
+				args = {
+					src : _this.baseURL(_this.settings.tinycimm_assets_path+image.filename),
+					alt : image.description,
+					title : image.description
+				};
+
+				el = ed.selection.getNode();
+
+				if (el && el.nodeName == 'IMG') {
+					ed.dom.setAttribs(el, args);
+				} else {
+					ed.execCommand('mceInsertContent', false, 
+					'<a class="'+_this.settings.tinycimm_thumb_lightbox_class+'" '
+					+'rel="'+_this.settings.tinycimm_thumb_lightbox_gallery+'" '
+					+'href="'+_this.baseURL(_this.settings.tinycimm_assets_path+image.filename)+'">'
+					+'<img id="__mce_tmp" /></a>', {skip_undo : 1});
+					ed.dom.setAttribs('__mce_tmp', args);
+					ed.dom.setAttrib('__mce_tmp', 'id', '');
+					ed.undoManager.add();
+				}
+				tinyMCEPopup.close();
+			}
+		}
+	});
+
+}
+
+
 ImageDialog.prototype.loadUploader = function() {
 	// load the uploader form
 	if (!tinyMCEPopup.dom.get('upload_target_ajax').src) {

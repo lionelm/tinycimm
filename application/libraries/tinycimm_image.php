@@ -202,12 +202,12 @@ class TinyCIMM_image extends TinyCIMM {
 	/**
 	* resizes an image
 	**/
-	public function save_image_size($image_id, $width, $height, $quality=90){
+	public function save_image_size($image_id, $width, $height, $quality=90, $update=true){
 		$ci = &get_instance();
 		if (!(int) $width or !(int) $height) {
 			TinyCIMM::response_encode(array('outcome'=>false,'message'=>'Incorrect dimensions supplied. (Cant have value of 0)'));
 		}
-		$response = $this->resize_asset($ci->tinycimm_model->get_asset($image_id), $width, $height, $quality, true, true);
+		$response = $this->resize_asset($ci->tinycimm_model->get_asset($image_id), $width, $height, $quality, true, $update);
 		
 		$response->outcome = true;
 		$response->message = 'Image size successfully saved.';

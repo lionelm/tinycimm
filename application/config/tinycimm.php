@@ -29,4 +29,10 @@ $config['tinycimm_image_resize_config']['width'] = 1024;
 $config['tinycimm_image_resize_config']['height'] = 768;
 $config['tinycimm_image_resize_config']['quality'] = 90;
 
+// thumbnails
+$config['tinycimm_image_thumbnail_default_width'] = 200;
+$config['tinycimm_image_thumbnail_default_height'] = 200;
+$config['tinycimm_image_thumbnail_default_lightbox_class'] = 'lightbox';
+$config['tinycimm_image_thumbnail_default_lightbox_gallery'] = 'lightbox';
+
 ?>

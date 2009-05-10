@@ -43,8 +43,9 @@
 							</span>
 							<span class="controls-bg"></span>
 							<span class="controls">
-							<a href="#" title="delete image" class="delete" onclick="TinyCIMMImage.deleteImage(<?=$image['id'];?>);return false">&nbsp;</a>
+								<a href="#" title="delete image" class="delete" onclick="TinyCIMMImage.deleteImage(<?=$image['id'];?>);return false">&nbsp;</a>
 								<a href="#" title="resize image" class="resize" onclick="TinyCIMMImage.loadresizer('<?=$image['filename'];?>');return false;">&nbsp;</a>
+								<a href="#" title="insert thumbnail" class="thumbnail" onclick="TinyCIMMImage.insertThumbnail('<?=$image['filename'];?>');return false">&nbsp;</a>
 							</span>
 						</span>
 					<?endforeach;?>
