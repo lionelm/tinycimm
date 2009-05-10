@@ -158,7 +158,7 @@ ImageDialog.prototype.showResizeImage = function(preImage) {
 		setTimeout(function(){
 			img.style.display="block";
 		}, 200);
-		
+
 		// display panel
 		mcTabs.displayTab('resize_tab','resize_panel');
 		tinyMCEPopup.dom.get('resize_tab').style.display = 'block';
@@ -168,7 +168,7 @@ ImageDialog.prototype.showResizeImage = function(preImage) {
 		new ScrollSlider(tinyMCEPopup.dom.get('image-slider'), {
 			min : 0,
 			max : image.width,
-			value : image.height,
+			value : image.width,
 			size : 400,
 			scroll : function(new_w) {
 				var slider_width = tinyMCEPopup.dom.get('slider_width_val'), slider_height = tinyMCEPopup.dom.get('slider_height_val');
