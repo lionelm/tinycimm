@@ -132,20 +132,19 @@ ImageDialog.prototype.insertThumbnail = function(imgsrc){
 					title : image.description
 				};
 
-				el = ed.selection.getSel();
-
-				if (el && el.nodeName == 'IMG') {
-					ed.dom.setAttribs(el, args);
-				} else {
-					ed.execCommand('mceInsertContent', false, 
-					'<a class="'+_this.settings.tinycimm_thumb_lightbox_class+'" '
-					+'rel="'+_this.settings.tinycimm_thumb_lightbox_gallery+'" '
-					+'href="'+_this.baseURL(_this.settings.tinycimm_assets_path+image.filename)+'">'
-					+'<img id="__mce_tmp" /></a>', {skip_undo : 1});
-					ed.dom.setAttribs('__mce_tmp', args);
-					ed.dom.setAttrib('__mce_tmp', 'id', '');
-					ed.undoManager.add();
+				el = ed.selection.getNode();
+				var anchor_parent = ed.dom.getParent(ed.selection.getNode(), 'A');
+				if (anchor_parent) {
+					tinyMCEPopup.dom.remove(anchor_parent);
 				}
+				ed.execCommand('mceInsertContent', false, 
+				'<a class="'+_this.settings.tinycimm_thumb_lightbox_class+'" '
+				+'rel="'+_this.settings.tinycimm_thumb_lightbox_gallery+'" '
+				+'href="'+_this.baseURL(_this.settings.tinycimm_assets_path+image.filename)+'">'
+				+'<img id="__mce_tmp" /></a>', {skip_undo : 1});
+				ed.dom.setAttribs('__mce_tmp', args);
+				ed.dom.setAttrib('__mce_tmp', 'id', '');
+				ed.undoManager.add();
 				tinyMCEPopup.close();
 			}
 		}
