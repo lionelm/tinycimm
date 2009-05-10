@@ -25,7 +25,11 @@ tinyMCE.init(
 	button_tile_map : true,
 	file_browser_callback : 'tinycimm',
 	tinycimm_controller : '<?=$this->config->item('tinycimm_controller');?>',
-	tinycimm_assets_path : '/assets/'
+	tinycimm_assets_path : '/assets/',
+	tinycimm_thumb_width : '<?=$this->config->item('tinycimm_image_thumbnail_default_width');?>',
+	tinycimm_thumb_height : '<?=$this->config->item('tinycimm_image_thumbnail_default_height');?>',
+	tinycimm_thumb_lightbox_class : '<?=$this->config->item('tinycimm_image_thumbnail_default_lightbox_class');?>',
+	tinycimm_thumb_lightbox_gallery : '<?=$this->config->item('tinycimm_image_thumbnail_default_lightbox_gallery');?>'
 });
 
 function tinycimm(field_name, url, type, win) {
