@@ -109,9 +109,9 @@ ImageDialog.prototype.loadUploader = function() {
 // prepare the resizer panel
 ImageDialog.prototype.loadresizer = function(imagesrc) {
 	var path = /^http/.test(imagesrc) ? imagesrc : this.settings.tinycimm_assets_path+imagesrc;
-	// reset the resizer
-	tinyMCEPopup.dom.get('slider_img').src = '';
-	tinyMCEPopup.dom.get('slider_img').width = tinyMCEPopup.dom.get('slider_img').height = '0';
+	// completely remove the resizer image from the dom (this was the only reliable way i found to completely reset an image) 
+	// issue 12 http://code.google.com/p/tinycimm/issues/detail?id=12
+	tinyMCEPopup.dom.remove('slider_img');
 	// ensure image is cached before loading the resizer
 	this.loadImage(this.baseURL(path));
 }
@@ -148,10 +148,17 @@ ImageDialog.prototype.checkLoad = function(preImage) {
 // show resizer image
 ImageDialog.prototype.showResizeImage = function(preImage) {
 	this.getImage(preImage.src.toId(), function(image){
-		// load image 
-		tinyMCEPopup.dom.get('slider_img').src = preImage.src;
-		tinyMCEPopup.dom.get('slider_img').width = max_w = image.width; 
-		tinyMCEPopup.dom.get('slider_img').height = max_h = image.height;
+		// fix for issue 12 http://code.google.com/p/tinycimm/issues/detail?id=12
+		var img = window.document.createElement("img");
+		img.setAttribute('id', 'slider_img');
+		img.setAttribute('width', image.width);
+		img.setAttribute('height', image.height);
+		img.setAttribute('src', preImage.src);
+		tinyMCEPopup.dom.get('image-info').appendChild(img);
+		setTimeout(function(){
+			img.style.display="block";
+		}, 200);
+		
 		// display panel
 		mcTabs.displayTab('resize_tab','resize_panel');
 		tinyMCEPopup.dom.get('resize_tab').style.display = 'block';
@@ -160,14 +167,14 @@ ImageDialog.prototype.showResizeImage = function(preImage) {
 			
 		new ScrollSlider(tinyMCEPopup.dom.get('image-slider'), {
 			min : 0,
-			max : max_w,
-			value : max_w,
+			max : image.width,
+			value : image.height,
 			size : 400,
 			scroll : function(new_w) {
 				var slider_width = tinyMCEPopup.dom.get('slider_width_val'), slider_height = tinyMCEPopup.dom.get('slider_height_val');
 				if (slider_width && slider_height) {
 					slider_width.innerHTML = (tinyMCEPopup.dom.get('slider_img').width=new_w);
-					slider_height.innerHTML = (tinyMCEPopup.dom.get('slider_img').height=Math.round((parseInt(new_w)/parseInt(max_w))*max_h))+'px';
+					slider_height.innerHTML = (tinyMCEPopup.dom.get('slider_img').height=Math.round((parseInt(new_w)/parseInt(image.width))*image.height))+'px';
 				}
 			}
 		});
