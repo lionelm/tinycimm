@@ -16,8 +16,11 @@ ImageDialog.prototype.getImage = function(imageid, callback) {
 	this.get(imageid, callback);
 };
 
-ImageDialog.prototype.fileBrowser = function(folder, offset){
-	this.getBrowser(folder, offset, function(){
+ImageDialog.prototype.fileBrowser = function(folder, offset, load, el){
+	if (typeof el == 'object') {
+		tinyMCE.activeEditor.dom.select('img', el)[0].src = 'img/ajax-loader.gif';
+	}
+	this.getBrowser(folder, offset, load, function(){
 		// bind hover event to thumbnail
 		var thumb_images = tinyMCEPopup.dom.select('.thumb_wrapper');
 		for(var image in thumb_images) {
@@ -106,6 +109,9 @@ ImageDialog.prototype.loadUploader = function() {
 // prepare the resizer panel
 ImageDialog.prototype.loadresizer = function(imagesrc) {
 	var path = /^http/.test(imagesrc) ? imagesrc : this.settings.tinycimm_assets_path+imagesrc;
+	// reset the resizer
+	tinyMCEPopup.dom.get('slider_img').src = '';
+	tinyMCEPopup.dom.get('slider_img').width = tinyMCEPopup.dom.get('slider_img').height = '0';
 	// ensure image is cached before loading the resizer
 	this.loadImage(this.baseURL(path));
 }
@@ -123,7 +129,7 @@ ImageDialog.prototype.loadImage = function(img) {
 ImageDialog.prototype.checkImgLoad = function(preImage) {
 	if (!preImage.complete) {
 		mcTabs.displayTab('resize_tab','resize_panel');
-		tinyMCEPopup.dom.setHTML('image-info-dimensions', '<img style="float:left;margin-right:4px" src="img/ajax-loader.gif"/> caching image');
+		tinyMCEPopup.dom.setHTML('image-info-dimensions', '<img style="float:left;margin-right:4px" src="img/ajax-loader.gif"/> caching image..');
 	}
 	this.checkLoad(preImage);
 }	
