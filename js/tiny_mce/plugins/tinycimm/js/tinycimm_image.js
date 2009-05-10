@@ -49,6 +49,8 @@ ImageDialog.prototype.insertAndClose = function(image) {
 	args = {
 		src : this.baseURL(this.settings.tinycimm_assets_path+image.filename),
 		alt : image.description,
+		width : image.width,
+		height : image.height,
 		title : image.description
 	};
 
@@ -68,10 +70,12 @@ ImageDialog.prototype.insertAndClose = function(image) {
 	
 // either inserts the image into the image dialog, or into the editor	
 ImageDialog.prototype.insertImage = function(thumbspan, imgsrc, alttext) {
-	// show loading spinner and hide the controls
-	tinyMCE.activeEditor.dom.addClass(thumbspan, 'showloader');
-	var controls = tinyMCEPopup.dom.select('.controls, .controls-bg');
-	for(var i in controls) { controls[i].style.display = 'none'; }
+	if (typeof thumbspan == 'object') {
+		// show loading spinner and hide the controls
+		tinyMCE.activeEditor.dom.addClass(thumbspan, 'showloader');
+		var controls = tinyMCEPopup.dom.select('.controls, .controls-bg');
+		for(var i in controls) { controls[i].style.display = 'none'; }
+	}
 
 	var win = tinyMCEPopup.getWindowArg("window");
 	var URL = this.baseURL(this.settings.tinycimm_assets_path+imgsrc);
@@ -180,6 +184,15 @@ ImageDialog.prototype.showResizeImage = function(preImage) {
 		});
 	});
 }
+
+ImageDialog.prototype.insertResizeImage = function(){
+	var _this = this, slider_img = tinyMCEPopup.dom.get('slider_img');
+	// show loading animation
+	tinyMCEPopup.dom.get('insertimg').src = tinyMCEPopup.dom.get('insertimg').src.replace('image_add.png', 'ajax-loader.gif');
+	this.getImage(slider_img.src.toId(), function(image){
+		_this.insertImage(null, image.filename, image.description);
+	});
+}
 	
 ImageDialog.prototype.saveImgSize = function() {
 	var width = tinyMCEPopup.dom.get('slider_img').width, height = tinyMCEPopup.dom.get('slider_img').height, _this = this;
@@ -203,14 +216,7 @@ ImageDialog.prototype.saveImgSize = function() {
 			if (!obj.outcome) {
 				tinyMCEPopup.editor.windowManager.alert(obj.message); 
 			} else { 
-				tinyMCEPopup.editor.windowManager.confirm(
-				'Image size successfully saved.\n\n\nClick OK to insert image or cancel to return.', function(s) {
-					if (!s) {
-						_this.showBrowser();
-						return false;
-					}
-					_this.insertImage(null, obj.filename, obj.description);
-				});
+				tinyMCEPopup.editor.windowManager.alert('Image size successfully saved.');
 			}
 		}
 	});

@@ -97,17 +97,25 @@ class TinyCIMM {
 			$folder = (int) $ci->input->post('uploadfolder');
 
 			// insert the asset info into the db
-			$last_insert_id = $ci->tinycimm_model->insert_asset($folder, basename($asset_data['orig_name']), '', $description, $asset_data['file_ext'], $_FILES[$upload_config['field_name']]['type']);
+			$last_insert_id = 
+			$ci->tinycimm_model->insert_asset(
+				$folder, 
+				strtolower(basename($asset_data['orig_name'])), 
+				'', 
+				$description, 
+				strtolower($asset_data['file_ext']), 
+				$_FILES[$upload_config['field_name']]['type']
+			);
 
-			$ci->tinycimm_model->update_asset('id', $last_insert_id, 0, '', '', $last_insert_id.$asset_data['file_ext']);
+			$ci->tinycimm_model->update_asset('id', $last_insert_id, 0, '', '', $last_insert_id.strtolower($asset_data['file_ext']));
 			$asset = $ci->tinycimm_model->get_asset($last_insert_id);
 			$asset->width = $asset_data['image_width'];
 			$asset->height = $asset_data['image_height'];
 			$asset->folder = $folder;
-			$asset->filepath = $this->config->item('tinycimm_asset_path').$asset->id.$asset->extension;
+			$asset->filepath = $this->config->item('tinycimm_asset_path').$asset->id.strtolower($asset->extension);
 
 			// rename the uploaded file, CI's Upload library does not handle custom file naming 	
-			rename($asset_data['full_path'], $asset_data['file_path'].$asset->id.$asset->extension);
+			rename($asset_data['full_path'], $asset_data['file_path'].$asset->id.strtolower($asset->extension));
 
 			return $asset;
 			  
