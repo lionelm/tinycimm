@@ -6,6 +6,7 @@
  * Project      : http://tinycimm.googlecode.com/
  * Contact      : willis.rh@gmail.com
  *
+ *
  */
 
 String.prototype.toId = function(){
@@ -26,7 +27,7 @@ TinyCIMM.prototype.init = function(ed){
 	if (tinyMCEPopup.params.resize) {
 		this.loadresizer(n.src);
 	} else {
-		this.showBrowser(0, true);
+		this.showBrowser(0, 0, true);
 	}
 }
 
@@ -52,12 +53,14 @@ TinyCIMM.prototype.get = function(assetid, callback){
 	});
 }
 
-TinyCIMM.prototype.showBrowser = function(folder, load) {
+TinyCIMM.prototype.showBrowser = function(folder, offset, load, el) {
 	load = load || false;
 	folder = folder || 0;
+	offset = offset || 0;
+	el = el || false;
 	mcTabs.displayTab('browser_tab','browser_panel');
 	tinyMCEPopup.dom.get('resize_tab').style.display = 'none';
-	(load) && (this.fileBrowser) && this.fileBrowser(folder, 0, load);
+	(load) && (this.fileBrowser) && this.fileBrowser(folder, offset, load, el);
 }
 
 TinyCIMM.prototype.showUploader = function() {
@@ -67,7 +70,7 @@ TinyCIMM.prototype.showUploader = function() {
 }
 
 // load list of folders and files via json request
-TinyCIMM.prototype.getBrowser = function(folder, offset, callback) {
+TinyCIMM.prototype.getBrowser = function(folder, offset, el, callback) {
 	var _this = this;
 	folder = folder || 0;
 	offset = offset || 0;
@@ -122,13 +125,12 @@ TinyCIMM.prototype.loadSelect = function(folder) {
 						}
 					}, 500);
 				}
-			}
-			catch(e) {}
+			} catch(e) {}
 		}
 	});
 }
 
-// file upload callback function
+// file successfully uploaded callback function
 TinyCIMM.prototype.assetUploaded = function(folder) {
 	tinyMCEPopup.editor.windowManager.alert(this.type.ucfirst()+' successfully uploaded!');
 	this.showBrowser(folder, true);
@@ -157,7 +159,7 @@ TinyCIMM.prototype.addFolder = function() {
 
 TinyCIMM.prototype.deleteFolder = function(folderid) {
 	var _this = this;
-	tinyMCEPopup.editor.windowManager.confirm('Are you sure you want to delete this folder?', function(s) {
+	tinyMCEPopup.editor.windowManager.confirm('Are you sure you want to delete this folder?', function(s){
 		if (!s) { return false; }
 		var requesturl = _this.baseURL(_this.settings.tinycimm_controller+_this.type+'/delete_folder/'+folderid);
 		tinymce.util.XHR.send({

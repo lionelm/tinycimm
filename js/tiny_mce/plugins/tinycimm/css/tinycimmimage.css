@@ -40,9 +40,11 @@ span#loading {background:url(../img/ajax-loader.gif) no-repeat;padding-left:20px
 .folderlist li {display:block;height:18px;line-height:15px;}
 .folderlist li img {float:left;margin-right:2px;cursor:pointer}
 .folderlist li span {}
-.folderlist li .editimg {float:right}
+.folderlist li .editimg {float:right;display:block;width:13px;height:13px;position:absolute;right:0;top:0;z-index:2;}
 .folderlist li .editimg a img {border:0;margin:1px;filter:alpha(opacity=55);-moz-opacity:0.55;opacity:0.55;}
 .folderlist li .editimg a:hover img {border:1px solid #AAA;margin:0;filter:alpha(opacity=100);-moz-opacity:1;opacity:1;}
+.folderlist li .foldername {cursor:pointer;position:absolute;height:13px;width:100%;left:0;top:0;z-index:1;}
+.folderlist li .folder-row {display:block;width:100%;position:relative;height:13px;}
 .folderlist li .num_images {float:right}
 .folderlist li .image_size {float:right;color:#777;width:50px;display:block;text-align:left}
 .folderlist li .image_dimensions {float:right;color:#777;width:76px;display:block;text-align:right;padding-right:4px}

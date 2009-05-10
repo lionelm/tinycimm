@@ -31,16 +31,16 @@ class Assetmanager extends Controller {
   	}
 
 	function image() {
-		$param = array_slice(explode("/", $this->uri->uri_string()),4);
+		$param = array_slice(explode('/', $this->uri->uri_string()),4);
 		$method = trim($this->uri->segment(3));
 		$count = 0;
-                foreach ($param as $element) {
+                foreach($param as $element) {
 			$param[$count] = "'".$element."'";
 			$count++;
 		}
 		$this->tinycimm_image->view_path = $this->view_path = $this->config->item('tinycimm_views_root').$this->config->item('tinycimm_views_root_image');
 		// eval should just never be used, until i find a better way this will have to do
-		method_exists($this->tinycimm_image, $method) and eval('$this->tinycimm_image->' . $method . "(".join(",", $param).");");
+		method_exists($this->tinycimm_image, $method) and eval('$this->tinycimm_image->' . $method . '('.join(',', $param).');');
 	}
 
 }
