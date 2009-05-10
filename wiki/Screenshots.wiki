@@ -1,4 +1,5 @@
 #summary Some screenshots of the image manager
+#labels Featured
 
 
 [http://demo.tinycimm.badsyntax.co.uk/img/screenshots/screenshot1.png]
