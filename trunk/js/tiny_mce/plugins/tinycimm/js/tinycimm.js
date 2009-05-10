@@ -39,7 +39,7 @@ TinyCIMM.prototype.get = function(assetid, callback){
 	tinymce.util.XHR.send({
 		url : this.baseURL(this.settings.tinycimm_controller+this.type+'/get_'+this.type+'/'+assetid),
 		error : function(response) {
-			tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the image info.');
+			tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the asset info.');
 			return false;
 		},
 		success : function(response) {
