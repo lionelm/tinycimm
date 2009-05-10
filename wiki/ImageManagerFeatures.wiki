@@ -1,5 +1,5 @@
 #summary A brief overview of the Image Manager features.
-#labels Phase-Design,Phase-Requirements
+#labels Phase-Design,Phase-Requirements,Featured
 
 === Introduction ===
 
