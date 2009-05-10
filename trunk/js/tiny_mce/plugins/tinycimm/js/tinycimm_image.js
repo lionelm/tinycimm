@@ -116,6 +116,11 @@ ImageDialog.prototype.insertThumbnail = function(imgsrc){
 			if (!image.outcome) {
 				tinyMCEPopup.editor.windowManager.alert(obj.message); 
 			} else { 
+				var origWin = tinyMCEPopup.getWindowArg("tinyMCEPopup");
+				if (origWin != undefined) {
+					origWin.close();
+				}
+
 				tinyMCEPopup.restoreSelection();
 
 				// Fixes crash in Safari
@@ -127,7 +132,7 @@ ImageDialog.prototype.insertThumbnail = function(imgsrc){
 					title : image.description
 				};
 
-				el = ed.selection.getNode();
+				el = ed.selection.getSel();
 
 				if (el && el.nodeName == 'IMG') {
 					ed.dom.setAttribs(el, args);
