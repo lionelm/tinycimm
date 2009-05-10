@@ -33,18 +33,17 @@
 		<td valign="top">
 			<div class="heading">&raquo; <?=$selected_folder_info['name'];?></div>
 			<div id="filelist">
-				<div id="filelist-contextmenu"></div>
 				<?if (sizeof($images) == 0) {?>
 					(folder is empty)
 				<?} else {?>
 					<?foreach($images as $image):?>
-						<span class="thumb_wrapper" title="<?=$image['description'];?>">
+						<span class="thumb_wrapper" title="insert <?=$image['description'];?>">
 							<span class="thumb" onclick="TinyCIMMImage.insertImage(this, '<?=$image['filename'];?>', '<?=$image['description'];?>');" style="background:url(/assetmanager/image/get/<?=$image['id'];?>/92/92) no-repeat center center;">
 								<span class="loader"></span>
 							</span>
 							<span class="controls-bg"></span>
 							<span class="controls">
-								<a href="#" title="delete image" class="delete" onclick="TinyCIMMImage.deleteImage(<?=$image['id'];?>);return false">&nbsp;</a>
+							<a href="#" title="delete image" class="delete" onclick="TinyCIMMImage.deleteImage(<?=$image['id'];?>);return false">&nbsp;</a>
 								<a href="#" title="resize image" class="resize" onclick="TinyCIMMImage.loadresizer('<?=$image['filename'];?>');return false;">&nbsp;</a>
 							</span>
 						</span>
