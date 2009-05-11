@@ -44,11 +44,18 @@
 				<?} else {?>
 					<?foreach($images as $image):?>
 					<li>
-						<span class="clearfix" id="image-<?=$image['id'];?>" onclick="TinyCIMMImage.insertPreviewImage('<?=$image['id'];?>', '<?=$image['description'];?>');" style="cursor:pointer;display:block" title="insert image" onMouseOver="this.style.color='#000066';this.style.background='#EEEEEE';" onMouseOut="this.style.color='#000000';this.style.background='#FFFFFF';">
-						<span class="image_dimensions" style="display:inline;"><?=$image['dimensions'];?></span>
-						<img id="img-<?=$image['id'];?>" class="image_preview" src="img/icons/<?=str_replace('.', '', $image['extension']);?>.gif" />
-						<?=$image['name'];?>
-						<br class="clear" /></span>
+						<span class="clearfix" id="image-<?=$image['id'];?>" onclick="TinyCIMMImage.insertImage(null, '<?=$image['filename'];?>', '<?=$image['description'];?>');"  style="cursor:pointer;display:block" title="insert image" onMouseOver="this.style.color='#000066';this.style.background='#EEEEEE';" onMouseOut="this.style.color='#000000';this.style.background='#FFFFFF';">
+							<!--
+							<span class="list-controls" style="float:right">
+                                                                <a href="#" title="delete image" class="delete" onclick="TinyCIMMImage.deleteImage(<?=$image['id'];?>);return false">&nbsp;</a>
+                                                                <a href="#" title="resize image" class="resize" onclick="TinyCIMMImage.loadresizer('<?=$image['filename'];?>');return false;">&nbsp;</a>
+                                                                <a href="#" title="insert thumbnail" class="thumbnail" onclick="TinyCIMMImage.insertThumbnail(this, '<?=$image['filename'];?>');return false">&nbsp;</a>
+                                                        </span>
+							-->
+							<span class="image_dimensions" style="display:inline;"><?=$image['dimensions'];?></span>
+							<img id="img-<?=$image['id'];?>" class="image_preview" src="img/icons/<?=str_replace('.', '', $image['extension']);?>.gif" />
+							<?=$image['name'];?>
+						</span>
 					</li>
 					<?endforeach;?>
 				<?}?>

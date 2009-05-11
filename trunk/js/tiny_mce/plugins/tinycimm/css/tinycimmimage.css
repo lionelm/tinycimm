@@ -304,7 +304,7 @@ span#loading {
 	display:block;
 }
 
-.thumb_wrapper .controls .resize, .thumb_wrapper_over .controls .resize {
+.thumb_wrapper .controls .resize, .thumb_wrapper_over .controls .resize, .list-controls .resize {
 	text-decoration:none;
 	cursor:pointer;
 	display:block;
@@ -317,7 +317,7 @@ span#loading {
 	opacity:0.6;
 	margin-left:5px;
 }
-.thumb_wrapper .controls .delete, .thumb_wrapper_over .controls .delete {
+.thumb_wrapper .controls .delete, .thumb_wrapper_over .controls .delete, .list-controls .delete {
 	margin-left:0.4em;
 	text-decoration:none;
 	cursor:pointer;
@@ -331,7 +331,7 @@ span#loading {
 	-moz-opacity:0.6;
 	opacity:0.6;
 }
-.thumb_wrapper .controls .thumbnail, .thumb_wrapper_over .controls .thumbnail {
+.thumb_wrapper .controls .thumbnail, .thumb_wrapper_over .controls .thumbnail, .list-controls .thumbnail {
 	text-decoration:none;
 	cursor:pointer;
 	display:block;

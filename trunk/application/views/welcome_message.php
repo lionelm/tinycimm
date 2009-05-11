@@ -46,12 +46,14 @@ code {
 
 <h1>TinyCIMM demo</h1>
 
-<p>View the source of this page to see how the plugin is integrated into tinymce.</p>
+<p>View the source of this page to see how the plugin is integrated into tinymce as a file browser callback.</p>
 
 <p>The demo is using TinyMCE Version: 3.2.3 and CodeIgniter Version 1.7.1</p>
 
 <textarea id="demo_textarea">Welcome to the TinyCIMM demo page. This is a default TinyMCE editor. Click on the image icon in the editor toolbar to view a demonstration of the 
 image manager. </textarea>
+
+<?=$this->load->view('common/footer.php');?>
 
 </body>
 </html>

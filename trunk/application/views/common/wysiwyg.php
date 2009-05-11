@@ -44,6 +44,7 @@ function tinycimm(field_name, url, type, win) {
 		inline : "yes",  
 		close_previous : "no"
 	}, {
+		window : win,
 		tinyMCEPopup : win.tinyMCEPopup,
 		input : field_name
 	});
