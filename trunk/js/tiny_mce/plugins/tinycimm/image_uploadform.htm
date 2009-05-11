@@ -3,6 +3,9 @@
 <head>
 	<title>Upload Image Form</title>
 	<link href="css/advimage.css" rel="stylesheet" type="text/css" />
+	<style type="text/css" media="screen">
+		html, body {background:#FFF;}
+	</style>
 	<script type="text/javascript">
 		var tinymce = parent.tinymce;
 		// load popup css
@@ -52,7 +55,15 @@
 	<iframe id="hidden_iframe" name="hidden_iframe" src="javascript:false" style="display:none"></iframe>
 	<form method="post" target="hidden_iframe" enctype="multipart/form-data" action="#" id="uploadform" name="uploadform">
 		<table border="0" cellpadding="4" cellspacing="0">
-			<tr><td>Select File</td><td colspan="3"><input type="file" id="fileupload" name="fileupload" size="25" style="display:inline;width:220px;" /></td></tr>
+			<tr>
+				<td>Allowed Types</td>
+				<td>.jpg, .gif, .png</td>
+			<tr>
+				<td>Select File</td>
+				<td colspan="3">
+					<input type="file" id="fileupload" name="fileupload" size="25" style="display:inline;width:220px;" />
+				</td>
+			</tr>
 			<tr>
 				<td>Remote Folder</td>
 				<td colspan="3">
@@ -81,7 +92,9 @@
 			</tr>
 			<tr>
 				<td>Quality</td>
-				<td colspan="3"><input type="text" size="3" style="text-align:center;width:24px" id="image-quality" value="90" />%</td>
+				<td colspan="3">
+					<input type="text" size="3" style="text-align:center;width:24px" id="image-quality" value="90" />%
+				</td>
 			</tr>
 			<tr>
 				<td colspan="4">
