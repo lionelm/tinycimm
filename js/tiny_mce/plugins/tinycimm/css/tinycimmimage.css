@@ -420,3 +420,23 @@ select#view-type, select#sort-type {
 .hidden {
 	display:none;
 }
+
+.clearfix:after {
+	content: "."; 
+	display: block; 
+	height: 0; 
+	clear: both; 
+	visibility: hidden; 
+}
+
+.clearfix { 
+	display: inline-block; 
+}
+/* requred comment for clearfix to work in Opera \*/
+* html .clearfix {
+	height:1%;
+}
+
+* .clearfix {
+	display:block; 
+}
