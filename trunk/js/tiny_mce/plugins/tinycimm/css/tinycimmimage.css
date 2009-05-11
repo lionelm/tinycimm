@@ -34,7 +34,7 @@ img {
 	height:auto;
 }
 #filelist {
-	height:310px;
+	height:315px;
 	margin:0;
 	width:100%;
 	padding-left:3px;
@@ -234,7 +234,7 @@ span#loading {
 	height:99px;
 	float:left;
 	z-index:1;
-	margin:0px 3px 3px 0px;
+	margin:0px 6px 6px 0px;
 	position:relative;
 }
 .thumb_wrapper {
@@ -270,18 +270,21 @@ span#loading {
 	position:absolute;
 	height:100%;
 	width:100%;
-	z-index:100;
+	z-index:99;
 	background:#FFF url(../img/progress.gif) no-repeat center center;
 	filter:alpha(opacity=40);
 	-moz-opacity:0.4;
 	opacity:0.4;
 }
+
 .thumb_wrapper span.loader, .thumb_wrapper_over span.loader {
 	display:none;
 }
+
 .showloader span.loader {
 	display:block;
 }
+
 .thumb_wrapper .controls .resize, .thumb_wrapper_over .controls .resize {
 	text-decoration:none;
 	cursor:pointer;

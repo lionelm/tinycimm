@@ -16,7 +16,6 @@ String.prototype.ucfirst = function(){
 	return this.substr(0, 1).toUpperCase()+this.substr(1, this.length-1).toLowerCase();
 }
 
-
 function TinyCIMM(type){
 	this.type = type || null;
 	this.settings = tinyMCEPopup.editor.settings;
@@ -33,6 +32,12 @@ TinyCIMM.prototype.init = function(ed){
 
 TinyCIMM.prototype.baseURL = function(url) {
 	return tinyMCEPopup.editor.documentBaseURI.toAbsolute(url);
+}
+
+TinyCIMM.prototype.cacheImages = function(images){
+	for(var img in images){
+		new Image().src = images[img];
+	}
 }
 
 TinyCIMM.prototype.get = function(assetid, callback){
