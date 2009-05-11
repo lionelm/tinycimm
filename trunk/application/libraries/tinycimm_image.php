@@ -119,13 +119,6 @@ class TinyCIMM_image extends TinyCIMM {
 		$ci->load->view($this->view_path.'image_'.$ci->session->userdata('cimm_view').'_list', $data);
 	}
   
-  	/**
-  	* set view type for asset listing (list or thumbnails) in user session
-  	**/
-	public function setview($view) {
-		$this->session->set_userdata('cimm_view', $view);
-	}
-	
 	/**
 	* update asset row
 	**/
@@ -211,17 +204,20 @@ class TinyCIMM_image extends TinyCIMM {
 		$response->message = 'Image size successfully saved.';
 		$this->response_encode($response);
 	}
-
   
 	/**
-	*
+	* change browser template in user session
 	**/
-	public function change_view($view='thumb', $folder_id=0){
+	public function change_view($view='thumbnails'){
 		$ci = &get_instance();
 		$ci->session->set_userdata('cimm_view', $view);
-		$this->get_browser((int) $folder_id);
+		exit;
 	}
 
+
+	/**
+	* displays the image upload form
+	*/
 	public function get_uploader_form(){
 		$ci = &get_instance();
 		$data['upload_config'] = $ci->config->item('tinycimm_image_upload_config');

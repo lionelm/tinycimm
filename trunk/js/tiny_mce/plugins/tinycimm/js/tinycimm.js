@@ -227,6 +227,7 @@ TinyCIMM.prototype.deleteAsset = function(assetid) {
 }
 	
 TinyCIMM.prototype.changeView = function(view) {
+	var _this = this;
 	// show loading image
 	tinyMCEPopup.dom.setHTML('filebrowser', '<span id="loading">loading</span>');
 	tinymce.util.XHR.send({
@@ -234,8 +235,8 @@ TinyCIMM.prototype.changeView = function(view) {
 		error : function(text) {
 			tinyMCEPopup.editor.windowManager.alert('There was an error processing the request.');
 		},
-		success : function(text) {
-			tinyMCEPopup.dom.setHTML('filebrowser', text);
+		success : function() {
+			_this.showBrowser(0, 0, true);	
 		}
 	});
 }
