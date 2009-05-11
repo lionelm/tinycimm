@@ -44,7 +44,7 @@
 				<?} else {?>
 					<?foreach($images as $image):?>
 					<li>
-						<span id="image-<?=$image['id'];?>" onclick="TinyCIMMImage.insertPreviewImage('<?=$image['id'];?>', '<?=$image['description'];?>');" style="cursor:pointer;display:block" title="insert image" onMouseOver="this.style.color='#000066';this.style.background='#EEEEEE';" onMouseOut="this.style.color='#000000';this.style.background='#FFFFFF';">
+						<span class="clearfix" id="image-<?=$image['id'];?>" onclick="TinyCIMMImage.insertPreviewImage('<?=$image['id'];?>', '<?=$image['description'];?>');" style="cursor:pointer;display:block" title="insert image" onMouseOver="this.style.color='#000066';this.style.background='#EEEEEE';" onMouseOut="this.style.color='#000000';this.style.background='#FFFFFF';">
 						<span class="image_dimensions" style="display:inline;"><?=$image['dimensions'];?></span>
 						<img id="img-<?=$image['id'];?>" class="image_preview" src="img/icons/<?=str_replace('.', '', $image['extension']);?>.gif" />
 						<?=$image['name'];?>
