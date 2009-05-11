@@ -72,11 +72,12 @@ class TinyCIMM_image extends TinyCIMM {
 
 		$total_assets = count($ci->tinycimm_model->get_assets($folder));
 
+		$per_page = $ci->config->item('tinycimm_pagination_per_page_'.$ci->session->userdata('cimm_view'));
 		$pagination_config['base_url'] = base_url($ci->config->item('tinycimm_controller').'image/get_browser/'.$folder);
 		$pagination_config['total_rows'] = $total_assets;
 		$pagination_config['full_tag_open'] = '<div class="heading pagination">';
 		$pagination_config['full_tag_close'] = '</div>';
-		$pagination_config['per_page'] = $ci->config->item('tinycimm_pagination_per_page_'.$ci->session->userdata('cimm_view')); 
+		$pagination_config['per_page'] = $per_page; 
 		$pagination_config['uri_segment'] = 5;
 		$ci->pagination->initialize($pagination_config);
 	
@@ -98,7 +99,6 @@ class TinyCIMM_image extends TinyCIMM {
 		
 		$data['images'] = array();
 		$totimagesize = 0;
-		$per_page = $ci->config->item('tinycimm_pagination_per_page_'.$ci->session->userdata('cimm_view'));
 		foreach($assets = $ci->tinycimm_model->get_assets((int) $folder, $offset, $per_page) as $image) {
 			$image_path = $this->config->item('tinycimm_asset_path').$image['id'].$image['extension'];
 			$image_size = ($imgsize = @getimagesize($image_path)) ? $imgsize : array(0,0);
