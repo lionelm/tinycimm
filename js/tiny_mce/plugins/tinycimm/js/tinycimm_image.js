@@ -12,6 +12,11 @@ function ImageDialog(){}
 ImageDialog.prototype = new TinyCIMM('image');
 ImageDialog.prototype.constructor = ImageDialog;
 
+ImageDialog.prototype.preInit = function() {
+	var images = ['../img/ajax-loader.gif', '../img/ajax-loader-sm.gif', '../img/progress.gif'];
+	this.cacheImages(images);
+}
+
 ImageDialog.prototype.getImage = function(imageid, callback) {
 	this.get(imageid, callback);
 };
@@ -100,10 +105,15 @@ ImageDialog.prototype.insertImage = function(thumbspan, imgsrc, alttext) {
 	return;
 }
 
-ImageDialog.prototype.insertThumbnail = function(imgsrc){
+ImageDialog.prototype.insertThumbnail = function(anchor, imgsrc){
 	var _this = this, ed = tinyMCEPopup.editor, f = document.forms[0], nl = f.elements, v, args = {}, el, 
 	width = this.settings.tinycimm_thumb_width, height = this.settings.tinycimm_thumb_height,
 	url = this.baseURL(this.settings.tinycimm_controller+'image/save_image_size/'+imgsrc.toId()+'/'+width+'/'+height+'/90/0');
+
+	// show spinner image
+	if (typeof anchor == 'object' && anchor.nodeName == 'A') {
+		anchor.style.background = 'url(img/ajax-loader-sm.gif) no-repeat center center';
+	}
 
 	// save the thumbnail size	
 	tinymce.util.XHR.send({
@@ -116,6 +126,7 @@ ImageDialog.prototype.insertThumbnail = function(imgsrc){
 			if (!image.outcome) {
 				tinyMCEPopup.editor.windowManager.alert(obj.message); 
 			} else { 
+				// if an advimage dialog window is already open
 				var origWin = tinyMCEPopup.getWindowArg("tinyMCEPopup");
 				if (origWin != undefined) {
 					origWin.close();
@@ -133,10 +144,13 @@ ImageDialog.prototype.insertThumbnail = function(imgsrc){
 				};
 
 				el = ed.selection.getNode();
+				// if a thumbnail is selected
 				var anchor_parent = ed.dom.getParent(ed.selection.getNode(), 'A');
 				if (anchor_parent) {
+					// remove the thumb anchor
 					tinyMCEPopup.dom.remove(anchor_parent);
 				}
+				// replace/insert the image thumbnail with anchor
 				ed.execCommand('mceInsertContent', false, 
 				'<a class="'+_this.settings.tinycimm_thumb_lightbox_class+'" '
 				+'rel="'+_this.settings.tinycimm_thumb_lightbox_gallery+'" '
@@ -165,8 +179,7 @@ ImageDialog.prototype.loadUploader = function() {
 // prepare the resizer panel
 ImageDialog.prototype.loadresizer = function(imagesrc) {
 	var path = /^http/.test(imagesrc) ? imagesrc : this.settings.tinycimm_assets_path+imagesrc;
-	// completely remove the resizer image from the dom (this was the only reliable way i found to completely reset an image) 
-	// issue 12 http://code.google.com/p/tinycimm/issues/detail?id=12
+	// completely remove the resizer image from the dom : issue 12 http://code.google.com/p/tinycimm/issues/detail?id=12
 	tinyMCEPopup.dom.remove('slider_img');
 	// ensure image is cached before loading the resizer
 	this.loadImage(this.baseURL(path));
@@ -218,6 +231,7 @@ ImageDialog.prototype.showResizeImage = function(preImage) {
 		// display panel
 		mcTabs.displayTab('resize_tab','resize_panel');
 		tinyMCEPopup.dom.get('resize_tab').style.display = 'block';
+
 		// image dimensions overlay layer
 		tinyMCEPopup.dom.setHTML('image-info-dimensions', '<span id="slider_width_val"></span> x <span id="slider_height_val"></span>');
 			
@@ -278,6 +292,6 @@ ImageDialog.prototype.deleteImage = function(imageid) {
 	this.deleteAsset(imageid);
 }	
 	
-
 var TinyCIMMImage = new ImageDialog();
+TinyCIMMImage.preInit();
 tinyMCEPopup.onInit.add(TinyCIMMImage.init, TinyCIMMImage);
