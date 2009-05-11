@@ -137,7 +137,8 @@ TinyCIMM.prototype.loadSelect = function(folder) {
 
 // file successfully uploaded callback function
 TinyCIMM.prototype.assetUploaded = function(folder) {
-	tinyMCEPopup.editor.windowManager.alert(this.type.ucfirst()+' successfully uploaded!');
+	//tinyMCEPopup.editor.windowManager.alert(this.type.ucfirst()+' successfully uploaded!');
+	//this.showFlashMsg(this.type.ucfirst()+' successfully uploaded!');
 	this.showBrowser(folder, 0, true);
 }
 	

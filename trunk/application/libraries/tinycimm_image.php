@@ -188,6 +188,10 @@ class TinyCIMM_image extends TinyCIMM {
 		$this->get_folders_html();
   	}
   	
+        public function get_folders_select($folder_id=0){
+                parent::get_folders_select((int) $folder_id);
+        }
+
 	public function get_folders_html(){
 		parent::get_folders_html();
 	}
@@ -219,13 +223,7 @@ class TinyCIMM_image extends TinyCIMM {
 
 	public function get_uploader_form(){
 		$ci = &get_instance();
-		// get list of folders
-		$data['folders'] = array();
-		foreach($folders = $ci->tinycimm_model->get_folders('name') as $folderinfo) {
-			$data['folders'][] = $folderinfo;
-		}
-		$data['upload_config'] = $this->config->item('tinycimm_image_upload_config');
-
+		$data['upload_config'] = $ci->config->item('tinycimm_image_upload_config');
 		$ci->load->view($this->view_path.'image_upload_form', $data);
 	}
 	

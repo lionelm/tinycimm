@@ -184,6 +184,17 @@ class TinyCIMM {
 	/**
 	* @TODO would become obsolete if we switched away from a multi folder system and went with categories @Liam
 	**/
+        public function get_folders_select($folder_id=0){
+                $ci = &get_instance();
+                $data['folder_id'] = $folder_id;
+                $data['folders'] = array();
+                foreach($folders = $ci->tinycimm_model->get_folders('name') as $folderinfo) {
+                        $data['folders'][] = $folderinfo;
+                }
+                $ci->load->view($this->view_path.'image_folder_select', $data);
+        }
+
+
 	public function get_folders_html(){
 		$ci = &get_instance();
 		$data['folders'][0] = array('id'=>0,'name'=>'General');

@@ -68,16 +68,7 @@
 				<td>Remote Folder</td>
 				<td colspan="3">
 					<div id="folder_select_list" style="display: inline;">
-						<select name="uploadfolder" id="folderselect">
-							<optgroup label="Folders">
-								<option value="">General</option>
-								<?foreach($folders as $folderinfo):?>
-									<option value="<?=$folderinfo['id'];?>">
-										<?=$folderinfo['name'];?>
-									</option>
-								<?endforeach;?>
-							</optgroup>
-						</select>
+						<?=TinyCIMM_image::get_folders_select();?>
 					</div>
 				</td>
 			</tr>
