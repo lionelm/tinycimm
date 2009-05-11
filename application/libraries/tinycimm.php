@@ -76,9 +76,8 @@ class TinyCIMM {
 	/**
 	* upload asset to directory and insert info into DB
 	**/
-	public function upload_asset() {
+	public function upload_asset($upload_config) {
 		$ci = &get_instance();
-		$upload_config = $this->config->item('tinycimm_upload_config');
 		// if file has been uploaded
 		if (isset($_FILES[$upload_config['field_name']]['name']) and $_FILES[$upload_config['field_name']]['name'] != '') {
 
@@ -185,16 +184,6 @@ class TinyCIMM {
 	/**
 	* @TODO would become obsolete if we switched away from a multi folder system and went with categories @Liam
 	**/
-	public function get_folders_select($folder_id=0){
-		$ci = &get_instance();
-		$data['folder_id'] = $folder_id;
-		$data['folders'] = array();
-		foreach($folders = $ci->tinycimm_model->get_folders('name') as $folderinfo) {
-			$data['folders'][] = $folderinfo;
-		}
-		$ci->load->view($this->view_path.'image_folder_select', $data);
-	}
-
 	public function get_folders_html(){
 		$ci = &get_instance();
 		$data['folders'][0] = array('id'=>0,'name'=>'General');

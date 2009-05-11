@@ -14,12 +14,12 @@ $config['tinycimm_pagination_per_page'] = 9;
 $config['tinycimm_asset_path_chmod'] = 0777;
 
 // upload configuration variables
-$config['tinycimm_upload_config']['field_name'] = 'fileupload';
-$config['tinycimm_upload_config']['upload_path'] = $config['tinycimm_asset_path'];
-$config['tinycimm_upload_config']['allowed_types'] = 'gif|jpg|png';
-$config['tinycimm_upload_config']['max_size'] = '6800';
-$config['tinycimm_upload_config']['max_width']  = '5000';
-$config['tinycimm_upload_config']['max_height']  = '5000';
+$config['tinycimm_image_upload_config']['field_name'] = 'fileupload';
+$config['tinycimm_image_upload_config']['upload_path'] = $config['tinycimm_asset_path'];
+$config['tinycimm_image_upload_config']['allowed_types'] = 'gif|jpg|png';
+$config['tinycimm_image_upload_config']['max_size'] = '6800';
+$config['tinycimm_image_upload_config']['max_width']  = '5000';
+$config['tinycimm_image_upload_config']['max_height']  = '5000';
 
 // image resize
 $config['tinycimm_image_resize_config']['image_library'] = 'GD2';
