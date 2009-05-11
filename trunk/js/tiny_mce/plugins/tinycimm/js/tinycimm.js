@@ -217,8 +217,8 @@ TinyCIMM.prototype.deleteAsset = function(assetid) {
 				if (!obj.outcome) {
 					tinyMCEPopup.editor.windowManager.alert('Error: '+obj.message);
 				} else {
-					tinyMCEPopup.editor.windowManager.alert(obj.message);
 			 		_this.showBrowser(obj.folder, 0, true);
+					// _this.showFlashMsg(obj.message);
 				}
 			}
 		});

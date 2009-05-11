@@ -33,6 +33,7 @@ img {
 #browser_panel {
 	height:auto;
 }
+
 #filelist {
 	height:315px;
 	margin:0;
@@ -44,13 +45,13 @@ img {
 }
 
 #fileuploader {
-	height:150px;
+	height:300px;
 	width:100%;
 	overflow:hidden;
 }
 
 #upload_target_ajax {
-	height:150px;
+	height:160px;
 	width:100%;
 	border:0;
 }
@@ -72,13 +73,16 @@ select#folderselect {}
 #image_wrapper_panel, #resize_panel {
 	height:392px;
 }
+
 #image_wrapper_panel fieldset {
 	height:382px;
 }
+
 #resizer {
 	height:368px;
 	overflow:none;
 }
+
 #save_size {
 	width:96px;
 	padding-top:0;
@@ -89,6 +93,7 @@ select#folderselect {}
 	margin-bottom:20px;
 	padding-top:6px;
 }
+
 #image-info {
 	height:320px;
 	width:508px;
@@ -109,6 +114,7 @@ select#folderselect {}
 	font-weight:bold;
 	z-index:9999;
 }
+
 #slider_img {
 	display:none;
 }
@@ -141,24 +147,29 @@ span#loading {
 	line-height:16px;
 	display:block;
 }
+
 #folderlist {
 	padding-left:3px;
 }
+
 .folderlist {
 	list-style:none;
 	margin:0;
 	padding:0;
 }
+
 .folderlist li {
 	display:block;
 	height:18px;
 	line-height:15px;
 }
+
 .folderlist li img {
 	float:left;
 	margin-right:2px;
 	cursor:pointer
 }
+
 .folderlist li .editimg {
 	float:right;
 	display:block;
@@ -169,6 +180,7 @@ span#loading {
 	top:0;
 	z-index:2;
 }
+
 .folderlist li .editimg a img {
 	border:0;
 	margin:1px;
@@ -176,6 +188,7 @@ span#loading {
 	-moz-opacity:0.55;
 	opacity:0.55;
 }
+
 .folderlist li .editimg a:hover img {
 	border:1px solid #AAA;
 	margin:0;
@@ -183,6 +196,7 @@ span#loading {
 	-moz-opacity:1;
 	opacity:1;
 }
+
 .folderlist li .foldername {
 	cursor:pointer;
 	position:absolute;
@@ -192,15 +206,18 @@ span#loading {
 	top:0;
 	z-index:1;
 }
+
 .folderlist li .folder-row {
 	display:block;
 	width:100%;
 	position:relative;
 	height:13px;
 }
+
 .folderlist li .num_images {
 	float:right;
 }
+
 .folderlist li .image_size {
 	float:right;
 	color:#777;
@@ -208,6 +225,7 @@ span#loading {
 	display:block;
 	text-align:left;
 }
+
 .folderlist li .image_dimensions {
 	float:right;
 	color:#777;
@@ -220,6 +238,7 @@ span#loading {
 .filelist li {
 	overflow:hidden;
 }
+
 .filelist li span {
 	cursor:pointer;
 	display:block;
@@ -362,20 +381,42 @@ select#view-type, select#sort-type {
 	-moz-opacity:0.5;
 	opacity:0.5;
 }
-#dimwindowimg {width:50px;height:50px;position:absolute;left:50%;top:50%;margin:-55px 0 0 -45px;z-index:1001}
-#dimwindowimg div {text-align:center}
+
+#dimwindowimg {
+	width:50px;
+	height:50px;
+	position:absolute;
+	left:50%;
+	top:50%;
+	margin:-55px 0 0 -45px;
+	z-index:1001;
+}
+
+#dimwindowimg div {
+	text-align:center;
+}
 
 /* pagination */
-.pagination a, .pagination a:visited, .pagination b {border:1px solid #F4F4F0;padding:0px 2px;text-decoration:none;}
-.pagination b {color:#2B6FB6}
-.pagination a:hover {border:1px solid #aaa;padding:0px 2px;}
+.pagination a, .pagination a:visited, .pagination b {
+	border:1px solid #F4F4F0;
+	padding:0px 2px;
+	text-decoration:none;
+}
 
-/* manage image panel */
-td.mng_img {height:14px;line-height:14px}
-td.mng_img img {float:left;margin:0 2px 0 0}
-#manage_thumb_img {float:left;border:1px solid #444;margin:10px 10px 0 2px;text-align:center;width:95px;height:95px;background-position:center center}
-div#folder_select_list img {float:left;margin-right:5px}
-div#folder_select_list select {width:160px}
+.pagination b {
+	color:#2B6FB6;
+}
 
-.clear {clear:left}
-.hidden {display:none;}
+.pagination a:hover {
+	border:1px solid #aaa;
+	padding:0px 2px;
+}
+
+/* common */
+.clear {
+	clear:left;
+}
+
+.hidden {
+	display:none;
+}

@@ -170,9 +170,8 @@ ImageDialog.prototype.insertThumbnail = function(anchor, imgsrc){
 ImageDialog.prototype.loadUploader = function() {
 	// load the uploader form
 	if (!tinyMCEPopup.dom.get('upload_target_ajax').src) {
-		tinyMCEPopup.dom.get('upload_target_ajax').src = 'image_uploadform.htm';
+		tinyMCEPopup.dom.get('upload_target_ajax').src = this.baseURL(this.settings.tinycimm_controller+'image/get_uploader_form');
 	} 
-	this.loadSelect();
 	tinyMCEPopup.resizeToInnerSize();
 };
 	
