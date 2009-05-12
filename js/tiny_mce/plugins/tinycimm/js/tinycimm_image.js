@@ -21,11 +21,13 @@ ImageDialog.prototype.getImage = function(imageid, callback) {
 	this.get(imageid, callback);
 };
 
-ImageDialog.prototype.fileBrowser = function(folder, offset, load, el){
+ImageDialog.prototype.fileBrowser = function(folder, offset, load, el, search_query){
+	if (!load) {return;}
+	search_query = search_query || '';
 	if (typeof el == 'object') {
 		tinyMCE.activeEditor.dom.select('img', el)[0].src = 'img/ajax-loader.gif';
 	}
-	this.getBrowser(folder, offset, load, function(){
+	this.getBrowser(folder, offset, search_query, function(){
 		// bind hover event to thumbnail
 		var thumb_images = tinyMCEPopup.dom.select('.thumb_wrapper');
 		for(var image in thumb_images) {
@@ -38,6 +40,10 @@ ImageDialog.prototype.fileBrowser = function(folder, offset, load, el){
 				tinyMCE.activeEditor.dom.removeClass(this, 'thumb_wrapper_over');
 				tinyMCE.activeEditor.dom.addClass(this, 'thumb_wrapper');
 			};
+		}
+		// search textbox
+		tinyMCEPopup.dom.get('search-input').onkeypress = function(e){
+			TinyCIMMImage.doSearch(e, this);
 		}
 	});
 }
@@ -292,6 +298,12 @@ ImageDialog.prototype.saveImgSize = function() {
 ImageDialog.prototype.deleteImage = function(imageid) {
 	this.deleteAsset(imageid);
 }	
+
+ImageDialog.prototype.doSearch = function(e, el){
+	if (e.charCode == 0 && e.keyCode == 13) {
+		this.fileBrowser(0, 0, true, false, el.value)
+	}
+}
 	
 var TinyCIMMImage = new ImageDialog();
 TinyCIMMImage.preInit();
