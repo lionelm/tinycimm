@@ -75,15 +75,16 @@ TinyCIMM.prototype.showUploader = function() {
 }
 
 // load list of folders and files via json request
-TinyCIMM.prototype.getBrowser = function(folder, offset, el, callback) {
+TinyCIMM.prototype.getBrowser = function(folder, offset, search_query, callback) {
 	var _this = this;
 	folder = folder || 0;
 	offset = offset || 0;
+	search_query = search_query || '';
 	if (tinyMCEPopup.dom.get('img-'+folder) == null) {
 		tinyMCEPopup.dom.setHTML('filebrowser', '<span id="loading">loading</span>');
 	}
 	(this.type) && tinymce.util.XHR.send({
-		url : this.baseURL(this.settings.tinycimm_controller+this.type+'/get_browser/'+folder+'/'+offset),
+		url : this.baseURL(this.settings.tinycimm_controller+this.type+'/get_browser/'+folder+'/'+offset+'/'+search_query),
 		error : function(reponse) {
 			tinyMCEPopup.editor.windowManager.alert('Sorry, there was an error retrieving the assets.');
 		},
@@ -95,7 +96,7 @@ TinyCIMM.prototype.getBrowser = function(folder, offset, el, callback) {
 			for(var anchor in pagination_anchors) {
 				pagination_anchors[anchor].onclick = function(e){
 					e.preventDefault();
-					_this.fileBrowser(folder, this.href.toId().toString());
+					_this.fileBrowser(folder, this.href.toId().toString(), true, false);
 				};
 			}
 			(callback) && callback();

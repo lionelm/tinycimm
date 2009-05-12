@@ -65,19 +65,19 @@ class TinyCIMM_image extends TinyCIMM {
 	/**
 	* get browser 
 	**/
-	public function get_browser($folder=0, $offset=0) {
+	public function get_browser($folder=0, $offset=0, $search='') {
 		$ci = &get_instance();
 		$ci->load->library('pagination');
 		$ci->load->helper('url');
 
-		$total_assets = count($ci->tinycimm_model->get_assets($folder));
-
 		$per_page = $ci->config->item('tinycimm_pagination_per_page_'.$ci->session->userdata('cimm_view'));
+		$total_assets = count($ci->tinycimm_model->get_assets($folder, $offset, NULL, $search));
+
 		$pagination_config['base_url'] = base_url($ci->config->item('tinycimm_controller').'image/get_browser/'.$folder);
 		$pagination_config['total_rows'] = $total_assets;
 		$pagination_config['full_tag_open'] = '<div class="heading pagination">';
 		$pagination_config['full_tag_close'] = '</div>';
-		$pagination_config['per_page'] = $per_page; 
+		$pagination_config['per_page'] = $per_page;
 		$pagination_config['uri_segment'] = 5;
 		$ci->pagination->initialize($pagination_config);
 	
@@ -86,7 +86,7 @@ class TinyCIMM_image extends TinyCIMM {
 
 		// get a list of folders, and store the total amount of assets
 		foreach($folders = $ci->tinycimm_model->get_folders() as $folderinfo) {
-			$folderinfo['total_assets'] = count($ci->tinycimm_model->get_assets($folderinfo['id']));
+			$folderinfo['total_assets'] = count($ci->tinycimm_model->get_assets($folderinfo['id'], $offset, $per_page, $search));
 			$data['folders'][] = $folderinfo;
 			// selected folder info
 			if ($folderinfo['id'] == $folder) {
@@ -96,10 +96,9 @@ class TinyCIMM_image extends TinyCIMM {
 		if (!isset($data['selected_folder_info'])) {
 			$data['selected_folder_info'] = $data['folders'][0];
 		}
-		
 		$data['images'] = array();
 		$totimagesize = 0;
-		foreach($assets = $ci->tinycimm_model->get_assets((int) $folder, $offset, $per_page) as $image) {
+		foreach($assets = $ci->tinycimm_model->get_assets((int) $folder, $offset, $per_page, $search) as $image) {
 			$image_path = $this->config->item('tinycimm_asset_path').$image['id'].$image['extension'];
 			$image_size = ($imgsize = @getimagesize($image_path)) ? $imgsize : array(0,0);
 			$image['width'] = $image_size[0];

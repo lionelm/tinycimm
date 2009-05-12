@@ -26,8 +26,15 @@ class Tinycimm_model extends Model {
 	* @param integer|$folder_id The id of the folder the assets are related to
 	* @return Object| a result object containing rows for the assets
 	**/
-	function get_assets($folder_id=0, $offset=NULL, $limit=NULL){
-		return $this->db->where('folder_id', (int) $folder_id)->order_by('dateadded', 'desc')->get('asset', $limit, $offset)->result_array();
+	function get_assets($folder_id=0, $offset=NULL, $limit=NULL, $search_query=''){
+		if (trim($search_query) != '') {
+			$this->db->like('name', $search_query);
+			$this->db->or_like('filename', $search_query);
+			$this->db->or_like('description', $search_query);
+		}
+		$this->db->where('folder_id', (int) $folder_id);
+		$this->db->order_by('dateadded', 'desc');
+		return $this->db->get('asset', $limit, $offset)->result_array();
 	}
 	
 	/**

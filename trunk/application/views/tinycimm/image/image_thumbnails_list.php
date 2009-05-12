@@ -31,7 +31,10 @@
 		</td>
 		<td width="5">&nbsp;</td>
 		<td valign="top">
-			<div class="heading">&raquo; <?=$selected_folder_info['name'];?></div>
+			<div class="heading">
+				<input type="text" id="search-input" onblur="this.value=this.value==''?'search..':this.value;" onfocus="this.value=this.value=='search..'?'':this.value;" value="search.." />
+				&raquo; <?=$selected_folder_info['name'];?>
+			</div>
 			<div id="filelist">
 				<?if (sizeof($images) == 0) {?>
 					(folder is empty)
