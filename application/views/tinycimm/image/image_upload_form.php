@@ -42,7 +42,7 @@
 		**/
 		function updateimg(folder) {
 			document.forms[0].reset();
-			document.forms[0].description.innerHTML = '';
+			document.forms[0].description.value = '';
 			parent.TinyCIMMImage.assetUploaded(folder);
 		}
 
@@ -50,7 +50,7 @@
 			document.forms[0].action = parent.tinyMCEPopup.editor.documentBaseURI.toAbsolute(parent.tinyMCE.settings.tinycimm_controller+'image/upload');
 			document.getElementById('fileupload').onchange = function(e) {
 				if (this.value) {
-					document.getElementById('description').innerHTML = 
+					document.getElementById('description').value = 
 					this.value
 					.replace(/\\/g, '/')
 					.replace(/.*\/|\.\w*$/g, '')
