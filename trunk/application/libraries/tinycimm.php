@@ -92,8 +92,13 @@ class TinyCIMM {
 	  		}
 
 			$asset_data = $ci->upload->data();
-			$description = $ci->input->post('description');
+			$description = trim($ci->input->post('description'));
 			$folder = (int) $ci->input->post('uploadfolder');
+
+			if (empty($description)) {
+				$this->tinymce_alert('Please supply a brief description for the file.');
+				exit;
+			}
 
 			// insert the asset info into the db
 			$last_insert_id = 
