@@ -92,7 +92,7 @@ class TinyCIMM {
 	  		}
 
 			$asset_data = $ci->upload->data();
-			$description = str_replace($asset_data['file_ext'], '', strtolower($asset_data['orig_name']));
+			$description = $ci->input->post('description');
 			$folder = (int) $ci->input->post('uploadfolder');
 
 			// insert the asset info into the db

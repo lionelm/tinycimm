@@ -42,11 +42,22 @@
 		**/
 		function updateimg(folder) {
 			document.forms[0].reset();
+			document.forms[0].description.innerHTML = '';
 			parent.TinyCIMMImage.assetUploaded(folder);
 		}
 
 		window.onload = function() {
 			document.forms[0].action = parent.tinyMCEPopup.editor.documentBaseURI.toAbsolute(parent.tinyMCE.settings.tinycimm_controller+'image/upload');
+			document.getElementById('fileupload').onchange = function(e) {
+				if (this.value) {
+					document.getElementById('description').innerHTML = 
+					this.value
+					.replace(/\\/g, '/')
+					.replace(/.*\/|\.\w*$/g, '')
+					.replace(/[_-]/g, ' ')
+					.replace(/\s{2,}/g, ' ');
+				}
+			}
 		}
 	</script>
 	<base target="_self" />
@@ -54,14 +65,20 @@
 <body id="advimage" style="background:#FFF;margin:0">
 	<iframe id="hidden_iframe" name="hidden_iframe" src="javascript:false" style="display:none"></iframe>
 	<form method="post" target="hidden_iframe" enctype="multipart/form-data" action="#" id="uploadform" name="uploadform">
-		<table border="0" cellpadding="4" cellspacing="0">
+		<table border="0" cellpadding="4" cellspacing="2">
 			<tr>
 				<td>Allowed Types</td>
-				<td><?=str_replace('|', ', ', $upload_config['allowed_types']);?></td>
+				<td colspan="3"><?=str_replace('|', ', ', $upload_config['allowed_types']);?></td>
 			<tr>
 				<td>Select File</td>
 				<td colspan="3">
 					<input type="file" id="fileupload" name="fileupload" size="25" style="display:inline;width:220px;" />
+				</td>
+			</tr>
+			<tr>
+				<td valign="top">Description</td>
+				<td colspan="3">
+					<textarea name="description" id="description"></textarea>
 				</td>
 			</tr>
 			<tr>
