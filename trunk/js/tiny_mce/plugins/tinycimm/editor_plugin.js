@@ -14,8 +14,8 @@
 			ed.addCommand('mceTinyCIMMImage', function(resize) {
 				ed.windowManager.open({
 					file : url + '/image.htm',
-					width : 552,
-					height : 446,
+					width : 574,
+					height : 462,
 					inline : 1
 				}, {
 					plugin_url : url,

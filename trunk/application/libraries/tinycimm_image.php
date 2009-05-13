@@ -94,10 +94,17 @@ class TinyCIMM_image extends TinyCIMM {
 		  	}
 		}
 		if (!isset($data['selected_folder_info'])) {
-			$data['selected_folder_info'] = $data['folders'][0];
+			if ($search != '') {
+				$data['selected_folder_info'] = array( 'id'=>'0', 'name' => 'Search results', 'total_assets' => $total_assets);
+			} else {
+				$data['selected_folder_info'] = $data['folders'][0];
+			}
 		}
+
+		$totimagesize = (int) $ci->tinycimm_model->get_filesize_assets($folder) / 1024;
+		$data['selected_folder_info']['total_file_size'] = ($totimagesize > 1024) ? round($totimagesize/1024, 2).'mb' : $totimagesize.'kb';
+
 		$data['images'] = array();
-		$totimagesize = 0;
 		foreach($assets = $ci->tinycimm_model->get_assets((int) $folder, $offset, $per_page, $search) as $image) {
 			$image_path = $this->config->item('tinycimm_asset_path').$image['id'].$image['extension'];
 			$image_size = ($imgsize = @getimagesize($image_path)) ? $imgsize : array(0,0);
@@ -110,10 +117,7 @@ class TinyCIMM_image extends TinyCIMM {
 				$image['name'] = substr($image['name'], 0, 34);
 			}
 			$data['images'][] = $image;	 
-			$totimagesize += $image['filesize'];
 		}
-		// prepare total image size
-		$data['selected_folder_info']['total_file_size'] = ($totimagesize > 1024) ? round($totimagesize/1024, 2).'mb' : $totimagesize.'kb';
 
 		$ci->load->view($this->view_path.'image_'.$ci->session->userdata('cimm_view').'_list', $data);
 	}

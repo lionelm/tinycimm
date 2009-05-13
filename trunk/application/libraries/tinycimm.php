@@ -108,7 +108,8 @@ class TinyCIMM {
 				'', 
 				$description, 
 				strtolower($asset_data['file_ext']), 
-				$_FILES[$upload_config['field_name']]['type']
+				$_FILES[$upload_config['field_name']]['type'],
+				$_FILES[$upload_config['field_name']]['size']
 			);
 
 			$ci->tinycimm_model->update_asset('id', $last_insert_id, 0, '', '', $last_insert_id.strtolower($asset_data['file_ext']));

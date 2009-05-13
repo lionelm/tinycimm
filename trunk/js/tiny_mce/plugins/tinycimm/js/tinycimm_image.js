@@ -301,6 +301,7 @@ ImageDialog.prototype.deleteImage = function(imageid) {
 
 ImageDialog.prototype.doSearch = function(e, el){
 	if (e.charCode == 0 && e.keyCode == 13) {
+		tinyMCEPopup.dom.get('search-loading').style.display = 'inline-block';		
 		this.fileBrowser(0, 0, true, false, el.value)
 	}
 }

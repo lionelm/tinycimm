@@ -51,17 +51,23 @@ class Tinycimm_model extends Model {
 	*
 	* @returns integer|insert_id the last insert id from the id sequence colmn
 	**/
-	function insert_asset($folder_id=0, $name='', $filename='', $description='', $extension='', $mimetype=''){
+	function insert_asset($folder_id=0, $name='', $filename='', $description='', $extension='', $mimetype='', $filesize=0){
 		$fields = array(
 			'folder_id' => $folder_id, 
 			'name' => $name, 
 			'filename' => $filename, 
 			'description' => $description, 
 			'extension' => $extension, 
-			'mimetype' => $mimetype
+			'mimetype' => $mimetype,
+			'filesize' => $filesize
 			);
 		$this->db->set($fields)->insert('asset');
 		return $this->db->insert_id();
+	}
+
+	function get_filesize_assets($folder_id=0){
+		$result = $this->db->query('SELECT SUM(filesize) AS filesize FROM asset WHERE folder_id = '.((int) $folder_id).' LIMIT 1')->row();
+		return $result->filesize;
 	}
 	
 	/** 
