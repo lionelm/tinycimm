@@ -38,8 +38,8 @@ function tinycimm(field_name, url, type, win) {
 
 	tinyMCE.activeEditor.windowManager.open({
 		file : url,
-		width : 552,
-		height : 446,
+		width : 574,
+		height : 462,
 		resizable : "yes",
 		inline : "yes",  
 		close_previous : "no"

@@ -10,7 +10,8 @@
  */
 
 String.prototype.toId = function(){
-        return /\//.test(this) ? this.replace(/.*\/([0-9]+).*$/, '$1') : this.replace(/([0-9]+).*$/, '$1')
+        var id = /\//.test(this) ? this.replace(/.*\/([0-9]+).*$/, '$1') : this.replace(/([0-9]+).*$/, '$1');
+	return isNaN(id) ? 0 : id;
 }
 String.prototype.ucfirst = function(){
 	return this.substr(0, 1).toUpperCase()+this.substr(1, this.length-1).toLowerCase();
@@ -59,7 +60,7 @@ TinyCIMM.prototype.get = function(assetid, callback){
 }
 
 TinyCIMM.prototype.showBrowser = function(folder, offset, load, el) {
-	load = load || false;
+	load = tinyMCEPopup.dom.get('filelist') ? (load || false) : true;
 	folder = folder || 0;
 	offset = offset || 0;
 	el = el || false;
