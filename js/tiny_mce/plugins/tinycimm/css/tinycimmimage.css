@@ -49,11 +49,11 @@ img {
 }
 
 #filelist {
-	height:332px;
+	height:334px;
 	margin:0;
 	width:100%;
 	padding-left:3px;
-	overflow:auto;
+	overflow:hidden;
 	z-index:999;
 	position:relative;
 }

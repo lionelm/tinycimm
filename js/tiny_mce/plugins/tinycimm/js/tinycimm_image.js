@@ -41,10 +41,6 @@ ImageDialog.prototype.fileBrowser = function(folder, offset, load, el, search_qu
 				tinyMCE.activeEditor.dom.addClass(this, 'thumb_wrapper');
 			};
 		}
-		// search textbox
-		tinyMCEPopup.dom.get('search-input').onkeypress = function(e){
-			TinyCIMMImage.doSearch(e, this);
-		}
 	});
 }
 
@@ -61,8 +57,7 @@ ImageDialog.prototype.insertAndClose = function(image) {
 		src : this.baseURL(this.settings.tinycimm_assets_path+image.filename),
 		alt : image.description,
 		width : image.width,
-		height : image.height,
-		title : image.description
+		height : image.height
 	};
 
 	el = ed.selection.getNode();
@@ -300,7 +295,8 @@ ImageDialog.prototype.deleteImage = function(imageid) {
 }	
 
 ImageDialog.prototype.doSearch = function(e, el){
-	if (e.charCode == 0 && e.keyCode == 13) {
+	// enter pressed
+	if (e.keyCode == 13) {
 		tinyMCEPopup.dom.get('search-loading').style.display = 'inline-block';		
 		this.fileBrowser(0, 0, true, false, el.value)
 	}
