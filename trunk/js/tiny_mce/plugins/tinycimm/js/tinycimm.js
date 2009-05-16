@@ -65,7 +65,9 @@ TinyCIMM.prototype.showBrowser = function(folder, offset, load, el) {
 	offset = offset || 0;
 	el = el || false;
 	mcTabs.displayTab('browser_tab','browser_panel');
-	tinyMCEPopup.dom.get('resize_tab').style.display = 'none';
+	if (tinyMCEPopup.dom.get('resize_table')) {
+		tinyMCEPopup.dom.get('resize_tab').style.display = 'none';
+	}
 	(load) && (this.fileBrowser) && this.fileBrowser(folder, offset, load, el);
 }
 
