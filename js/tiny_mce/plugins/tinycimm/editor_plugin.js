@@ -11,7 +11,8 @@
 		 * @param {string} url Absolute URL to where the plugin is located.
 		 */
 		init : function(ed, url) {
-			ed.addCommand('mceTinyCIMMImage', function(resize) {
+
+			ed.addCommand('mceTinyCIMM-Image', function(resize) {
 				ed.windowManager.open({
 					file : url + '/image.htm',
 					width : 574,
@@ -23,16 +24,35 @@
 				});
 			});
 
-			// register button
-			ed.addButton('tinycimmimage', {
+			ed.addCommand('mceTinyCIMM-Media', function(resize){
+				ed.windowManager.open({
+					file : url + '/media.htm',
+					width : 574,
+					height : 462,
+					inline : 1
+				}, {
+					plugin_url : url,
+					resize : resize
+				});
+			});
+
+			// register image manager button
+			ed.addButton('tinycimm-image', {
 				title : 'Image Manager',
-				cmd : 'mceTinyCIMMImage',
+				cmd : 'mceTinyCIMM-Image',
 				image : url + '/img/insertimage.gif'
+			});
+
+			// register media manager button
+			ed.addButton('tinycimm-media', {
+				title : 'Media Manager',
+				cmd : 'mceTinyCIMM-Media',
+				image : url + '/img/insertmedia.gif'
 			});
 
 			// Add a node change handler, selects the button in the UI when a image is selected
 			ed.onNodeChange.add(function(ed, cm, n) {
-				cm.setActive('tinycimmimage', n.nodeName == 'IMG');
+				cm.setActive('tinycimm-image', n.nodeName == 'IMG');
 			});
 		},
 
@@ -44,7 +64,7 @@
 		 */
 		getInfo : function() {
 			return {
-				longname : 'TinyCIMM Image Plugin',
+				longname : 'TinyCIMM',
 				author : 'Richard Willis & Liam Gooding',
 				authorurl : 'http://badsyntax.co.uk',
 				infourl : 'http://tinycimm.googlecode.com/',
