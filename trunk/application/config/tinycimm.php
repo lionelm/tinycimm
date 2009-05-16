@@ -5,6 +5,7 @@
 $config['tinycimm_controller'] = '/assetmanager/';
 $config['tinycimm_views_root'] = 'tinycimm/';
 $config['tinycimm_views_root_image'] = 'image/';
+$config['tinycimm_views_root_media'] = 'media/';
 $config['tinycimm_asset_path'] = $_SERVER['DOCUMENT_ROOT'].'/assets/';
 $config['tinycimm_asset_cache_path'] = $config['tinycimm_asset_path'].'cache/';
 
@@ -14,13 +15,19 @@ $config['tinycimm_pagination_per_page_listing'] = 16;
 // set to either 0777 or 0755 depending on your server setup
 $config['tinycimm_asset_path_chmod'] = 0777;
 
-// upload configuration variables
+// image upload config
 $config['tinycimm_image_upload_config']['field_name'] = 'fileupload';
 $config['tinycimm_image_upload_config']['upload_path'] = $config['tinycimm_asset_path'];
 $config['tinycimm_image_upload_config']['allowed_types'] = 'gif|jpg|png';
 $config['tinycimm_image_upload_config']['max_size'] = '6800';
 $config['tinycimm_image_upload_config']['max_width']  = '5000';
 $config['tinycimm_image_upload_config']['max_height']  = '5000';
+
+// media upload config 
+$config['tinycimm_media_upload_config']['field_name'] = 'fileupload';
+$config['tinycimm_media_upload_config']['upload_path'] = $config['tinycimm_asset_path'];
+$config['tinycimm_media_upload_config']['allowed_types'] = 'flv';
+$config['tinycimm_media_upload_config']['max_size'] = '6800';
 
 // image resize
 $config['tinycimm_image_resize_config']['image_library'] = 'GD2';

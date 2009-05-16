@@ -4,6 +4,8 @@ copywrite to go here
 */
 
 class Tinycimm_model extends Model {
+
+	public $allowed_types = array();
 	
 	function Tinycimm_model(){
 		parent::Model();
@@ -33,6 +35,9 @@ class Tinycimm_model extends Model {
 			$this->db->or_like('description', $search_query);
 		}
 		$this->db->where('folder_id', (int) $folder_id);
+		foreach($this->allowed_types as $type) {
+			$this->db->or_where('extension', '.'.$type);
+		}
 		$this->db->order_by('dateadded', 'desc');
 		return $this->db->get('asset', $limit, $offset)->result_array();
 	}

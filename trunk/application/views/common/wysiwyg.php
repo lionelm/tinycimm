@@ -9,7 +9,7 @@ tinyMCE.init(
 	relative_urls : false,
 	theme : "advanced",
 	plugins : "tinycimm,advimage,advlink,media,paste,pagebreak,inlinepopups,contextmenu",
-	theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,bullist,numlist,outdent,indent,|,sub,sup,|,pastetext,pasteword,|,undo,redo,|,image,tinycimmimage,media,|,link,unlink,|,code,help",
+	theme_advanced_buttons1 : "bold,italic,|,undo,redo,|,image,tinycimm-image,|,media,tinycimm-media,|,link,unlink,|,code,help",
 	theme_advanced_buttons2 : "",
 	theme_advanced_buttons3 : "",
 	theme_advanced_toolbar_location : "top",
