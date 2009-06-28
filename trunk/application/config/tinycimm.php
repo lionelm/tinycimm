@@ -36,6 +36,7 @@ $config['tinycimm_image_resize_config']['create_thumb'] = FALSE;
 $config['tinycimm_image_resize_config']['width'] = 1024;
 $config['tinycimm_image_resize_config']['height'] = 768;
 $config['tinycimm_image_resize_config']['quality'] = 90;
+$config['tinycimm_image_resize_config']['default_initial_width'] = 300;
 
 // thumbnails
 $config['tinycimm_image_thumbnail_default_width'] = 200;

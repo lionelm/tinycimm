@@ -99,7 +99,7 @@ select#folderselect {}
 
 #save_size {
 	width:96px;
-	padding-top:0;
+	padding:6px 5px 0px 0px;
 	float:right;
 }
 
@@ -109,8 +109,8 @@ select#folderselect {}
 }
 
 #image-info {
-	height:320px;
-	width:508px;
+	height:342px;
+	width:522px;
 	display:block;
 	overflow:auto;
 	border:1px solid #000000;

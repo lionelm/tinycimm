@@ -26,6 +26,7 @@ tinyMCE.init(
 	file_browser_callback : 'tinycimm',
 	tinycimm_controller : '<?=$this->config->item('tinycimm_controller');?>',
 	tinycimm_assets_path : '/assets/',
+	tinycimm_resize_default_intial_width : '<?=$this->config->item('default_initial_width', 'tinycimm_image_resize_config');?>',
 	tinycimm_thumb_width : '<?=$this->config->item('tinycimm_image_thumbnail_default_width');?>',
 	tinycimm_thumb_height : '<?=$this->config->item('tinycimm_image_thumbnail_default_height');?>',
 	tinycimm_thumb_lightbox_class : '<?=$this->config->item('tinycimm_image_thumbnail_default_lightbox_class');?>',

@@ -22,8 +22,10 @@ ImageDialog.prototype.getImage = function(imageid, callback) {
 };
 
 ImageDialog.prototype.fileBrowser = function(folder, offset, load, el, search_query){
-	if (!load) {return;}
 	search_query = search_query || '';
+	if (!load) {
+		return;
+	}
 	if (typeof el == 'object') {
 		tinyMCE.activeEditor.dom.select('img', el)[0].src = 'img/ajax-loader.gif';
 	}
@@ -179,7 +181,7 @@ ImageDialog.prototype.loadUploader = function() {
 };
 	
 // prepare the resizer panel
-ImageDialog.prototype.loadresizer = function(imagesrc) {
+ImageDialog.prototype.loadResizer = function(imagesrc) {
 	var path = /^http/.test(imagesrc) ? imagesrc : this.settings.tinycimm_assets_path+imagesrc;
 	// completely remove the resizer image from the dom : issue 12 http://code.google.com/p/tinycimm/issues/detail?id=12
 	tinyMCEPopup.dom.remove('slider_img');
@@ -218,6 +220,7 @@ ImageDialog.prototype.checkLoad = function(preImage) {
 	
 // show resizer image
 ImageDialog.prototype.showResizeImage = function(preImage) {
+	var _this = this;
 	this.getImage(preImage.src.toId(), function(image){
 		// fix for issue 12 http://code.google.com/p/tinycimm/issues/detail?id=12
 		var img = window.document.createElement("img");
@@ -229,18 +232,20 @@ ImageDialog.prototype.showResizeImage = function(preImage) {
 		setTimeout(function(){
 			img.style.display="block";
 		}, 200);
-
+		
 		// display panel
 		mcTabs.displayTab('resize_tab','resize_panel');
 		tinyMCEPopup.dom.get('resize_tab').style.display = 'block';
 
 		// image dimensions overlay layer
 		tinyMCEPopup.dom.setHTML('image-info-dimensions', '<span id="slider_width_val"></span> x <span id="slider_height_val"></span>');
+
+		var sliderVal = image.width < _this.settings.tinycimm_resize_default_intial_width ? image.width : _this.settings.tinycimm_resize_default_intial_width;
 			
 		new ScrollSlider(tinyMCEPopup.dom.get('image-slider'), {
 			min : 0,
 			max : image.width,
-			value : image.width,
+			value : sliderVal,
 			size : 400,
 			scroll : function(new_w) {
 				var slider_width = tinyMCEPopup.dom.get('slider_width_val'), slider_height = tinyMCEPopup.dom.get('slider_height_val');
@@ -254,10 +259,10 @@ ImageDialog.prototype.showResizeImage = function(preImage) {
 }
 
 ImageDialog.prototype.insertResizeImage = function(){
-	var _this = this, slider_img = tinyMCEPopup.dom.get('slider_img');
+	var _this = this, image_id = tinyMCEPopup.dom.get('slider_img').src.toId();
 	// show loading animation
-	tinyMCEPopup.dom.get('insertimg').src = tinyMCEPopup.dom.get('insertimg').src.replace('image_add.png', 'ajax-loader.gif');
-	this.getImage(slider_img.src.toId(), function(image){
+	//tinyMCEPopup.dom.get('insertimg').src = tinyMCEPopup.dom.get('insertimg').src.replace('image_add.png', 'ajax-loader.gif');
+	this.getImage(image_id, function(image){
 		_this.insertImage(null, image.filename, image.description);
 	});
 }
@@ -298,7 +303,7 @@ ImageDialog.prototype.doSearch = function(e, el){
 	// enter pressed
 	if (e.keyCode == 13) {
 		tinyMCEPopup.dom.get('search-loading').style.display = 'inline-block';		
-		this.fileBrowser(0, 0, true, false, el.value)
+		this.fileBrowser(0, 0, true, false, encodeURIComponent(el.value));
 	}
 }
 	
