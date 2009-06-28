@@ -21,7 +21,7 @@
 <p>View an example of the context menu integration by right-clicking on an image and selecting 'Resize'.</p>
 
 <div>
-<textarea id="demo_textarea" rows="25" cols="20">&nbsp;</textarea>
+<textarea id="demo_textarea" rows="25" cols="80">&nbsp;</textarea>
 </div>
 
 <?=$this->load->view('common/footer.php');?>

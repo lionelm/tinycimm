@@ -41,14 +41,15 @@
 					(folder is empty)
 				<?} else {?>
 					<?foreach($images as $image):?>
-						<span class="thumb_wrapper" title="insert <?=$image['description'];?>">
-							<span class="thumb" onclick="TinyCIMMImage.insertImage(this, '<?=$image['filename'];?>', '<?=$image['description'];?>');" style="background:url(/assetmanager/image/get/<?=$image['id'];?>/92/92) no-repeat center center;">
+						<span class="thumb_wrapper" title="insert '<?=htmlspecialchars($image['description']);?>'">
+							<span class="thumb" onclick="TinyCIMMImage.loadResizer('<?=$image['filename'];?>')" style="background:url(/assetmanager/image/get/<?=$image['id'];?>/92/92) no-repeat center center;">
+							<!--<span class="thumb" onclick="TinyCIMMImage.insertImage(this, '<?=$image['filename'];?>', '<?=$image['description'];?>');" style="background:url(/assetmanager/image/get/<?=$image['id'];?>/92/92) no-repeat center center;">-->
 								<span class="loader"></span>
 							</span>
 							<span class="controls-bg"></span>
 							<span class="controls">
 								<a href="#" title="delete image" class="delete" onclick="TinyCIMMImage.deleteImage(<?=$image['id'];?>);return false">&nbsp;</a>
-								<a href="#" title="resize image" class="resize" onclick="TinyCIMMImage.loadresizer('<?=$image['filename'];?>');return false;">&nbsp;</a>
+								<!--<a href="#" title="resize image" class="resize" onclick="TinyCIMMImage.loadresizer('<?=$image['filename'];?>');return false;">&nbsp;</a>-->
 								<a href="#" title="insert thumbnail" class="thumbnail" onclick="TinyCIMMImage.insertThumbnail(this, '<?=$image['filename'];?>');return false">&nbsp;</a>
 							</span>
 						</span>

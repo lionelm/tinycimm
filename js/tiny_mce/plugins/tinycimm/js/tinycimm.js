@@ -41,9 +41,9 @@ TinyCIMM.prototype.cacheImages = function(images){
 	}
 }
 
-TinyCIMM.prototype.get = function(assetid, callback){
+TinyCIMM.prototype.get = function(asset_id, callback){
 	tinymce.util.XHR.send({
-		url : this.baseURL(this.settings.tinycimm_controller+this.type+'/get_'+this.type+'/'+assetid),
+		url : this.baseURL(this.settings.tinycimm_controller+this.type+'/get_'+this.type+'/'+asset_id),
 		error : function(response) {
 			tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the asset info.');
 			return false;
@@ -107,9 +107,9 @@ TinyCIMM.prototype.getBrowser = function(folder, offset, search_query, callback)
 	});
 }
 
-TinyCIMM.prototype.insert = function(assetid) {
+TinyCIMM.prototype.insert = function(asset_id) {
 	var _this = this;
-	this.get(assetid, function(asset){
+	this.get(asset_id, function(asset){
 		_this.insertAndClose(asset);
 	});
 }
@@ -167,11 +167,11 @@ TinyCIMM.prototype.addFolder = function() {
 	});
 }
 
-TinyCIMM.prototype.deleteFolder = function(folderid) {
+TinyCIMM.prototype.deleteFolder = function(folder_id) {
 	var _this = this;
 	tinyMCEPopup.editor.windowManager.confirm('Are you sure you want to delete this folder?', function(s){
 		if (!s) { return false; }
-		var requesturl = _this.baseURL(_this.settings.tinycimm_controller+_this.type+'/delete_folder/'+folderid);
+		var requesturl = _this.baseURL(_this.settings.tinycimm_controller+_this.type+'/delete_folder/'+folder_id);
 		tinymce.util.XHR.send({
 			url : requesturl,
 			error : function(response) {
@@ -208,12 +208,12 @@ TinyCIMM.prototype.getFoldersHTML = function(callback) {
 	});
 }
 	
-TinyCIMM.prototype.deleteAsset = function(assetid) {
+TinyCIMM.prototype.deleteAsset = function(asset_id) {
 	var _this = this;
 	tinyMCEPopup.editor.windowManager.confirm('Are you sure you want to delete this '+this.type+'?', function(s) {
 		if (!s) {return false;}
 		tinymce.util.XHR.send({
-			url : _this.baseURL(_this.settings.tinycimm_controller+_this.type+'/delete_'+_this.type+'/'+assetid),
+			url : _this.baseURL(_this.settings.tinycimm_controller+_this.type+'/delete_'+_this.type+'/'+asset_id),
 			error : function(response) {
 				tinyMCEPopup.editor.windowManager.alert('There was an error processing the request.');
 			},
