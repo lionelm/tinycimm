@@ -16,6 +16,12 @@ String.prototype.toId = function(){
 String.prototype.ucfirst = function(){
 	return this.substr(0, 1).toUpperCase()+this.substr(1, this.length-1).toLowerCase();
 }
+String.prototype.trim = function(){
+	return this.replace(/^\s*|\s*$/g, '');
+}
+String.prototype.safeEscape = function(){
+	return encodeURIComponent(this.trim().replace(/[\/\\]/g, '')).replace(/%20/g, '+').toString();
+}
 
 function TinyCIMM(type){
 	this.type = type || null;
