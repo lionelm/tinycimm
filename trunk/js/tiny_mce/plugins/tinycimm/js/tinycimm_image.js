@@ -47,8 +47,8 @@ ImageDialog.prototype.fileBrowser = function(folder, offset, load, el, search_qu
 }
 
 // inserts an image into the editor
-ImageDialog.prototype.insertAndClose = function(image) {
-	var ed = tinyMCEPopup.editor, f = document.forms[0], nl = f.elements, v, args = {}, el;
+ImageDialog.prototype.insertAndClose = function(image, width, height) {
+	var ed = tinyMCEPopup.editor, args = {}, el;
 
 	tinyMCEPopup.restoreSelection();
 
@@ -56,10 +56,10 @@ ImageDialog.prototype.insertAndClose = function(image) {
 	(tinymce.isWebKit) && ed.getWin().focus();
 
 	args = {
-		src : this.baseURL(this.settings.tinycimm_assets_path+image.filename),
+		src : this.baseURL(this.settings.tinycimm_controller+'image/get/'+image.id+'/'+width+'/'+height),
 		alt : image.description,
-		width : image.width,
-		height : image.height
+		width : width,
+		height : height
 	};
 
 	el = ed.selection.getNode();
@@ -77,18 +77,19 @@ ImageDialog.prototype.insertAndClose = function(image) {
 }
 	
 // either inserts the image into the image dialog, or into the editor	
-ImageDialog.prototype.insertImage = function(thumbspan, imgsrc, alttext) {
+ImageDialog.prototype.insertImage = function(thumbspan, image, width, height) {
+	/*
 	if (typeof thumbspan == 'object') {
 		// show loading spinner and hide the controls
 		tinyMCE.activeEditor.dom.addClass(thumbspan, 'showloader');
 		var controls = tinyMCEPopup.dom.select('.controls, .controls-bg');
 		for(var i in controls) { controls[i].style.display = 'none'; }
 	}
-
+	*/
 	var win = tinyMCEPopup.getWindowArg("window");
-	var URL = this.baseURL(this.settings.tinycimm_assets_path+imgsrc);
 
 	if (win != undefined) {
+		var URL = this.baseURL(this.settings.tinycimm_controller+'image/get/'+image.id+'/'+width+'/'+height);
 		// insert into image dialog
 		win.document.getElementById(tinyMCEPopup.getWindowArg("input")).value = URL;
 		if (typeof(win.ImageDialog) != "undefined") {
@@ -98,14 +99,25 @@ ImageDialog.prototype.insertImage = function(thumbspan, imgsrc, alttext) {
 			if (win.ImageDialog.showPreviewImage) {
 				win.ImageDialog.showPreviewImage(URL);
 			}
-			win.document.getElementById('alt').value = alttext;
+			win.document.getElementById('alt').value = image.description;
 		}
  		tinyMCEPopup.close();
 	} else {
 		// insert into editor
-		this.insert(imgsrc.toId());
+		this.insertAndClose(image, width, height);
 	}
 	return;
+}
+
+ImageDialog.prototype.insertResizeImage = function(){
+	var _this = this, image_id = tinyMCEPopup.dom.get('slider_img').src.toId(), 
+	width = tinyMCEPopup.dom.get('slider_width_val').innerHTML, height = tinyMCEPopup.dom.get('slider_height_val').innerHTML.replace(/px$/, '');
+	// show loading animation
+	//tinyMCEPopup.dom.get('insertimg').src = tinyMCEPopup.dom.get('insertimg').src.replace('image_add.png', 'ajax-loader.gif');
+	
+	this.getImage(image_id, function(image){
+		_this.insertImage(null, image, width, height);
+	});
 }
 
 ImageDialog.prototype.insertThumbnail = function(anchor, imgsrc){
@@ -258,14 +270,6 @@ ImageDialog.prototype.showResizeImage = function(preImage) {
 	});
 }
 
-ImageDialog.prototype.insertResizeImage = function(){
-	var _this = this, image_id = tinyMCEPopup.dom.get('slider_img').src.toId();
-	// show loading animation
-	//tinyMCEPopup.dom.get('insertimg').src = tinyMCEPopup.dom.get('insertimg').src.replace('image_add.png', 'ajax-loader.gif');
-	this.getImage(image_id, function(image){
-		_this.insertImage(null, image.filename, image.description);
-	});
-}
 	
 ImageDialog.prototype.saveImgSize = function() {
 	var width = tinyMCEPopup.dom.get('slider_img').width, height = tinyMCEPopup.dom.get('slider_img').height, _this = this;
@@ -303,7 +307,7 @@ ImageDialog.prototype.doSearch = function(e, el){
 	// enter pressed
 	if (e.keyCode == 13) {
 		tinyMCEPopup.dom.get('search-loading').style.display = 'inline-block';		
-		this.fileBrowser(0, 0, true, false, encodeURIComponent(el.value));
+		this.fileBrowser(0, 0, true, false, el.value.safeEscape());
 	}
 }
 	
