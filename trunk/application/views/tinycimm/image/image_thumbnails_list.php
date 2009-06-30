@@ -19,7 +19,6 @@
 			<table border="0" cellpadding="2" cellspacing="1">
 				<tr><td>Images:</td><td><?=$selected_folder_info['total_assets'];?></td></tr>
 				<tr><td>Size:</td><td><?=$selected_folder_info['total_file_size'];?></td></tr>
-				<!--<tr><td>Owner:</td><td><?=$selected_folder_info['username'];?></td></tr>-->
 				<tr><td>View:</td><td>
 				<select style="border:1px solid #AAA" onchange="TinyCIMMImage.changeView(this.options[this.selectedIndex].value)">
 					<optgroup label="Views">

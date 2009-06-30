@@ -118,7 +118,6 @@ class TinyCIMM_image extends TinyCIMM {
 			}
 			$data['images'][] = $image;	 
 		}
-
 		$ci->load->view($this->view_path.'image_'.$ci->session->userdata('cimm_view').'_list', $data);
 	}
   

@@ -30,14 +30,14 @@ class Tinycimm_model extends Model {
 	**/
 	function get_assets($folder_id=0, $offset=NULL, $limit=NULL, $search_query=''){
 		if (trim($search_query) != '') {
-			$this->db->like('name', $search_query);
+			$this->db->where('name', $search_query);
 			$this->db->or_like('filename', $search_query);
 			$this->db->or_like('description', $search_query);
 		}
 		$this->db->where('folder_id', (int) $folder_id);
-		foreach($this->allowed_types as $type) {
-			$this->db->or_where('extension', '.'.$type);
-		}
+		//foreach($this->allowed_types as $type) {
+		//	$this->db->or_where('extension', '.'.$type);
+		//}
 		$this->db->order_by('dateadded', 'desc');
 		return $this->db->get('asset', $limit, $offset)->result_array();
 	}
