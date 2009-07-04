@@ -163,6 +163,8 @@ ImageDialog.prototype.insertThumbnail = function(anchor, imgsrc){
 		args = {
 			src : _this.baseURL(_this.settings.tinycimm_assets_path+image.filename),
 			alt : image.description,
+			width : image.width,
+			height : image.height,
 			title : image.description
 		};
 
@@ -198,7 +200,10 @@ ImageDialog.prototype.loadUploader = function() {
 };
 	
 // prepare the resizer panel
-ImageDialog.prototype.loadResizer = function(imagesrc) {
+ImageDialog.prototype.loadResizer = function(imagesrc, event) {
+	if (event && event.originalTarget && (event.originalTarget.className == 'delete' || event.originalTarget.className == 'thumbnail')) {
+		return;
+	}
 	var _this = this;
 	// completely remove the resizer image from the dom : issue 12 http://code.google.com/p/tinycimm/issues/detail?id=12
 	tinyMCEPopup.dom.remove('slider_img');
@@ -241,8 +246,8 @@ ImageDialog.prototype.checkLoad = function(preImage) {
 	
 // show resizer image
 ImageDialog.prototype.showResizeImage = function(image) {
-	// fix for issue 12 http://code.google.com/p/tinycimm/issues/detail?id=12
-	var img = window.document.createElement("img");
+	var img = window.document.createElement("img"), 
+	sliderVal = image.width < this.settings.tinycimm_resize_default_intial_width ? image.width : this.settings.tinycimm_resize_default_intial_width;
 	img.setAttribute('id', 'slider_img');
 	img.setAttribute('width', image.width);
 	img.setAttribute('height', image.height);
@@ -259,7 +264,6 @@ ImageDialog.prototype.showResizeImage = function(image) {
 	// image dimensions overlay layer
 	tinyMCEPopup.dom.setHTML('image-info-dimensions', '<span id="slider_width_val"></span> x <span id="slider_height_val"></span>');
 
-	var sliderVal = image.width < this.settings.tinycimm_resize_default_intial_width ? image.width : this.settings.tinycimm_resize_default_intial_width;
 			
 	new ScrollSlider(tinyMCEPopup.dom.get('image-slider'), {
 		min : 0,
@@ -275,7 +279,6 @@ ImageDialog.prototype.showResizeImage = function(image) {
 		}
 	});
 }
-
 	
 ImageDialog.prototype.saveImgSize = function() {
 	var width = tinyMCEPopup.dom.get('slider_img').width, height = tinyMCEPopup.dom.get('slider_img').height, _this = this;

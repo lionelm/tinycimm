@@ -77,7 +77,10 @@ class TinyCIMM {
 			}
 			$update and $ci->tinycimm_model->update_asset('id', $asset->id, 0, '', '', $asset->filename);
 		}
-		
+		$resized_image_size = @getimagesize($asset->resize_filepath);
+		$asset->width = $resized_image_size[0];
+		$asset->height = $resized_image_size[1];
+
 		return $asset;
 	}
 
