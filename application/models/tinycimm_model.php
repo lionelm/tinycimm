@@ -34,7 +34,7 @@ class Tinycimm_model extends Model {
 			$this->db->or_like('filename', $search_query);
 			$this->db->or_like('description', $search_query);
 		}
-		$this->db->where('folder_id', (int) $folder_id);
+		(int) $folder_id and $this->db->where('folder_id', (int) $folder_id);
 		//foreach($this->allowed_types as $type) {
 		//	$this->db->or_where('extension', '.'.$type);
 		//}
