@@ -78,26 +78,16 @@ ImageDialog.prototype.insertAndClose = function(image, width, height) {
 	
 // either inserts the image into the image dialog, or into the editor	
 ImageDialog.prototype.insertImage = function(thumbspan, image, width, height) {
-	/*
-	if (typeof thumbspan == 'object') {
-		// show loading spinner and hide the controls
-		tinyMCE.activeEditor.dom.addClass(thumbspan, 'showloader');
-		var controls = tinyMCEPopup.dom.select('.controls, .controls-bg');
-		for(var i in controls) { controls[i].style.display = 'none'; }
-	}
-	*/
-	var win = tinyMCEPopup.getWindowArg("window");
-
+	var win = tinyMCEPopup.getWindowArg("window"), url = this.baseURL(this.settings.tinycimm_controller+'image/get/'+image.id+'/'+width+'/'+height);
 	if (win != undefined) {
-		var URL = this.baseURL(this.settings.tinycimm_controller+'image/get/'+image.id+'/'+width+'/'+height);
 		// insert into image dialog
-		win.document.getElementById(tinyMCEPopup.getWindowArg("input")).value = URL;
+		win.document.getElementById(tinyMCEPopup.getWindowArg("input")).value = url;
 		if (typeof(win.ImageDialog) != "undefined") {
 			if (win.ImageDialog.getImageData) {
 				win.ImageDialog.getImageData();
 			}
 			if (win.ImageDialog.showPreviewImage) {
-				win.ImageDialog.showPreviewImage(URL);
+				win.ImageDialog.showPreviewImage(url);
 			}
 			win.document.getElementById('alt').value = image.description;
 		}
@@ -112,8 +102,6 @@ ImageDialog.prototype.insertImage = function(thumbspan, image, width, height) {
 ImageDialog.prototype.insertResizeImage = function(){
 	var _this = this, image_id = tinyMCEPopup.dom.get('slider_img').src.toId(), 
 	width = tinyMCEPopup.dom.get('slider_width_val').innerHTML, height = tinyMCEPopup.dom.get('slider_height_val').innerHTML.replace(/px$/, '');
-	// show loading animation
-	//tinyMCEPopup.dom.get('insertimg').src = tinyMCEPopup.dom.get('insertimg').src.replace('image_add.png', 'ajax-loader.gif');
 	
 	this.resizeImage(image_id, width, height, function(image){
 		_this.insertImage(null, image, width, height);
@@ -200,54 +188,50 @@ ImageDialog.prototype.loadUploader = function() {
 };
 	
 // prepare the resizer panel
-ImageDialog.prototype.loadResizer = function(filename, width, height, event) {
+ImageDialog.prototype.loadResizer = function(filename, event, sliderWidth) {
 	if (event && event.originalTarget && (event.originalTarget.className == 'delete' || event.originalTarget.className == 'thumbnail')) {
 		return;
 	}
 	var _this = this;
 	// completely remove the resizer image from the dom : issue 12 http://code.google.com/p/tinycimm/issues/detail?id=12
 	tinyMCEPopup.dom.remove('slider_img');
-	this.loadImage(filename, width, height);
+	this.loadImage(filename, sliderWidth);
 }
 
 // pre-cache an image
-ImageDialog.prototype.loadImage = function(filename, width, height) { 
+ImageDialog.prototype.loadImage = function(filename, sliderWidth) { 
 	var preImage = new Image(), _this = this;
 	preImage.src = this.settings.tinycimm_assets_path+filename;
-	preImage.width = width;
-	preImage.height = height;
 	setTimeout(function(){
-		_this.checkImgLoad(preImage);
+		_this.checkImgLoad(preImage, sliderWidth);
 	},10);	// ie
 }
 
 // show loading text if image not already cached
-ImageDialog.prototype.checkImgLoad = function(preImage) {
+ImageDialog.prototype.checkImgLoad = function(preImage, sliderWidth) {
 	if (!preImage.complete) {
 		mcTabs.displayTab('resize_tab','resize_panel');
 		tinyMCEPopup.dom.setHTML('image-info-dimensions', '<img style="float:left;margin-right:4px" src="img/ajax-loader.gif"/> caching image..');
 	}
-	this.checkLoad(preImage);
+	this.checkLoad(preImage, sliderWidth);
 }	
 
-ImageDialog.prototype.checkLoad = function(preImage) {
+ImageDialog.prototype.checkLoad = function(preImage, sliderWidth) {
 	var _this = this;
 	if (preImage.complete) { 
-		this.showResizeImage(preImage);
+		this.showResizeImage(preImage, sliderWidth);
 		return;
 	}
  	setTimeout(function(){
-		_this.checkLoad(preImage)
+		_this.checkLoad(preImage, sliderWidth)
 	}, 10);
 }
 	
 // show resizer image
-ImageDialog.prototype.showResizeImage = function(image) {
+ImageDialog.prototype.showResizeImage = function(image, sliderWidth) {
 	var img = window.document.createElement("img"), 
-	sliderVal = image.width < this.settings.tinycimm_resize_default_intial_width ? image.width : this.settings.tinycimm_resize_default_intial_width;
+	sliderVal = sliderWidth ? sliderWidth : (image.width < this.settings.tinycimm_resize_default_intial_width ? image.width : this.settings.tinycimm_resize_default_intial_width);
 	img.setAttribute('id', 'slider_img');
-	img.setAttribute('width', image.width);
-	img.setAttribute('height', image.height);
 	img.setAttribute('src', image.src);
 	tinyMCEPopup.dom.get('image-info').appendChild(img);
 	setTimeout(function(){
@@ -260,7 +244,6 @@ ImageDialog.prototype.showResizeImage = function(image) {
 
 	// image dimensions overlay layer
 	tinyMCEPopup.dom.setHTML('image-info-dimensions', '<span id="slider_width_val"></span> x <span id="slider_height_val"></span>');
-
 			
 	new ScrollSlider(tinyMCEPopup.dom.get('image-slider'), {
 		min : 0,
@@ -277,34 +260,6 @@ ImageDialog.prototype.showResizeImage = function(image) {
 	});
 }
 	
-ImageDialog.prototype.saveImgSize = function() {
-	var width = tinyMCEPopup.dom.get('slider_img').width, height = tinyMCEPopup.dom.get('slider_img').height, _this = this;
-
-	// show loading animation
-	tinyMCEPopup.dom.get('saveimg').src = tinyMCEPopup.dom.get('saveimg').src.replace('save.gif', 'ajax-loader.gif');
-		
-	// prepare request url
-	var imgsrc_arr = tinyMCEPopup.editor.documentBaseURI.toRelative(tinyMCEPopup.dom.get('slider_img').src).split('/');
-	var requesturl = this.baseURL(this.settings.tinycimm_controller+'image/save_image_size/'+imgsrc_arr[imgsrc_arr.length-1].toId()+'/'+width+'/'+height+'/90');
-	// send request
-	tinymce.util.XHR.send({
-		url : requesturl,
-		error : function(response) {
-			tinyMCEPopup.editor.windowManager.alert('There was an error processing the request: '+response+"\nPlease try again.");
-			tinyMCEPopup.dom.get('saveimg').src = tinyMCEPopup.dom.get('saveimg').src.replace('ajax-loader.gif', 'save.gif');
-		},
-		success : function(response) {
-			tinyMCEPopup.dom.get('saveimg').src = tinyMCEPopup.dom.get('saveimg').src.replace('ajax-loader.gif', 'save.gif');
-			var obj = tinymce.util.JSON.parse(response);
-			if (!obj.outcome) {
-				tinyMCEPopup.editor.windowManager.alert(obj.message); 
-			} else { 
-				tinyMCEPopup.editor.windowManager.alert('Image size successfully saved.');
-			}
-		}
-	});
-}
-
 ImageDialog.prototype.deleteImage = function(imageid) {
 	this.deleteAsset(imageid);
 }	

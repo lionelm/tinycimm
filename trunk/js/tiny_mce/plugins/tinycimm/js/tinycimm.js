@@ -6,7 +6,6 @@
  * Project      : http://tinycimm.googlecode.com/
  * Contact      : willis.rh@gmail.com
  *
- *
  */
 
 String.prototype.toId = function(){
@@ -15,6 +14,9 @@ String.prototype.toId = function(){
 		(/\//.test(this) ? this.replace(/.*\/([0-9]+).*$/, '$1') : 
 			this.replace(/([0-9]+).*$/, '$1'));
 	return isNaN(id) ? 0 : id;
+}
+String.prototype.extension = function(){
+	return this.replace(/.*\.([a-z]+)$/, '$1');
 }
 String.prototype.ucfirst = function(){
 	return this.substr(0, 1).toUpperCase()+this.substr(1, this.length-1).toLowerCase();
@@ -32,8 +34,9 @@ function TinyCIMM(type){
 }
 
 TinyCIMM.prototype.init = function(ed){
+	var node = ed.selection.getNode();
 	if (tinyMCEPopup.params.resize) {
-		this.loadResizer(ed.selection.getNode().src);
+		this.loadResizer(node.src.toId()+'.'+node.src.extension(), false, node.width);
 	} else {
 		this.showBrowser(0, 0, true);
 	}
