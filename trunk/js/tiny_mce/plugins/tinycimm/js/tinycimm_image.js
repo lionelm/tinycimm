@@ -121,7 +121,7 @@ ImageDialog.prototype.insertResizeImage = function(){
 }
 
 ImageDialog.prototype.insertThumbnail = function(anchor, imgsrc){
-	var _this = this, ed = tinyMCEPopup.editor, f = document.forms[0], nl = f.elements, v, args = {}, el, 
+	var _this = this, ed = tinyMCEPopup.editor, args = {}, el, 
 	width = this.settings.tinycimm_thumb_width, height = this.settings.tinycimm_thumb_height,
 	url = this.baseURL(this.settings.tinycimm_controller+'image/save_image_size/'+imgsrc.toId()+'/'+width+'/'+height+'/90/0');
 
