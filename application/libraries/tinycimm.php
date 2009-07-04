@@ -20,25 +20,33 @@ class TinyCIMM {
 		$this->input = &$ci->input;
 	}
 
-	public function get_asset($asset_id, $width=200, $height=200, $quality=85, $send_nocache=true){
+	public function get_asset($asset_id, $width=200, $height=200, $quality=85, $send_nocache=false){
 		$ci = &get_instance();
 		$asset = $ci->tinycimm_model->get_asset($asset_id) or die('asset not found');
 		$asset->filepath = $this->config->item('tinycimm_asset_path').$asset_id.$asset->extension;
 		if (!@file_exists($asset->filepath)) {
 			die('asset not found');
 		}
-		
-		$resize_asset = $this->resize_asset($asset, $width, $height, $quality);
+		$asset = $this->resize_asset($asset, $width, $height, $quality);
 
-		header('Content-Transfer-Encoding: binary');
-		if ($send_nocache) {
-			header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-			header('Pragma: public');
+		$headers = apache_request_headers();
+
+		// checking if the client is validating his cache and if it is current.
+		if (isset($headers['If-Modified-Since']) && (strtotime($headers['If-Modified-Since']) == filemtime($asset->resize_filepath))) {
+			// client's cache is current, so we just respond '304 Not Modified'.
+			header('Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($asset->resize_filepath)).' GMT', true, 304);
+		} else {
+			// image not cached or cache outdated, we respond '200 OK' and output the image.
+			header('Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($asset->resize_filepath)).' GMT', true, 200);
+			if ($send_nocache) {
+				header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+				header('Pragma: public');
+			}
+			header('Content-type: '.$asset->mimetype);
+			header("Content-Length: ".filesize($asset->resize_filepath));
+			flush();
+			readfile($asset->resize_filepath);
 		}
-		header('Content-type: '.$resize_asset->mimetype);
-		header("Content-Length: ".filesize($resize_asset->resize_filepath));
-		flush();
-		readfile($resize_asset->resize_filepath);
 		exit;
 	}
 

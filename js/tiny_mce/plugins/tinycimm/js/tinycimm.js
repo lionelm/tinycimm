@@ -10,7 +10,10 @@
  */
 
 String.prototype.toId = function(){
-        var id = /\//.test(this) ? this.replace(/.*\/([0-9]+).*$/, '$1') : this.replace(/([0-9]+).*$/, '$1');
+        var id = 
+	/get/.test(this) ? this.replace(/.*get\/([0-9]+)\/?([0-9]+)?\/?([0-9]+)?\/?/, '$1') : 
+		(/\//.test(this) ? this.replace(/.*\/([0-9]+).*$/, '$1') : 
+			this.replace(/([0-9]+).*$/, '$1'));
 	return isNaN(id) ? 0 : id;
 }
 String.prototype.ucfirst = function(){
@@ -29,9 +32,8 @@ function TinyCIMM(type){
 }
 
 TinyCIMM.prototype.init = function(ed){
-	var n = ed.selection.getNode();
 	if (tinyMCEPopup.params.resize) {
-		this.loadresizer(n.src);
+		this.loadResizer(ed.selection.getNode().src);
 	} else {
 		this.showBrowser(0, 0, true);
 	}

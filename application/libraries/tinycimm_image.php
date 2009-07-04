@@ -31,10 +31,11 @@ class TinyCIMM_image extends TinyCIMM {
 			$dimensions = getimagesize($ci->config->item('tinycimm_asset_path').$image->filename);
 			$image->width = $dimensions[0];
 			$image->height = $dimensions[1];
+			$image->src = $ci->config->item('tinycimm_controller')."image/get/{$image->id}/{$image->width}/{$image->height}";
 			$image->outcome = true;
 			$this->response_encode($image);
 		} else {
-			die('image not found');
+			$this->response_encode(array('outcome' => false, 'message' => 'Image not found.'));
 		}
 	}
 	
