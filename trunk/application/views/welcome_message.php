@@ -12,19 +12,19 @@
 </head>
 <body>
 
-<h1>TinyCIMM Image demo</h1>
+	<h1>TinyCIMM Image demo</h1>
 
-<p>The demo is using TinyMCE Version: 3.2.3 and CodeIgniter Version 1.7.1</p>
+	<p>The demo is using TinyMCE Version: 3.2.3 and CodeIgniter Version 1.7.1</p>
 
-<p>View the source of this page to see how the plugin is integrated into tinymce as a file browser callback.</p>
+	<p>View the source of this page to see how the plugin is integrated into tinymce as a file browser callback.</p>
 
-<p>View an example of the context menu integration by right-clicking on an image and selecting 'Resize'.</p>
+	<p>View an example of the context menu integration by right-clicking on an image and selecting 'Resize'.</p>
 
-<div>
-<textarea id="demo_textarea" rows="25" cols="80">&nbsp;</textarea>
-</div>
+	<div>
+		<textarea id="demo_textarea" rows="25" cols="80">&nbsp;</textarea>
+	</div>
 
-<?=$this->load->view('common/footer.php');?>
+	<? @file_exists(APPPATH.'views/common/footer.php') and $this->load->view('common/footer'); ?> 
 
 </body>
 </html>
