@@ -56,7 +56,7 @@ ImageDialog.prototype.insertAndClose = function(image, width, height) {
 	(tinymce.isWebKit) && ed.getWin().focus();
 
 	args = {
-		src : this.baseURL(this.settings.tinycimm_controller+'image/get/'+image.id+'/'+width+'/'+height),
+		src : this.settings.tinycimm_assets_path+image.filename,
 		alt : image.description,
 		width : width,
 		height : height
@@ -115,8 +115,26 @@ ImageDialog.prototype.insertResizeImage = function(){
 	// show loading animation
 	//tinyMCEPopup.dom.get('insertimg').src = tinyMCEPopup.dom.get('insertimg').src.replace('image_add.png', 'ajax-loader.gif');
 	
-	this.getImage(image_id, function(image){
+	this.resizeImage(image_id, width, height, function(image){
 		_this.insertImage(null, image, width, height);
+	});
+}
+
+ImageDialog.prototype.resizeImage = function(imageId, width, height, callback){
+	var url = this.baseURL(this.settings.tinycimm_controller+'image/save_image_size/'+imageId+'/'+width+'/'+height+'/90/0');
+	tinymce.util.XHR.send({
+		url : url,
+		error : function(response) {
+			tinyMCEPopup.editor.windowManager.alert('There was an error processing the request: '+response+"\nPlease try again.");
+		},
+		success : function(response) {
+			var image = tinymce.util.JSON.parse(response);
+			if (!image.outcome) {
+				tinyMCEPopup.editor.windowManager.alert(obj.message); 
+			} else { 
+				(callback) && callback(image);
+			}
+		}
 	});
 }
 
@@ -130,55 +148,42 @@ ImageDialog.prototype.insertThumbnail = function(anchor, imgsrc){
 		anchor.style.background = 'url(img/ajax-loader-sm.gif) no-repeat center center';
 	}
 
-	// save the thumbnail size	
-	tinymce.util.XHR.send({
-		url : url,
-		error : function(response) {
-			tinyMCEPopup.editor.windowManager.alert('There was an error processing the request: '+response+"\nPlease try again.");
-		},
-		success : function(response) {
-			var image = tinymce.util.JSON.parse(response);
-			if (!image.outcome) {
-				tinyMCEPopup.editor.windowManager.alert(obj.message); 
-			} else { 
-				// if an advimage dialog window is already open
-				var origWin = tinyMCEPopup.getWindowArg("tinyMCEPopup");
-				if (origWin != undefined) {
-					origWin.close();
-				}
-
-				tinyMCEPopup.restoreSelection();
-
-				// Fixes crash in Safari
-				(tinymce.isWebKit) && ed.getWin().focus();
-
-				args = {
-					src : _this.baseURL(_this.settings.tinycimm_assets_path+image.filename),
-					alt : image.description,
-					title : image.description
-				};
-
-				el = ed.selection.getNode();
-				// if a thumbnail is selected
-				var anchor_parent = ed.dom.getParent(ed.selection.getNode(), 'A');
-				if (anchor_parent) {
-					// remove the thumb anchor
-					tinyMCEPopup.dom.remove(anchor_parent);
-				}
-				// replace/insert the image thumbnail with anchor
-				ed.execCommand('mceInsertContent', false, 
-				'<a class="'+_this.settings.tinycimm_thumb_lightbox_class+'" '
-				+'rel="'+_this.settings.tinycimm_thumb_lightbox_gallery+'" '
-				+'href="'+_this.baseURL(_this.settings.tinycimm_assets_path+image.filename)+'">'
-				+'<img id="__mce_tmp" /></a>', {skip_undo : 1});
-				ed.dom.setAttribs('__mce_tmp', args);
-				ed.dom.setAttrib('__mce_tmp', 'id', '');
-				ed.undoManager.add();
-				tinyMCEPopup.close();
-			}
+	this.resizeImage(imgsrc.toId(), width, height, function(image){
+		// if an advimage dialog window is already open
+		var origWin = tinyMCEPopup.getWindowArg("tinyMCEPopup");
+		if (origWin != undefined) {
+			origWin.close();
 		}
-	});
 
+		tinyMCEPopup.restoreSelection();
+
+		// Fixes crash in Safari
+		(tinymce.isWebKit) && ed.getWin().focus();
+
+		args = {
+			src : _this.baseURL(_this.settings.tinycimm_assets_path+image.filename),
+			alt : image.description,
+			title : image.description
+		};
+
+		el = ed.selection.getNode();
+		// if a thumbnail is selected
+		var anchor_parent = ed.dom.getParent(ed.selection.getNode(), 'A');
+		if (anchor_parent) {
+			// remove the thumb anchor
+			tinyMCEPopup.dom.remove(anchor_parent);
+		}
+		// replace/insert the image thumbnail with anchor
+		ed.execCommand('mceInsertContent', false, 
+		'<a class="'+_this.settings.tinycimm_thumb_lightbox_class+'" '
+		+'rel="'+_this.settings.tinycimm_thumb_lightbox_gallery+'" '
+		+'href="'+_this.baseURL(_this.settings.tinycimm_assets_path+image.filename)+'">'
+		+'<img id="__mce_tmp" /></a>', {skip_undo : 1});
+		ed.dom.setAttribs('__mce_tmp', args);
+		ed.dom.setAttrib('__mce_tmp', 'id', '');
+		ed.undoManager.add();
+		tinyMCEPopup.close();
+	});
 }
 
 
@@ -206,7 +211,7 @@ ImageDialog.prototype.loadResizer = function(imagesrc) {
 // pre-cache an image
 ImageDialog.prototype.loadImage = function(image) { 
 	var preImage = new Image(), _this = this;
-	preImage.src = image.src;
+	preImage.src = this.settings.tinycimm_assets_path+image.id+image.extension;
 	preImage.width = image.width;
 	preImage.height = image.height;
 	setTimeout(function(){
