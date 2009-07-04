@@ -65,7 +65,7 @@
 		getInfo : function() {
 			return {
 				longname : 'TinyCIMM',
-				author : 'Richard Willis & Liam Gooding',
+				author : 'Richard Willis',
 				authorurl : 'http://badsyntax.co.uk',
 				infourl : 'http://tinycimm.googlecode.com/',
 				version : "0.1"

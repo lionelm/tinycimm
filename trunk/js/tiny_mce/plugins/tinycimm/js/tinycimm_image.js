@@ -194,17 +194,21 @@ ImageDialog.prototype.loadUploader = function() {
 	
 // prepare the resizer panel
 ImageDialog.prototype.loadResizer = function(imagesrc) {
-	var path = /^http/.test(imagesrc) ? imagesrc : this.settings.tinycimm_assets_path+imagesrc;
+	var _this = this;
 	// completely remove the resizer image from the dom : issue 12 http://code.google.com/p/tinycimm/issues/detail?id=12
 	tinyMCEPopup.dom.remove('slider_img');
 	// ensure image is cached before loading the resizer
-	this.loadImage(this.baseURL(path));
+	this.getImage(imagesrc.toId(), function(image){
+		_this.loadImage(image);
+	});
 }
 
 // pre-cache an image
-ImageDialog.prototype.loadImage = function(img) { 
+ImageDialog.prototype.loadImage = function(image) { 
 	var preImage = new Image(), _this = this;
-	preImage.src = img;
+	preImage.src = image.src;
+	preImage.width = image.width;
+	preImage.height = image.height;
 	setTimeout(function(){
 		_this.checkImgLoad(preImage);
 	},10);	// ie
@@ -231,42 +235,39 @@ ImageDialog.prototype.checkLoad = function(preImage) {
 }
 	
 // show resizer image
-ImageDialog.prototype.showResizeImage = function(preImage) {
-	var _this = this;
-	this.getImage(preImage.src.toId(), function(image){
-		// fix for issue 12 http://code.google.com/p/tinycimm/issues/detail?id=12
-		var img = window.document.createElement("img");
-		img.setAttribute('id', 'slider_img');
-		img.setAttribute('width', image.width);
-		img.setAttribute('height', image.height);
-		img.setAttribute('src', preImage.src);
-		tinyMCEPopup.dom.get('image-info').appendChild(img);
-		setTimeout(function(){
-			img.style.display="block";
-		}, 200);
+ImageDialog.prototype.showResizeImage = function(image) {
+	// fix for issue 12 http://code.google.com/p/tinycimm/issues/detail?id=12
+	var img = window.document.createElement("img");
+	img.setAttribute('id', 'slider_img');
+	img.setAttribute('width', image.width);
+	img.setAttribute('height', image.height);
+	img.setAttribute('src', image.src);
+	tinyMCEPopup.dom.get('image-info').appendChild(img);
+	setTimeout(function(){
+		img.style.display="block";
+	}, 200);
 		
-		// display panel
-		mcTabs.displayTab('resize_tab','resize_panel');
-		tinyMCEPopup.dom.get('resize_tab').style.display = 'block';
+	// display panel
+	mcTabs.displayTab('resize_tab','resize_panel');
+	tinyMCEPopup.dom.get('resize_tab').style.display = 'block';
 
-		// image dimensions overlay layer
-		tinyMCEPopup.dom.setHTML('image-info-dimensions', '<span id="slider_width_val"></span> x <span id="slider_height_val"></span>');
+	// image dimensions overlay layer
+	tinyMCEPopup.dom.setHTML('image-info-dimensions', '<span id="slider_width_val"></span> x <span id="slider_height_val"></span>');
 
-		var sliderVal = image.width < _this.settings.tinycimm_resize_default_intial_width ? image.width : _this.settings.tinycimm_resize_default_intial_width;
+	var sliderVal = image.width < this.settings.tinycimm_resize_default_intial_width ? image.width : this.settings.tinycimm_resize_default_intial_width;
 			
-		new ScrollSlider(tinyMCEPopup.dom.get('image-slider'), {
-			min : 0,
-			max : image.width,
-			value : sliderVal,
-			size : 400,
-			scroll : function(new_w) {
-				var slider_width = tinyMCEPopup.dom.get('slider_width_val'), slider_height = tinyMCEPopup.dom.get('slider_height_val');
-				if (slider_width && slider_height) {
-					slider_width.innerHTML = (tinyMCEPopup.dom.get('slider_img').width=new_w);
-					slider_height.innerHTML = (tinyMCEPopup.dom.get('slider_img').height=Math.round((parseInt(new_w)/parseInt(image.width))*image.height))+'px';
-				}
+	new ScrollSlider(tinyMCEPopup.dom.get('image-slider'), {
+		min : 0,
+		max : image.width,
+		value : sliderVal,
+		size : 400,
+		scroll : function(new_w) {
+			var slider_width = tinyMCEPopup.dom.get('slider_width_val'), slider_height = tinyMCEPopup.dom.get('slider_height_val');
+			if (slider_width && slider_height) {
+				slider_width.innerHTML = (tinyMCEPopup.dom.get('slider_img').width=new_w);
+				slider_height.innerHTML = (tinyMCEPopup.dom.get('slider_img').height=Math.round((parseInt(new_w)/parseInt(image.width))*image.height))+'px';
 			}
-		});
+		}
 	});
 }
 
