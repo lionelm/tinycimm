@@ -78,7 +78,7 @@ ImageDialog.prototype.insertAndClose = function(image, width, height) {
 	
 // either inserts the image into the image dialog, or into the editor	
 ImageDialog.prototype.insertImage = function(thumbspan, image, width, height) {
-	var win = tinyMCEPopup.getWindowArg("window"), url = this.baseURL(this.settings.tinycimm_controller+'image/get/'+image.id+'/'+width+'/'+height);
+	var win = tinyMCEPopup.getWindowArg("window"), url = this.settings.tinycimm_assets_path+image.filename;
 	if (win != undefined) {
 		// insert into image dialog
 		win.document.getElementById(tinyMCEPopup.getWindowArg("input")).value = url;
