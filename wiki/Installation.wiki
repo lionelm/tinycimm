@@ -45,7 +45,7 @@ m.add({title : 'advanced.unlink_desc', icon : 'unlink', cmd : 'UnLink'});
 *Add this after*
 {{{
 m.addSeparator();
-m.add({title : 'Resize image', icon : 'image', cmd : 'mceTinyCIMMImage', ui : true});
+m.add({title : 'Resize image', icon : 'image', cmd : 'mceTinyCIMM-Image', ui : true});
 }}}
 
   * This will display a new item that will open the tinycimm image resizer
