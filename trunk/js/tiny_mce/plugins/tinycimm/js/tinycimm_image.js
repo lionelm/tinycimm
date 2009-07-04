@@ -200,25 +200,22 @@ ImageDialog.prototype.loadUploader = function() {
 };
 	
 // prepare the resizer panel
-ImageDialog.prototype.loadResizer = function(imagesrc, event) {
+ImageDialog.prototype.loadResizer = function(filename, width, height, event) {
 	if (event && event.originalTarget && (event.originalTarget.className == 'delete' || event.originalTarget.className == 'thumbnail')) {
 		return;
 	}
 	var _this = this;
 	// completely remove the resizer image from the dom : issue 12 http://code.google.com/p/tinycimm/issues/detail?id=12
 	tinyMCEPopup.dom.remove('slider_img');
-	// ensure image is cached before loading the resizer
-	this.getImage(imagesrc.toId(), function(image){
-		_this.loadImage(image);
-	});
+	this.loadImage(filename, width, height);
 }
 
 // pre-cache an image
-ImageDialog.prototype.loadImage = function(image) { 
+ImageDialog.prototype.loadImage = function(filename, width, height) { 
 	var preImage = new Image(), _this = this;
-	preImage.src = this.settings.tinycimm_assets_path+image.id+image.extension;
-	preImage.width = image.width;
-	preImage.height = image.height;
+	preImage.src = this.settings.tinycimm_assets_path+filename;
+	preImage.width = width;
+	preImage.height = height;
 	setTimeout(function(){
 		_this.checkImgLoad(preImage);
 	},10);	// ie
