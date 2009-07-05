@@ -1,6 +1,6 @@
 /*
  *
- * tinycimm_media.js
+ * tinycimm_file.js
  * Copyright (c) 2009 Richard Willis
  * MIT license  : http://www.opensource.org/licenses/mit-license.php
  * Project      : http://tinycimm.googlecode.com/
@@ -8,20 +8,20 @@
  *
  */
 
-function MediaDialog(){}
-MediaDialog.prototype = new TinyCIMM('media');
-MediaDialog.prototype.constructor = MediaDialog;
+function FileDialog(){}
+FileDialog.prototype = new TinyCIMM('file');
+FileDialog.prototype.constructor = FileDialog;
 
-MediaDialog.prototype.preInit = function() {
+FileDialog.prototype.preInit = function() {
 	var images = ['../img/ajax-loader.gif', '../img/ajax-loader-sm.gif', '../img/progress.gif'];
 	this.cacheImages(images);
 }
 
-MediaDialog.prototype.getImage = function(imageid, callback) {
+FileDialog.prototype.getImage = function(imageid, callback) {
 	this.get(imageid, callback);
 };
 
-MediaDialog.prototype.fileBrowser = function(folder, offset, load, el, search_query){
+FileDialog.prototype.fileBrowser = function(folder, offset, load, el, search_query){
 	if (!load) {return;}
 	search_query = search_query || '';
 	if (typeof el == 'object') {
@@ -30,6 +30,6 @@ MediaDialog.prototype.fileBrowser = function(folder, offset, load, el, search_qu
 	this.getBrowser(folder, offset, search_query);
 }
 
-var TinyCIMMMedia = new MediaDialog();
-TinyCIMMMedia.preInit();
-tinyMCEPopup.onInit.add(TinyCIMMMedia.init, TinyCIMMMedia);
+var TinyCIMMFile = new FileDialog();
+TinyCIMMFile.preInit();
+tinyMCEPopup.onInit.add(TinyCIMMFile.init, TinyCIMMFile);
