@@ -50,14 +50,14 @@ class TinyCIMM {
 		exit;
 	}
 
-	public function resize_asset($asset, $width=200, $height=200, $quality=85, $cache=true, $update=false){
+	public function resize_asset($asset, $width=200, $height=200, $quality=90, $cache=true, $update=false){
 		$ci = &get_instance();
 
 		$asset->filepath = $this->config->item('tinycimm_asset_path').$asset->id.$asset->extension;
 		$asset->filename = 'cache/'.$asset->id.'_'.$width.'_'.$height.'_'.$quality.$asset->extension;
-		$asset->resize_filepath = $this->config->item('tinycimm_asset_path').$asset->filename;
+		$asset->resize_filepath = $update ? $asset->filepath : $this->config->item('tinycimm_asset_path').$asset->filename;
 
-		if (($cache and !file_exists($asset->resize_filepath)) or !$cache) {
+		if (($cache and !file_exists($asset->resize_filepath) or $update) or !$cache) {
 			$resize_config = $this->config->item('tinycimm_image_resize_config');		
 			$imagesize = @getimagesize($asset->filepath) or die('asset not found');
 			if ($imagesize[0] > $width or $imagesize[1] > $height) {
