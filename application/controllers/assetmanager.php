@@ -24,13 +24,11 @@ class Assetmanager extends Controller {
 		$this->load->helper('url');
 		TinyCIMM::check_paths();
 
-		// set default view type in user session
-
 		// add your user auth check here to secure tinycimm
 		// eg $this->auth->is_logged_in() or die('Access denied.');
   	}
 
-	function image() {
+	public function image() {
 		!$this->session->userdata('cimm_view') and $this->session->set_userdata('cimm_view', 'thumbnails');
 		$param = array_slice(explode('/', $this->uri->uri_string()),4);
 		$method = trim($this->uri->segment(3));
@@ -45,19 +43,12 @@ class Assetmanager extends Controller {
 		method_exists($this->tinycimm_image, $method) and eval('$this->tinycimm_image->' . $method . '('.join(',', $param).');');
 	}
 
-	function media() {
-		!$this->session->userdata('cimm_view') and $this->session->set_userdata('cimm_view', 'listing');
-		$param = array_slice(explode('/', $this->uri->uri_string()),4);
-		$method = trim($this->uri->segment(3));
-		$count = 0;
-                foreach($param as $element) {
-			$param[$count] = "'".$element."'";
-			$count++;
-		}
-		$this->tinycimm_media->view_path = $this->view_path = $this->config->item('tinycimm_views_root').$this->config->item('tinycimm_views_root_media');
-		$types = $this->config->item('tinycimm_media_upload_config');
-		$this->tinycimm_model->allowed_types = explode('|', $types['allowed_types']);
-		method_exists($this->tinycimm_media, $method) and eval('$this->tinycimm_media->' . $method . '('.join(',', $param).');');
+	public function media() {
+		exit('<em>Sorry, the media browser is still in development</em>');
+	}
+
+	public function file() {
+		exit('<em>Sorry, the file browser is still in development</em>');
 	}
 
 }
