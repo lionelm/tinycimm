@@ -119,7 +119,7 @@ class TinyCIMM_image extends TinyCIMM {
 			}
 			$data['images'][] = $image;	 
 		}
-		$ci->load->view($this->view_path.'image_'.$ci->session->userdata('cimm_view').'_list', $data);
+		$ci->load->view($this->view_path.$ci->session->userdata('cimm_view').'_list', $data);
 	}
   
 	/**
@@ -224,7 +224,7 @@ class TinyCIMM_image extends TinyCIMM {
 	public function get_uploader_form(){
 		$ci = &get_instance();
 		$data['upload_config'] = $ci->config->item('tinycimm_image_upload_config');
-		$ci->load->view($this->view_path.'image_upload_form', $data);
+		$ci->load->view($this->view_path.'upload_form', $data);
 	}
 	
 	/**

@@ -10,7 +10,7 @@
 	</span>&raquo; Folders
 </div>
 <div id="folderlist">
-	<?= $this->load->view($this->view_path.'image_folder_list');?>
+	<?= $this->load->view($this->view_path.'folder_list');?>
 </div>
 <br/>
 <div class="heading">&raquo; Folder Info</div>
