@@ -318,6 +318,15 @@ span#loading {
 	display:block;
 }
 
+.list-controls {
+	float:right;
+}
+
+.list-item {
+	cursor:pointer;
+	display:block;
+}
+
 .thumb_wrapper .controls .resize, .thumb_wrapper_over .controls .resize, .list-controls .resize {
 	text-decoration:none;
 	cursor:pointer;

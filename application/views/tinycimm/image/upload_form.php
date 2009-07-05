@@ -2,9 +2,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title>Upload Image Form</title>
-	<link href="css/advimage.css" rel="stylesheet" type="text/css" />
 	<style type="text/css" media="screen">
 		html, body {background:#FFF;}
+		body {margin:0;}
 	</style>
 	<script type="text/javascript">
 		var tinymce = parent.tinymce;
@@ -62,7 +62,7 @@
 	</script>
 	<base target="_self" />
 </head>
-<body id="advimage" style="background:#FFF;margin:0">
+<body style="background:#FFF;margin:0">
 	<iframe id="hidden_iframe" name="hidden_iframe" src="javascript:false" style="display:none"></iframe>
 	<form method="post" target="hidden_iframe" enctype="multipart/form-data" action="#" id="uploadform" name="uploadform">
 		<table border="0" cellpadding="4" cellspacing="2">
