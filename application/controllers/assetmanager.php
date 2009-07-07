@@ -2,10 +2,10 @@
 /*
  * TinyCIMM - controller class
  * assetmanager.php
- * Copyright (c) 2009 Richard Willis & Liam Gooding
+ * Copyright (c) 2009 Richard Willis
  * MIT license  : http://www.opensource.org/licenses/mit-license.php
  * Project      : http://tinycimm.googlecode.com/
- * Contact      : willis.rh@gmail.com
+ * Contact      : willis.rh@gmail.com : http://badsyntax.co.uk
  *
  */
 
