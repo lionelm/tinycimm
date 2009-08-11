@@ -25,6 +25,10 @@
   * Edit the {{{application/config/autoload.php}}} file
     * add '_tinycimm_' to the *config* key, '_url_' to the *helpers*, and '_database_' to the *libraries* 
   * make sure the {{{$config['base_url']}}} is set correctly in your application/config/config.php
+  * to support flv uploads, you need to add this to {{{application/config/mimes.php}}}:
+{{{
+'flv' => 'application/octet-stream'
+}}}
   * make sure the database details in {{{application/config/database.php}}} are correct
   * use the {{{sql/mysql/tinycimm.sql}}} to create the tables
   * secure TinyCIMM in the {{{controllers/assetmanager.php}}} class
