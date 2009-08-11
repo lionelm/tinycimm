@@ -22,8 +22,8 @@ class TinyCIMM {
 
 	public function get_asset($asset_id, $width=200, $height=200, $quality=85, $send_nocache=false){
 		$ci = &get_instance();
-		$asset = $ci->tinycimm_model->get_asset($asset_id) or die('asset not found');
-		$asset->filepath = $this->config->item('tinycimm_asset_path').$asset_id.$asset->extension;
+		$asset = $ci->tinycimm_model->get_asset($asset_id) or die('test 2asset not found');
+		$asset->filepath = $this->config->item('tinycimm_asset_path_full').$asset_id.$asset->extension;
 		if (!@file_exists($asset->filepath)) {
 			die('asset not found');
 		}
@@ -34,16 +34,16 @@ class TinyCIMM {
 		// checking if the client is validating his cache and if it is current.
 		if (isset($headers['If-Modified-Since']) && (strtotime($headers['If-Modified-Since']) == filemtime($asset->resize_filepath))) {
 			// client's cache is current, so we just respond '304 Not Modified'.
-			header('Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($asset->resize_filepath)).' GMT', true, 304);
+			header('Last-Modified: '.gmdate('D, d M Y H:i:s', @filemtime($asset->resize_filepath)).' GMT', true, 304);
 		} else {
 			// image not cached or cache outdated, we respond '200 OK' and output the image.
-			header('Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($asset->resize_filepath)).' GMT', true, 200);
+			header('Last-Modified: '.gmdate('D, d M Y H:i:s', @filemtime($asset->resize_filepath)).' GMT', true, 200);
 			if ($send_nocache) {
 				header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 				header('Pragma: public');
 			}
 			header('Content-type: '.$asset->mimetype);
-			header("Content-Length: ".filesize($asset->resize_filepath));
+			header("Content-Length: ".@filesize($asset->resize_filepath));
 			flush();
 			readfile($asset->resize_filepath);
 		}
@@ -53,9 +53,9 @@ class TinyCIMM {
 	public function resize_asset($asset, $width=200, $height=200, $quality=90, $cache=true, $update=false){
 		$ci = &get_instance();
 
-		$asset->filepath = $this->config->item('tinycimm_asset_path').$asset->id.$asset->extension;
-		$asset->filename = 'cache/'.$asset->id.'_'.$width.'_'.$height.'_'.$quality.$asset->extension;
-		$asset->resize_filepath = $update ? $asset->filepath : $this->config->item('tinycimm_asset_path').$asset->filename;
+		$asset->filepath = $this->config->item('tinycimm_asset_path_full').$asset->id.$asset->extension;
+		$asset->filename = $this->config->item('tinycimm_asset_cache_path').$asset->id.'_'.$width.'_'.$height.'_'.$quality.$asset->extension;
+		$asset->resize_filepath = $update ? $asset->filepath : $_SERVER['DOCUMENT_ROOT'].$asset->filename;
 
 		if (($cache and !file_exists($asset->resize_filepath) or $update) or !$cache) {
 			$resize_config = $this->config->item('tinycimm_image_resize_config');		
@@ -128,7 +128,7 @@ class TinyCIMM {
 			$asset->width = $asset_data['image_width'];
 			$asset->height = $asset_data['image_height'];
 			$asset->folder = $folder;
-			$asset->filepath = $this->config->item('tinycimm_asset_path').$asset->id.strtolower($asset->extension);
+			$asset->filepath = $this->config->item('tinycimm_asset_path_full').$asset->id.strtolower($asset->extension);
 
 			// rename the uploaded file, CI's Upload library does not handle custom file naming 	
 			rename($asset_data['full_path'], $asset_data['file_path'].$asset->id.strtolower($asset->extension));
@@ -149,7 +149,7 @@ class TinyCIMM {
 		$ci = &get_instance();
 
 		$asset = $ci->tinycimm_model->get_asset($asset_id) or die('asset not found');
-		$asset->filepath = $this->config->item('tinycimm_asset_path').$asset_id.$asset->extension;
+		$asset->filepath = $this->config->item('tinycimm_asset_path_full').$asset_id.$asset->extension;
 
 		// delete images from filesystem, including original and thumbnails
 		if (file_exists($asset->filepath)) {
@@ -157,10 +157,10 @@ class TinyCIMM {
 		}
 
 		// delete the new size specific files				
-		if ($handle = @opendir($this->config->item('tinycimm_asset_cache_path'))) {
+		if ($handle = @opendir($this->config->item('tinycimm_asset_cache_path_full'))) {
 			while (FALSE !== ($file = readdir($handle))) {
 				if (preg_match("/{$asset->id}\_[0-9]+\_[0-9]+\_[0-9]+.*/", $file)) {
-					@unlink($this->config->item('tinycimm_asset_cache_path').$file);
+					@unlink($this->config->item('tinycimm_asset_cache_path_full').$file);
 				}
 			}	
 			@closedir($handle);
@@ -252,12 +252,12 @@ class TinyCIMM {
 		$chmod = $this->config->item('tinycimm_asset_upload_chmod');
 		
 		// upload dir
-		if (!file_exists($this->config->item('tinycimm_asset_path'))) {
-			@mkdir($this->config->item('tinycimm_asset_path'), $chmod) or die('Error: Unable to create asset folder '.$this->config->item('tinycimm_asset_path').'<br/><strong>Please adjust permissions</strong>');
+		if (!file_exists($this->config->item('tinycimm_asset_path_full'))) {
+			@mkdir($this->config->item('tinycimm_asset_path_full'), $chmod) or die('Error: Unable to create asset folder '.$this->config->item('tinycimm_asset_path_full').'<br/><strong>Please adjust permissions</strong>');
 		}
 		// cache dir
-		if (!file_exists($this->config->item('tinycimm_asset_cache_path'))) {
-			@mkdir($this->config->item('tinycimm_asset_cache_path'), $chmod) or die('Error: Unable to create asset cache folder '.$this->config->item('tinycimm_asset_cache_path').'<br/><strong>Please adjust permissions</strong>');
+		if (!file_exists($this->config->item('tinycimm_asset_cache_path_full'))) {
+			@mkdir($this->config->item('tinycimm_asset_cache_path_full'), $chmod) or die('Error: Unable to create asset cache folder '.$this->config->item('tinycimm_asset_cache_path_full').'<br/><strong>Please adjust permissions</strong>');
 		}
 	}
 	
