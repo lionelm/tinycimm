@@ -56,7 +56,7 @@ ImageDialog.prototype.insertAndClose = function(image, width, height) {
 	(tinymce.isWebKit) && ed.getWin().focus();
 
 	args = {
-		src : this.settings.tinycimm_assets_path+image.filename,
+		src : image.filename,
 		alt : image.description,
 		width : width,
 		height : height

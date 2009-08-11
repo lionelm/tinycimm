@@ -18,7 +18,6 @@ class Assetmanager extends Controller {
 		$this->load->library('session');
 		$this->load->library('tinycimm');
 		$this->load->library('tinycimm_image');
-		$this->load->library('tinycimm_media');
 		$this->load->model('tinycimm_model');
 		$this->load->config('tinycimm');
 		$this->load->helper('url');
@@ -44,7 +43,18 @@ class Assetmanager extends Controller {
 	}
 
 	public function media() {
-		exit('<em>Sorry, the media browser is still in development</em>');
+		!$this->session->userdata('cimm_view') and $this->session->set_userdata('cimm_view', 'thumbnails');
+		$param = array_slice(explode('/', $this->uri->uri_string()),4);
+		$method = trim($this->uri->segment(3));
+		$count = 0;
+                foreach($param as $element) {
+			$param[$count] = "'".$element."'";
+			$count++;
+		}
+		$this->tinycimm_image->view_path = $this->view_path = $this->config->item('tinycimm_views_root').$this->config->item('tinycimm_views_root_media');
+		$types = $this->config->item('tinycimm_media_upload_config');
+		$this->tinycimm_model->allowed_types = explode('|', $types['allowed_types']);
+		method_exists($this->tinycimm_image, $method) and eval('$this->tinycimm_media->' . $method . '('.join(',', $param).');');
 	}
 
 	public function file() {
