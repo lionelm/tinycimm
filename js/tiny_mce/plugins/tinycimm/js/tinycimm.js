@@ -209,8 +209,9 @@ TinyCIMM.prototype.deleteFolder = function(folder_id) {
 	
 // get folders as html string
 TinyCIMM.prototype.getFoldersHTML = function(callback) {
+	var self = this;
 	tinymce.util.XHR.send({
-		url : this.baseURL(this.settings.tinycimm_controller+'image/get_folders_html'),
+		url : this.baseURL(this.settings.tinycimm_controller+self.type+'/get_folders_html'),
 		error : function(response) {
 	 		tinyMCEPopup.editor.windowManager.alert('There was an error processing the request.');
 		},
