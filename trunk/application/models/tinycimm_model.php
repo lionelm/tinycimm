@@ -36,7 +36,7 @@ class Tinycimm_model extends Model {
 		}
 		(int) $folder_id and $this->db->where('folder_id', (int) $folder_id);
 		if (count($this->allowed_types)){
-			$this->db->where("extension = '".implode("' or extension = '.", (array) $this->allowed_types)."'");
+			$this->db->where("(extension = '.".implode("' or extension = '.", (array) $this->allowed_types)."')");
 		}
 		$this->db->order_by('dateadded', 'desc');
 		return $this->db->get('asset', $limit, $offset)->result_array();
@@ -103,10 +103,14 @@ class Tinycimm_model extends Model {
 	*
 	* @returns integer|insert_id the last insert id from the id sequence colmn
 	**/
-	function insert_folder($folder_name=''){
-		$fields = array('name' => $folder_name);
-		$this->db->set($fields)->insert('asset_folder');
-		return $this->db->insert_id();
+	function insert_folder($folder_name='', $type_name=''){
+		$result = $this->db->where('name', $type_name)->get('type')->row();
+		if ($result->id) {
+			$fields = array('type_id' => $result->id, 'name' => $folder_name);
+			$this->db->set($fields)->insert('asset_folder');
+			return $this->db->insert_id();
+		}
+		return 0;
 	}
 	
 	/**
@@ -116,9 +120,9 @@ class Tinycimm_model extends Model {
 	* @param Integer|$user_id 
 	* @return Object| a result object of the list of folder from the database
 	**/
-	function get_folders($order_by='name', $user_id=FALSE){
+	function get_folders($type='image', $order_by='name', $user_id=FALSE){
 		if ($user_id === FALSE) {
-			return $this->db->order_by($order_by, 'asc')->get('asset_folder')->result_array();
+			return $this->db->join('type', 'type.id = asset_folder.type_id', 'LEFT')->where('type.name', $type)->select('asset_folder.id, asset_folder.name')->order_by("asset_folder.{$order_by}", 'asc')->get('asset_folder')->result_array();
 		} else {
 			return $this->db->where('user_id', (int) $user_id)->order_by($order_by, 'asc')->get('asset_folder')->result_array();
 		}

@@ -183,7 +183,7 @@ class TinyCIMM {
 		return $ci->tinycimm_model->delete_folder((int) $folder_id);
 	}
 
-	public function add_folder($name=''){
+	public function add_folder($name='', $type='image'){
 		$ci = &get_instance();
 		$name = urldecode(trim($name));
 
@@ -195,7 +195,7 @@ class TinyCIMM {
 			return array('outcome' => false, 'message' => 'The folder name must be less than 24 characters.\n(The supplied folder name is "+captionID.length+" characters).');
 		}
 
-		$ci->tinycimm_model->insert_folder($name);
+		$ci->tinycimm_model->insert_folder($name, $type);
 	}
 
 	/**
@@ -212,10 +212,10 @@ class TinyCIMM {
         }
 
 
-	public function get_folders_html(){
+	public function get_folders_html($type=''){
 		$ci = &get_instance();
-		$data['folders'][0] = array('id'=>0,'name'=>'General');
-		foreach($folders = $ci->tinycimm_model->get_folders('name') as $folderinfo) {
+		$data['folders'][0] = array('id'=>0,'name'=>'All files');
+		foreach($folders = $ci->tinycimm_model->get_folders($type, 'name') as $folderinfo) {
 			$data['folders'][] = $folderinfo;
 		}
 		$ci->load->view($this->view_path.'folder_list', $data);
