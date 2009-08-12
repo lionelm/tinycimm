@@ -105,7 +105,6 @@ class TinyCIMM_image extends TinyCIMM {
 		$totimagesize = (int) $ci->tinycimm_model->get_filesize_assets($folder) / 1024;
 		$data['selected_folder_info']['total_file_size'] = ($totimagesize > 1024) ? round($totimagesize/1024, 2).'mb' : $totimagesize.'kb';
 
-		$data['images'] = array();
 		foreach($assets = $ci->tinycimm_model->get_assets((int) $folder, $offset, $per_page, $search) as $image) {
 			$image_path = $this->config->item('tinycimm_asset_path').$image['id'].$image['extension'];
 			$image_size = ($imgsize = @getimagesize($image_path)) ? $imgsize : array(0,0);

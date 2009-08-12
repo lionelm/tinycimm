@@ -30,6 +30,15 @@ MediaDialog.prototype.fileBrowser = function(folder, offset, load, el, search_qu
 	this.getBrowser(folder, offset, search_query);
 }
 
+MediaDialog.prototype.loadUploader = function() {
+	if (!tinyMCEPopup.dom.get('upload_target_ajax').src) {
+		tinyMCEPopup.dom.get('upload_target_ajax').src = this.baseURL(this.settings.tinycimm_controller+'media/get_uploader_form');
+	}
+	// refresh the select drop down 
+	this.loadSelect(0, 'media');
+	tinyMCEPopup.resizeToInnerSize();
+};
+
 var TinyCIMMMedia = new MediaDialog();
 TinyCIMMMedia.preInit();
 tinyMCEPopup.onInit.add(TinyCIMMMedia.init, TinyCIMMMedia);

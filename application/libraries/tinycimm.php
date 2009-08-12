@@ -125,8 +125,8 @@ class TinyCIMM {
 
 			$ci->tinycimm_model->update_asset('id', $last_insert_id, 0, '', '', $last_insert_id.strtolower($asset_data['file_ext']));
 			$asset = $ci->tinycimm_model->get_asset($last_insert_id);
-			$asset->width = $asset_data['image_width'];
-			$asset->height = $asset_data['image_height'];
+			$asset->width = isset($asset_data['image_width']) ? $asset_data['image_width'] : '';
+			$asset->height = isset($asset_data['image_height']) ? $asset_data['image_height'] : '';
 			$asset->folder = $folder;
 			$asset->filepath = $this->config->item('tinycimm_asset_path_full').$asset->id.strtolower($asset->extension);
 

@@ -12,7 +12,7 @@
 				[<a href="#" onclick="tinyMCEPopup.dom.get('addfolder').style.display='block';tinyMCEPopup.dom.get('add_folder_caption').focus()">add</a>]
 			</span>&raquo; Folders</div>
 			<div id="folderlist">
-				<?= $this->load->view($this->view_path.'media_folder_list');?>
+				<?= $this->load->view($this->view_path.'folder_list');?>
 			</div>
 			<br/>
 			<div class="heading">&raquo; Folder Info</div>
@@ -37,19 +37,19 @@
 				&raquo; <?=$selected_folder_info['name'];?>
 			</div>
 			<div id="filelist">
-				<?if (sizeof($images) == 0) {?>
+				<?if (sizeof($assets) == 0) {?>
 					(folder is empty)
 				<?} else {?>
-					<?foreach($images as $image):?>
-						<span class="thumb_wrapper" title="insert <?=$image['description'];?>">
-							<span class="thumb" onclick="TinyCIMMImage.insertImage(this, '<?=$image['filename'];?>', '<?=$image['description'];?>');" style="background:url(/assetmanager/image/get/<?=$image['id'];?>/92/92) no-repeat center center;">
+					<?foreach($assets as $asset):?>
+						<span class="thumb_wrapper" title="insert <?=$asset['description'];?>">
+							<span class="thumb" onclick="TinyCIMMImage.insertImage(this, '<?=$asset['filename'];?>', '<?=$asset['description'];?>');" style="background:url(/assetmanager/image/get/<?=$asset['id'];?>/92/92) no-repeat center center;">
 								<span class="loader"></span>
 							</span>
 							<span class="controls-bg"></span>
 							<span class="controls">
-								<a href="#" title="delete image" class="delete" onclick="TinyCIMMImage.deleteImage(<?=$image['id'];?>);return false">&nbsp;</a>
-								<a href="#" title="resize image" class="resize" onclick="TinyCIMMImage.loadresizer('<?=$image['filename'];?>');return false;">&nbsp;</a>
-								<a href="#" title="insert thumbnail" class="thumbnail" onclick="TinyCIMMImage.insertThumbnail(this, '<?=$image['filename'];?>');return false">&nbsp;</a>
+								<a href="#" title="delete image" class="delete" onclick="TinyCIMMImage.deleteImage(<?=$asset['id'];?>);return false">&nbsp;</a>
+								<a href="#" title="resize image" class="resize" onclick="TinyCIMMImage.loadresizer('<?=$asset['filename'];?>');return false;">&nbsp;</a>
+								<a href="#" title="insert thumbnail" class="thumbnail" onclick="TinyCIMMImage.insertThumbnail(this, '<?=$asset['filename'];?>');return false">&nbsp;</a>
 							</span>
 						</span>
 					<?endforeach;?>
