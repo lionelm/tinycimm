@@ -43,11 +43,11 @@
 		function updateimg(folder) {
 			document.forms[0].reset();
 			document.forms[0].description.value = '';
-			parent.TinyCIMMImage.assetUploaded(folder);
+			parent.TinyCIMMMedia.assetUploaded(folder);
 		}
 
 		window.onload = function() {
-			document.forms[0].action = parent.tinyMCEPopup.editor.documentBaseURI.toAbsolute(parent.tinyMCE.settings.tinycimm_controller+'image/upload');
+			document.forms[0].action = parent.tinyMCEPopup.editor.documentBaseURI.toAbsolute(parent.tinyMCE.settings.tinycimm_controller+'media/upload');
 			document.getElementById('fileupload').onchange = function(e) {
 				if (this.value) {
 					document.getElementById('description').value = 
@@ -85,30 +85,8 @@
 				<td>Remote Folder</td>
 				<td colspan="3">
 					<div id="folder_select_list" style="display: inline;">
-						<?=TinyCIMM_image::get_folders_select();?>
+						<?=TinyCIMM_Media::get_folders_select();?>
 					</div>
-				</td>
-			</tr>
-			<tr>
-				<td>Constrain Dimensions</td>
-				<td>
-					<input style="width:14px;float:left;border:0" type="radio" name="adjust_size" id="adjust_size_1" value="1" checked="checked" onclick="document.getElementById('con_dimensions').style.display='block';" /> 
-					<label style="float:left;line-height:18px" for="adjust_size_1">Yes</label> 
-					<input style="width:14px;float:left;border:0" type="radio" name="adjust_size" id="adjust_size_0" value="0" onclick="document.getElementById('con_dimensions').style.display='none';" /> 
-					<label style="float:left;line-height:18px" for="adjust_size_0">No</label>
-				</td>
-				<td>&nbsp;</td>
-				<td>
-					<div id="con_dimensions">
-						<input style="text-align:center;width:38px" type="text" name="max_x" value="640" /> x
-						<input style="text-align:center;width:38px" type="text" name="max_y" value="480" /> px
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td>Quality</td>
-				<td colspan="3">
-					<input type="text" size="3" style="text-align:center;width:24px" id="image-quality" value="90" />%
 				</td>
 			</tr>
 			<tr>
@@ -118,6 +96,6 @@
 			</tr>
 		</table>
 	</form>
-	<br /><br />
+	<br /><br /><br /><br /><br /><br />
 </body>
 </html>

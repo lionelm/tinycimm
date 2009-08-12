@@ -14,11 +14,19 @@
 		<ul>
 			<li id="browser_tab" class="current">
 				<span>
-					<a href="javascript:TinyCIMMImage.showBrowser();" onmousedown="return false;">
+					<a href="javascript:TinyCIMMMedia.showBrowser();" onmousedown="return false;">
 						Browse
 					</a>
 				</span>
 			</li>
+			<li id="upload_tab">
+				<span>
+					<a href="javascript:TinyCIMMMedia.showUploader();" onmousedown="return false;">
+						Upload
+					</a>
+				</span>
+                        </li>
+
 		</ul>
 	</div>
 
@@ -32,6 +40,17 @@
 					<span id="loading">loading</span>
 				</div>
 			</fieldset>
+		</div>
+
+		<!-- UPLOAD PANEL -->
+		<div id="upload_panel" class="panel" style="background:#FFF">
+			<fieldset>
+				<legend>Quick File Upload</legend>
+				<div id="fileuploader">
+					<iframe frameborder="0" id="upload_target_ajax" width="100%" name="upload_target_ajax" scrolling="no"></iframe>
+				</div>
+			</fieldset>
+			<br/>
 		</div>
 	
 	</div>

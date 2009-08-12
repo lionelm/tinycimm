@@ -176,6 +176,11 @@ ImageDialog.prototype.insertThumbnail = function(anchor, imgsrc){
 	});
 }
 
+ImageDialog.prototype.showUploader = function(){
+	mcTabs.displayTab('upload_tab','upload_panel');
+	tinyMCEPopup.dom.get('resize_tab').style.display = 'none';
+	this.loadUploader();
+}
 
 ImageDialog.prototype.loadUploader = function() {
 	// load the uploader form
@@ -271,6 +276,7 @@ ImageDialog.prototype.doSearch = function(e, el){
 		this.fileBrowser(0, 0, true, false, el.value.safeEscape());
 	}
 }
+
 	
 var TinyCIMMImage = new ImageDialog();
 TinyCIMMImage.preInit();

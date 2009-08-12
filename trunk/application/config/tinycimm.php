@@ -27,8 +27,8 @@ $config['tinycimm_image_upload_config']['max_height']  = '5000';
 // media upload config 
 $config['tinycimm_media_upload_config']['field_name'] = 'fileupload';
 $config['tinycimm_media_upload_config']['upload_path'] = $config['tinycimm_asset_path_full'];
-$config['tinycimm_media_upload_config']['allowed_types'] = 'flv';
-$config['tinycimm_media_upload_config']['max_size'] = '6800';
+$config['tinycimm_media_upload_config']['allowed_types'] = 'flv|mov|mp3';
+$config['tinycimm_media_upload_config']['max_size'] = '6800000';
 
 // image resize
 $config['tinycimm_image_resize_config']['image_library'] = 'GD2';

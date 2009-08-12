@@ -18,6 +18,7 @@ class Assetmanager extends Controller {
 		$this->load->library('session');
 		$this->load->library('tinycimm');
 		$this->load->library('tinycimm_image');
+		$this->load->library('tinycimm_media');
 		$this->load->model('tinycimm_model');
 		$this->load->config('tinycimm');
 		$this->load->helper('url');
@@ -37,8 +38,8 @@ class Assetmanager extends Controller {
 			$count++;
 		}
 		$this->tinycimm_image->view_path = $this->view_path = $this->config->item('tinycimm_views_root').$this->config->item('tinycimm_views_root_image');
-		$types = $this->config->item('tinycimm_image_upload_config');
-		$this->tinycimm_model->allowed_types = explode('|', $types['allowed_types']);
+		$upload_config = $this->config->item('tinycimm_image_upload_config');
+		$this->tinycimm_model->allowed_types = explode('|', $upload_config['allowed_types']);
 		method_exists($this->tinycimm_image, $method) and eval('$this->tinycimm_image->' . $method . '('.join(',', $param).');');
 	}
 
@@ -51,9 +52,9 @@ class Assetmanager extends Controller {
 			$param[$count] = "'".$element."'";
 			$count++;
 		}
-		$this->tinycimm_image->view_path = $this->view_path = $this->config->item('tinycimm_views_root').$this->config->item('tinycimm_views_root_media');
-		$types = $this->config->item('tinycimm_media_upload_config');
-		$this->tinycimm_model->allowed_types = explode('|', $types['allowed_types']);
+		$this->tinycimm_media->view_path = $this->view_path = $this->config->item('tinycimm_views_root').$this->config->item('tinycimm_views_root_media');
+		$upload_config = $this->config->item('tinycimm_media_upload_config');
+		$this->tinycimm_model->allowed_types = explode('|', $upload_config['allowed_types']);
 		method_exists($this->tinycimm_image, $method) and eval('$this->tinycimm_media->' . $method . '('.join(',', $param).');');
 	}
 

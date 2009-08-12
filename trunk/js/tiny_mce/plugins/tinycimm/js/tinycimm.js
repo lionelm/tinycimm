@@ -84,7 +84,6 @@ TinyCIMM.prototype.showBrowser = function(folder, offset, load, el) {
 
 TinyCIMM.prototype.showUploader = function() {
 	mcTabs.displayTab('upload_tab','upload_panel');
-	tinyMCEPopup.dom.get('resize_tab').style.display = 'none';
 	(this.loadUploader) && this.loadUploader();
 }
 
@@ -125,10 +124,11 @@ TinyCIMM.prototype.insert = function(asset_id) {
 	});
 }
 	
-TinyCIMM.prototype.loadSelect = function(folder) {
+TinyCIMM.prototype.loadSelect = function(folder, type) {
 	folder = folder || 0;
+	type = type || 'image';
 	tinymce.util.XHR.send({
-		url : this.baseURL(this.settings.tinycimm_controller+'image/get_folders_select/'+folder),
+		url : this.baseURL(this.settings.tinycimm_controller+type+'/get_folders_select/'+folder),
 		error : function(text) {
 			tinyMCEPopup.editor.windowManager.alert('There was an error retrieving the select list.');
 		},

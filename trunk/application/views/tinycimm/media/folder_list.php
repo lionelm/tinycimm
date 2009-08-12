@@ -9,10 +9,10 @@
 				</a>
 				-->
 				<a href="javascript:;">
-					<img onclick="TinyCIMMImage.deleteFolder('<?=$folder['id'];?>');" title="remove" src="img/delete.gif"/>
+					<img onclick="TinyCIMMMedia.deleteFolder('<?=$folder['id'];?>');" title="remove" src="img/delete.gif"/>
 				</a>
 			</span>
-			<span class="foldername" onClick="TinyCIMMImage.fileBrowser('<?=$folder['id'];?>', 0, true, this);">
+			<span class="foldername" onClick="TinyCIMMMedia.fileBrowser('<?=$folder['id'];?>', 0, true, this);">
 				<img class="folderimg" id="img-<?=$folder['id'];?>" src="img/folder.gif" />
 				<?=$folder['name'];?>/
 			</span>
