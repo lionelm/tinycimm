@@ -1,7 +1,7 @@
 <div id="addfolder" class="clearfix" style="display:none;">
 	<div class="heading">&raquo; Add Folder</div>
 	<input type="text" id="add_folder_caption" class="input" style="width:136px;float:left;margin-right:5px">
-	<img src="img/save.gif" onClick="TinyCIMMImage.addFolder();" style="cursor:pointer;float:left;opacity:0.65" onMouseOver="this.style.opacity='1';" onMouseOut="this.style.opacity='0.65';" alt="save folder" title="save folder" />
+	<img src="img/save.gif" onClick="TinyCIMMImage.addFolder('image');" style="cursor:pointer;float:left;opacity:0.65" onMouseOver="this.style.opacity='1';" onMouseOut="this.style.opacity='0.65';" alt="save folder" title="save folder" />
 	&nbsp;<img src="img/cancel.png" onclick="tinyMCEPopup.dom.get('addfolder').style.display='none';tinyMCEPopup.dom.get('add_folder_caption').value='';" style="cursor:pointer;opacity:0.65" onMouseOver="this.style.opacity='1';" onMouseOut="this.style.opacity='0.65';" title="cancel" />
 </div>
 <div class="heading">

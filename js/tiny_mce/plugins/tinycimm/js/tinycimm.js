@@ -157,9 +157,10 @@ TinyCIMM.prototype.assetUploaded = function(folder) {
 	this.showBrowser(folder, 0, true);
 }
 	
-TinyCIMM.prototype.addFolder = function() {
-	var captionID = encodeURIComponent(tinyMCEPopup.dom.get('add_folder_caption').value.replace(/^\s+|\s+$/g, ''));
-	var requesturl = this.baseURL(this.settings.tinycimm_controller+this.type+'/add_folder/'+captionID);
+TinyCIMM.prototype.addFolder = function(type) {
+	type = type || 'image';
+	var foldername = encodeURIComponent(tinyMCEPopup.dom.get('add_folder_caption').value.replace(/^\s+|\s+$/g, ''));
+	var requesturl = this.baseURL(this.settings.tinycimm_controller+this.type+'/add_folder/'+foldername+'/'+type);
 	tinymce.util.XHR.send({
 		url : requesturl,
 		error : function(response) {
