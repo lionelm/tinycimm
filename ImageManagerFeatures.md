@@ -1,0 +1,13 @@
+### Introduction ###
+
+The image manager allows you to manage your images and easily insert them into the tinyMCE editor or advimage dialog.
+
+### Some Features ###
+
+  * It's all AJAX'd
+  * Browser: View thumbnails or file listing of your images in the relevant folders. Quick viewing stats include image size.
+  * Folders: Add, edit, delete folders to organize your image library. Quick stats on folders include: num images, total size.
+  * Upload: Upload a local file to a remote folder. Constrain dimensions, to prevent you or your client from inserting massively huge images that interfere with site layout.
+  * Resize: A simple resizer allows you to resize your images. The original image is never adjusted so you can always restore your images
+  * Thumbnail: You can insert images as anchor thumbnails with custom lightbox class.
+  * Have a look at some [screenshots](http://code.google.com/p/tinycimm/wiki/Screenshots).

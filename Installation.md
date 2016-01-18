@@ -1,0 +1,52 @@
+(These instructions were written using TinyMCE Version 3.2.3, CodeIgniter Version 1.7.1 to setup TinyCIMM Version 0.1A)
+
+### Base requirements ###
+  * CodeIgniter V 1.7 (although it may work with older versions)
+  * TinyMCE 3.X
+  * PHP 5.X
+  * MySQL
+  * GD or ImageMagick
+
+### Optional (but recommended) ###
+  * TinyMCE advimage plugin
+  * TinyMCE inlinepopups plugin
+  * TinyMCE contextmenu plugin
+  * To use the file browser callback functionality, you need to enable the following TinyMCE plugins: advimage, advlink, media
+
+### Installation details ###
+
+  * Download and extract the tiniycimm zip file
+  * Copy the extracted files into your CodeIgniter project root directory
+  * Make sure the `assets/` and `assets/cache/` folders have write permissions
+  * The plugin requires you to have the correct urls, so it's important to check the example **`htaccess`** file is placed in the root of your codeigniter project, and renamed as **`.htacccess`**
+  * Edit the `application/config/autoload.php` file
+    * add '_tinycimm_' to the **config** key, '_url_' to the **helpers**, and '_database_' to the **libraries**
+  * make sure the `$config['base_url']` is set correctly in your application/config/config.php
+  * to support flv uploads, you need to add this to `application/config/mimes.php`:
+```
+'flv' => 'application/octet-stream'
+```
+  * make sure the database details in `application/config/database.php` are correct
+  * use the `sql/mysql/tinycimm.sql` to create the tables
+  * secure TinyCIMM in the `controllers/assetmanager.php` class
+  * use the `application/common/wysiwyg.php` view as an example to load tinymce and the tinycimm plugin
+
+
+### Context menu integration ###
+
+  * If you have enabled the 'contextmenu' tinymce plugin, then you can add a menu item to appear when you right-click on an image.
+  * Copy `tinymce/plugins/contextmenu/editor_plugin_src.js` over `tinymce/plugins/contextmenu/editor_plugin.js` (The plugin uses the `editor_plugin.js` file but it comes compressed and un-readable; the `editor_plugin_src.js` contains the uncompressed code.
+  * Edit `tinymce/plugins/contextmenu/editor_plugin.js`
+
+**Find this line**
+```
+m.add({title : 'advanced.unlink_desc', icon : 'unlink', cmd : 'UnLink'});
+```
+
+**Add this after**
+```
+m.addSeparator();
+m.add({title : 'Resize image', icon : 'image', cmd : 'mceTinyCIMM-Image', ui : true});
+```
+
+  * This will display a new item that will open the tinycimm image resizer
